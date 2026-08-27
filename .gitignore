@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tsbuildinfo
+storybook-static/
+.DS_Store
+
+# Claude
+.claude/commands/

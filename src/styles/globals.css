@@ -1,0 +1,6 @@
+/* Storybook/dev-only entry CSS. Not published — the published stylesheet
+   (theme.css → dist/styles.css) is imported directly by consumers alongside
+   their own Tailwind import. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./theme.css";
