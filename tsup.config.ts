@@ -8,11 +8,21 @@ export default defineConfig({
   clean: true,
   // `formik` is an optional peer — externalize it so it's never bundled and
   // consumers who don't use the Formik* fields tree-shake it away entirely.
-  external: ["react", "react-dom", "react/jsx-runtime", "formik"],
+  // `react-aria-components`/`radix-ui` are externalized too: bundling them would
+  // duplicate React Aria's cross-component context if a consumer app also
+  // depends on it directly, and needlessly inflate dist/index.js.
+  external: [
+    "react",
+    "react-dom",
+    "react/jsx-runtime",
+    "formik",
+    "react-aria-components",
+    "radix-ui",
+  ],
   treeshake: true,
   splitting: false,
   minify: false,
-  // Every component here is a client component (hooks, Radix, context). The whole
+  // Every component here is a client component (hooks, context). The whole
   // bundle is marked "use client" via a post-build step (scripts/add-use-client.mjs
   // in the build script) so it can be imported directly from a Next.js Server
   // Component — otherwise React resolves to the react-server condition and fails

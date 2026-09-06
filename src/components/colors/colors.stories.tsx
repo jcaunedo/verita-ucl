@@ -91,17 +91,6 @@ function AllColors() {
         <ColorSwatch name="Ring" cssVar="--ring" className="bg-ring" />
       </ColorGroup>
 
-      <ColorGroup title="Sidebar">
-        <ColorSwatch name="Background" cssVar="--sidebar-background" className="bg-sidebar-background" />
-        <ColorSwatch name="Foreground" cssVar="--sidebar-foreground" className="bg-sidebar-foreground" />
-        <ColorSwatch name="Primary" cssVar="--sidebar-primary" className="bg-sidebar-primary" />
-        <ColorSwatch name="Primary Foreground" cssVar="--sidebar-primary-foreground" className="bg-sidebar-primary-foreground" />
-        <ColorSwatch name="Accent" cssVar="--sidebar-accent" className="bg-sidebar-accent" />
-        <ColorSwatch name="Accent Foreground" cssVar="--sidebar-accent-foreground" className="bg-sidebar-accent-foreground" />
-        <ColorSwatch name="Border" cssVar="--sidebar-border" className="bg-sidebar-border" />
-        <ColorSwatch name="Ring" cssVar="--sidebar-ring" className="bg-sidebar-ring" />
-      </ColorGroup>
-
       <BrandScale />
     </div>
   );

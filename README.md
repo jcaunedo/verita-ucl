@@ -7,7 +7,8 @@ Shared React component library for Verita AI frontend applications.
 - React 19
 - TypeScript (strict mode)
 - Tailwind CSS 4
-- shadcn/ui (new-york style)
+- Untitled UI
+- React Aria (accessible component primitives)
 - Storybook 10
 - tsup (ESM bundling)
 
@@ -18,13 +19,13 @@ npm install
 npm run storybook
 ```
 
-Storybook launches on [http://localhost:6006](http://localhost:6006) where you can browse all components, variants, and the color palette.
+Storybook launches on [http://localhost:6009](http://localhost:6009) where you can browse all components, variants, and the color palette.
 
 ## Commands
 
 | Command                   | Description                             |
 | ------------------------- | ---------------------------------------- |
-| `npm run storybook`       | Launch Storybook dev server (port 6006) |
+| `npm run storybook`       | Launch Storybook dev server (port 6009) |
 | `npm run build`           | Build library to `dist/`                |
 | `npm run dev`             | Build in watch mode                     |
 | `npm run lint`            | Type-check with TypeScript              |
@@ -62,7 +63,6 @@ src/
     theme.css               # Design tokens (shipped to consumers)
     globals.css             # Storybook internal CSS
   components/
-    ui/                     # shadcn primitives land here first (staging)
     typography/              # Typography component (template for new components)
     colors/                 # Color palette stories
   layouts/                  # Full-page reference layouts assembled from components
@@ -70,7 +70,7 @@ src/
 
 ## Design Tokens
 
-`src/styles/theme.css` is seeded with shadcn's stock neutral palette as an
+`src/styles/theme.css` is seeded with a stock neutral palette as an
 unbranded starting point (see the `:root` / `.dark` primitive blocks). Swap in
 real brand tokens once a design system exists — the semantic token
 architecture (`@theme inline` role mappings) is meant to stay stable across

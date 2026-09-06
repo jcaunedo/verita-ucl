@@ -1,7 +1,7 @@
 // Prepends a "use client" directive to the built ESM bundle.
 //
 // Every UCL component relies on client-only React features (hooks, context,
-// Radix primitives), so the whole package is a client module. tsup/esbuild
+// React Aria primitives), so the whole package is a client module. tsup/esbuild
 // strip module-level directives during bundling, so we add it here as a
 // deterministic post-build step. This lets consumers import UCL directly from
 // a Next.js Server Component without hitting "createContext is not a function".

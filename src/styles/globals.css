@@ -1,6 +1,9 @@
 /* Storybook/dev-only entry CSS. Not published — the published stylesheet
    (theme.css → dist/styles.css) is imported directly by consumers alongside
-   their own Tailwind import. */
+   their own Tailwind import. Font @import duplicated here (must be first)
+   because Tailwind is imported before theme.css, and a render-blocking
+   @import after other statements is invalid/ignored. */
+@import url("https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./theme.css";

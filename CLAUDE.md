@@ -1,14 +1,14 @@
 # Verita AI UCL (Unified Content Library)
 
-Shared React component library for Verita AI frontend applications. Built with Tailwind CSS 4, shadcn/ui, and TypeScript.
+Shared React component library for Verita AI frontend applications. Built with Tailwind CSS 4, Untitled UI, and TypeScript.
 
 ## Quick Reference
 
 | Command                   | Purpose                                      |
-| ------------------------- | --------------------------------------------- |
+| ------------------------- | -------------------------------------------- |
 | `npm run build`           | Build library to `dist/` (ESM + types + CSS) |
 | `npm run dev`             | Watch mode build                             |
-| `npm run storybook`       | Launch Storybook on port 6006                |
+| `npm run storybook`       | Launch Storybook on port 6009                |
 | `npm run build-storybook` | Build static Storybook site                  |
 | `npm run lint`            | Type-check with `tsc --noEmit`               |
 
@@ -23,19 +23,26 @@ Shared React component library for Verita AI frontend applications. Built with T
 - **Forms & Formik:** if forms are added, keep primitives (`Input`, `Select`, …) Formik-agnostic. Formik-connected fields (`FormikInput`, `FormikSelect`, …) should live beside their primitive in `forms/<name>/formik-<name>.tsx` and share `forms/field/` (`FormField` shell + internal `useFormikField` hook). `formik` is an **optional** peer dependency (see "Formik Fields" below).
 - **Storybook:** `@storybook/react-vite` with `@tailwindcss/vite` plugin for Tailwind processing. Story `title`s follow the family taxonomy (e.g. `Forms/Input`, `Buttons/Button`)
 
-## Adding a shadcn Primitive (scaffold → relocate)
+## Adding an Untitled UI Primitive (adapt → relocate)
 
-The shadcn CLI writes a flat file into `src/components/ui/`, which is only a **staging** dir here. After scaffolding, relocate the component into its family folder:
+Untitled UI distributes components as copy-paste React/Tailwind source (via
+their site or Figma kit), not an installable npm package — there is no CLI
+scaffold step. Land the adapted source directly in its family folder; there
+is no `src/components/ui/` staging dir.
 
-```bash
-npx shadcn add <component>
-```
-
-1. Move `src/components/ui/<component>.tsx` → `src/components/<family>/<component>/<component>.tsx` (choose the family: `forms`, `buttons`, `overlays`, `data-display`, `cards`).
-2. Rewrite its sibling-component imports to the `@/components/<family>/<name>` alias.
-3. Add `src/components/<family>/<component>/index.ts` re-exporting the component + variants + types.
-4. Create `<component>.stories.tsx` in the same folder with `title: "<Family>/<Component>"`.
-5. Export from `src/index.ts`, then delete the now-empty `src/components/ui/`.
+1. Copy the component source from Untitled UI into
+   `src/components/<family>/<component>/<component>.tsx` (choose the family:
+   `forms`, `buttons`, `overlays`, `data-display`, `cards`).
+2. Adapt it to this repo's conventions: `cn()` from `@/lib/utils`, `cva` for
+   variants, `React.forwardRef`, and this repo's design tokens (`theme.css`)
+   instead of any tokens/classes hardcoded in the source you copied from.
+3. Rewrite its sibling-component imports to the `@/components/<family>/<name>`
+   alias.
+4. Add `src/components/<family>/<component>/index.ts` re-exporting the
+   component + variants + types.
+5. Create `<component>.stories.tsx` in the same folder with
+   `title: "<Family>/<Component>"`.
+6. Export from `src/index.ts`.
 
 ## Creating a Custom Component
 
@@ -833,12 +840,11 @@ If the app builds forms with **Formik + Yup**, UCL can ship Formik-connected fie
 ## Key Files
 
 | File                     | Purpose                                                              |
-| ------------------------ | ---------------------------------------------------------------------|
+| ------------------------ | -------------------------------------------------------------------- |
 | `src/index.ts`           | Public API — all consumer-facing exports                             |
 | `src/styles/theme.css`   | Design tokens, `@theme inline`, CSS variables — shipped to consumers |
 | `src/styles/globals.css` | Storybook entry CSS — imports Tailwind + theme                       |
 | `src/lib/utils.ts`       | `cn()` class merge utility                                           |
-| `components.json`        | shadcn CLI configuration                                             |
 | `tsup.config.ts`         | Library build configuration                                          |
 | `.storybook/main.ts`     | Storybook + Tailwind + path alias setup                              |
 
@@ -846,7 +852,7 @@ If the app builds forms with **Formik + Yup**, UCL can ship Formik-connected fie
 
 All color variables live in `src/styles/theme.css`:
 
-- **Semantic colors** (primary, secondary, muted, etc.) — used by shadcn components via `@theme inline` mappings
+- **Semantic colors** (primary, secondary, muted, etc.) — used by Untitled UI-derived components via `@theme inline` mappings
 - **Brand colors** (brand-50 through brand-950) — currently seeded with a neutral placeholder scale; usable as `bg-brand-500`, `text-brand-700`, etc.
 - **Dark mode** — override values in the `.dark` block
 
