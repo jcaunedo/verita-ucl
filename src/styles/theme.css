@@ -38,6 +38,28 @@
 		-moz-osx-font-smoothing: grayscale;
 		font-optical-sizing: auto;
 	}
+
+	/* Tailwind v4 preflight sets `cursor: default` on <button> (a deliberate
+	   change from v3). Restore the pointer affordance globally so no
+	   component needs its own `cursor-pointer` class — see DESIGN.md
+	   "Global cursor: pointer on every clickable element". */
+	button:not(:disabled),
+	[role="button"]:not([aria-disabled="true"]),
+	a[href],
+	label[for],
+	summary,
+	select,
+	[data-slot][role="checkbox"]:not([data-disabled]),
+	[data-slot][role="radio"]:not([data-disabled]),
+	[data-slot][role="switch"]:not([data-disabled]) {
+		cursor: pointer;
+	}
+
+	button:disabled,
+	[role="button"][aria-disabled="true"],
+	select:disabled {
+		cursor: not-allowed;
+	}
 }
 
 @theme inline {
@@ -54,6 +76,9 @@
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-muted: var(--muted);
 	--color-muted-foreground: var(--muted-foreground);
+	--color-icon-foreground: var(--icon-foreground);
+	--color-icon-muted: var(--icon-muted);
+	--color-icon-subtle: var(--icon-subtle);
 	--color-accent: var(--accent);
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
@@ -70,6 +95,7 @@
 	--color-tertiary-foreground: var(--tertiary-foreground);
 	--color-overlay: var(--overlay);
 	--color-link: var(--link);
+	--color-hover: var(--hover);
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);
@@ -434,6 +460,12 @@
 
 	--overlay: rgb(0 0 0 / 0.4);
 	--link: var(--rosewood-800);
+	/* Figma: color/hover = COMPOSE_COLOR(neutral-700, 4%) — a generic subtle
+	   hover-overlay tint, used across Button (secondary/secondary-destructive/
+	   tertiary) and similar no-solid-fill hover treatments. Supersedes an
+	   earlier hardcoded rgba(58,52,40,0.03) approximation sourced from a
+	   since-superseded external variable. */
+	--hover: color-mix(in srgb, var(--neutral-700) 4%, transparent);
 
 	/* ---------- Semantic: icon ---------- */
 	--icon-foreground: var(--neutral-700);
@@ -463,7 +495,7 @@
 	/* ---------- Fill surfaces ---------- */
 	--fill: var(--neutral-100);
 	--fill-subtle: var(--neutral-50);
-	--fill-muted: var(--neutral-200);
+	--fill-muted: var(--neutral-100);
 
 	/* ---------- Sidebar (unmapped in Figma semantic collection — derived) ---------- */
 	--sidebar: var(--white);

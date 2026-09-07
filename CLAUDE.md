@@ -847,6 +847,7 @@ If the app builds forms with **Formik + Yup**, UCL can ship Formik-connected fie
 | `src/lib/utils.ts`       | `cn()` class merge utility                                           |
 | `tsup.config.ts`         | Library build configuration                                          |
 | `.storybook/main.ts`     | Storybook + Tailwind + path alias setup                              |
+| `DESIGN.md`              | Durable design/component contracts — rules that took real iteration to land on and would otherwise get silently re-broken. **Read before creating or editing any component, and before touching `theme.css`** — check whether a rule there already governs what you're about to change (e.g. the global cursor-pointer rule) rather than re-deriving or re-breaking it. Add an entry when you land a fix/convention that fits its own stated criteria. |
 
 ## Updating Colors
 
