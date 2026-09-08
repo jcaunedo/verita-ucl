@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/data-display/badge";
+import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import { Button, type ButtonProps } from "@/components/buttons/button";
 import { Typography } from "@/components/typography";
 
@@ -9,10 +9,14 @@ import { Typography } from "@/components/typography";
  * A single onboarding/checklist step — label badge, title, description, and a
  * call-to-action button, on a dashed-border card. Figma: `next-step-card`
  * (single COMPONENT, no variant axes). Composes the existing `Badge`
- * (`tone="neutral"`, default `size="sm"`), `Button` (`size="xs"`,
+ * (default `tone="neutral"`, default `size="sm"`), `Button` (`size="xs"`,
  * `color="primary"`), and `Typography` (`size="lg"`/`"sm"`, which already
  * carries the correct letter-spacing for `lg`) rather than reproducing their
- * look inline.
+ * look inline. `badgeTone` defaults to `"neutral"` (the original Figma
+ * component's only observed tone) but is exposed since consuming layouts
+ * (e.g. the Dashboard's four next-step cards) bind different per-card tones
+ * (destructive/warning/info) via the same underlying `next-step-card`
+ * component with a different badge instance tone.
  *
  * The card's background/border (`--next-steps-card-background`/
  * `--next-steps-card-border`) are a component-specific token pair with no
@@ -22,6 +26,8 @@ import { Typography } from "@/components/typography";
 interface NextStepCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Leading label badge text (Figma's `badge` instance, `Label`). */
   label: string;
+  /** Leading label badge tone (Figma's `badge` instance tone binding). Defaults to `"neutral"`. */
+  badgeTone?: BadgeProps["tone"];
   /** Step title. */
   title: string;
   /** Step description. */
@@ -36,6 +42,7 @@ interface NextStepCardProps extends React.HTMLAttributes<HTMLDivElement> {
 /** An onboarding/checklist step card — badge, title, description, and a CTA button. Figma: `next-step-card`. */
 function NextStepCard({
   label,
+  badgeTone = "neutral",
   title,
   description,
   buttonLabel,
@@ -53,7 +60,7 @@ function NextStepCard({
       {...props}
     >
       <div className="flex w-full flex-col items-start gap-4">
-        <Badge tone="neutral" label={label} />
+        <Badge tone={badgeTone} label={label} />
         <div className="flex w-full flex-col items-start gap-1.5">
           <Typography size="lg" weight="semibold" className="text-foreground">
             {title}

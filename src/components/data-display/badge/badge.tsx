@@ -27,13 +27,14 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  *
  * Figma `badge` COMPONENT_SET — `tone` (12 values: Neutral, Brand,
  * Destructive, Warning, Success, Info, Gray blue, Blue light, Indigo,
- * Purple, Pink, Orange), each resolving to a subtle fill, a muted border,
- * and a strong text color from the semantic `color/tone/<name>/*` layer
- * (`theme.css`'s `--tone-*` tokens). Figma previously also offered a
- * "Modern" style (white card fill, neutral border, shadow/xs, tone driving
- * only the dot/icon color) but that axis has since been removed from the
- * design system — only the tonal-fill style remains, so `Badge` has no
- * `style` prop.
+ * Purple, Pink, Orange), each resolving to a subtle fill and a strong text
+ * color from the semantic `color/tone/<name>/*` layer (`theme.css`'s
+ * `--tone-*` tokens). Figma previously also offered a "Modern" style (white
+ * card fill, neutral border, shadow/xs, tone driving only the dot/icon
+ * color) but that axis has since been removed from the design system — only
+ * the tonal-fill style remains, so `Badge` has no `style` prop. Figma also
+ * dropped the border from every tone/size combination (2026-09) — the fill
+ * alone now carries the tone, no `border-tone-*-muted` outline.
  *
  * `size`: `sm` (22px, `text-xs`), `md` (26px, `text-sm`), `lg` (30px,
  * `text-sm`) — the type ramp comes from the file's `xs`/`sm` text styles,
@@ -45,25 +46,22 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * icon-only badge, per Figma's "Show Label off + Show Icon L on" guidance.
  */
 const badgeVariants = cva(
-  "inline-flex shrink-0 items-center rounded-badge border font-medium whitespace-nowrap",
+  "inline-flex shrink-0 items-center rounded-badge font-medium whitespace-nowrap",
   {
     variants: {
       tone: {
-        neutral: "border-tone-neutral-muted bg-tone-neutral-subtle text-tone-neutral",
-        brand: "border-tone-brand-muted bg-tone-brand-subtle text-tone-brand",
-        destructive:
-          "border-tone-destructive-muted bg-tone-destructive-subtle text-tone-destructive",
-        warning: "border-tone-warning-muted bg-tone-warning-subtle text-tone-warning",
-        success: "border-tone-success-muted bg-tone-success-subtle text-tone-success",
-        info: "border-tone-info-muted bg-tone-info-subtle text-tone-info",
-        "gray-blue":
-          "border-tone-gray-blue-muted bg-tone-gray-blue-subtle text-tone-gray-blue",
-        "blue-light":
-          "border-tone-blue-light-muted bg-tone-blue-light-subtle text-tone-blue-light",
-        indigo: "border-tone-indigo-muted bg-tone-indigo-subtle text-tone-indigo",
-        purple: "border-tone-purple-muted bg-tone-purple-subtle text-tone-purple",
-        pink: "border-tone-pink-muted bg-tone-pink-subtle text-tone-pink",
-        orange: "border-tone-orange-muted bg-tone-orange-subtle text-tone-orange",
+        neutral: "bg-tone-neutral-subtle text-tone-neutral",
+        brand: "bg-tone-brand-subtle text-tone-brand",
+        destructive: "bg-tone-destructive-subtle text-tone-destructive",
+        warning: "bg-tone-warning-subtle text-tone-warning",
+        success: "bg-tone-success-subtle text-tone-success",
+        info: "bg-tone-info-subtle text-tone-info",
+        "gray-blue": "bg-tone-gray-blue-subtle text-tone-gray-blue",
+        "blue-light": "bg-tone-blue-light-subtle text-tone-blue-light",
+        indigo: "bg-tone-indigo-subtle text-tone-indigo",
+        purple: "bg-tone-purple-subtle text-tone-purple",
+        pink: "bg-tone-pink-subtle text-tone-pink",
+        orange: "bg-tone-orange-subtle text-tone-orange",
       },
       size: {
         sm: "h-[22px] gap-1 px-2 py-0.5 text-xs",

@@ -159,7 +159,7 @@ function Sidebar() {
           )}
         </div>
 
-        <div className="flex w-full cursor-default flex-col items-start gap-3">
+        <div className="flex w-full cursor-default flex-col items-start gap-4">
           {NAV_ITEMS.map(({ key, icon: Icon, label, href }) => (
             <SidebarMenuItem
               key={key}
@@ -178,7 +178,7 @@ function Sidebar() {
         className="relative z-10 flex w-full flex-col items-start justify-end gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex w-full cursor-default flex-col items-start gap-3">
+        <div className="flex w-full cursor-default flex-col items-start gap-4">
           {FOOTER_ITEMS.map(({ key, icon: Icon, label }) => (
             <SidebarMenuItem
               key={key}
