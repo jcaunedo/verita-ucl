@@ -1,1 +1,1 @@
-export { AccountMenu, type AccountMenuProps } from "./account-menu";
+export { AccountTrigger, type AccountTriggerProps } from "./account-trigger";

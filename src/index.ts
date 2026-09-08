@@ -64,13 +64,28 @@ export {
   type SidebarMenuItemProps,
 } from "./components/buttons/sidebar-menu-item";
 
-export { AccountMenu, type AccountMenuProps } from "./components/buttons/account-menu";
+export { AccountTrigger, type AccountTriggerProps } from "./components/buttons/account-trigger";
 
 /* -------------------------------------------------------------------------- */
 /* Data display                                                               */
 /* -------------------------------------------------------------------------- */
 
 export { Avatar, avatarVariants, type AvatarProps } from "./components/data-display/avatar";
+
+export { Badge, badgeVariants, type BadgeProps } from "./components/data-display/badge";
+
+/* -------------------------------------------------------------------------- */
+/* Cards                                                                      */
+/* -------------------------------------------------------------------------- */
+
+export { CalloutCard, type CalloutCardProps } from "./components/cards/callout-card";
+
+export { NextStepCard, type NextStepCardProps } from "./components/cards/next-step-card";
+
+export {
+  SectionEmptyState,
+  type SectionEmptyStateProps,
+} from "./components/cards/section-empty-state";
 
 /* -------------------------------------------------------------------------- */
 /* Navigation                                                                 */

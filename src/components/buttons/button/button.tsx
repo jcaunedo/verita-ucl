@@ -28,7 +28,12 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
 
 /**
  * Figma `button` COMPONENT_SET → `color` (Style + Tone):
- * - Solid/Brand → primary, Solid/Destructive → primary-destructive
+ * - Solid/Brand → primary, Solid/Destructive → primary-destructive.
+ *   `primary`'s hover was re-synced twice on 2026-09-07: first to a 15% white
+ *   overlay, now to a flat, directly-bound `rosewood/600` (`#88353f`) fill —
+ *   no overlay/gradient this time, just a solid color-mix-free swap. Don't
+ *   normalize this to match Solid/Destructive's hover, which is still an
+ *   unrelated 10% black darken over its own base fill (untouched both times).
  * - Outlined/Neutral → secondary (white + border + shadow-xs)
  * - Outlined/Destructive → secondary-destructive (added 2026-09-06, Text only
  *   — no Icon-only variant exists in Figma for this tone). Uses the raw
@@ -101,7 +106,7 @@ const buttonVariants = cva(
       },
       color: {
         primary:
-          "bg-primary text-primary-foreground hover:bg-[color-mix(in_srgb,var(--primary)_90%,black)] disabled:bg-primary-muted",
+          "bg-primary text-primary-foreground hover:bg-rosewood-600 disabled:bg-primary-muted",
         "primary-destructive":
           "bg-destructive-400 text-white hover:bg-[color-mix(in_srgb,var(--destructive-400)_90%,black)] disabled:bg-fill-muted",
         secondary:

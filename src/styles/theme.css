@@ -66,8 +66,13 @@
 	/* ---------- Semantic colors (shadcn roles) ---------- */
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
+	--color-foreground-subtle: var(--foreground-subtle);
+	--color-foreground-soft: var(--foreground-soft);
+	--color-foreground-muted: var(--foreground-muted);
 	--color-card: var(--card);
 	--color-card-foreground: var(--card-foreground);
+	--color-next-steps-card-background: var(--next-steps-card-background);
+	--color-next-steps-card-border: var(--next-steps-card-border);
 	--color-popover: var(--popover);
 	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
@@ -122,6 +127,44 @@
 	--color-fill: var(--fill);
 	--color-fill-muted: var(--fill-muted);
 	--color-fill-subtle: var(--fill-subtle);
+
+	/* ---------- Tone roles (color/tone/*, Badge's 12-tone axis) ---------- */
+	--color-tone-brand: var(--tone-brand);
+	--color-tone-brand-subtle: var(--tone-brand-subtle);
+	--color-tone-brand-muted: var(--tone-brand-muted);
+	--color-tone-neutral: var(--tone-neutral);
+	--color-tone-neutral-subtle: var(--tone-neutral-subtle);
+	--color-tone-neutral-muted: var(--tone-neutral-muted);
+	--color-tone-destructive: var(--tone-destructive);
+	--color-tone-destructive-subtle: var(--tone-destructive-subtle);
+	--color-tone-destructive-muted: var(--tone-destructive-muted);
+	--color-tone-warning: var(--tone-warning);
+	--color-tone-warning-subtle: var(--tone-warning-subtle);
+	--color-tone-warning-muted: var(--tone-warning-muted);
+	--color-tone-success: var(--tone-success);
+	--color-tone-success-subtle: var(--tone-success-subtle);
+	--color-tone-success-muted: var(--tone-success-muted);
+	--color-tone-info: var(--tone-info);
+	--color-tone-info-subtle: var(--tone-info-subtle);
+	--color-tone-info-muted: var(--tone-info-muted);
+	--color-tone-gray-blue: var(--tone-gray-blue);
+	--color-tone-gray-blue-subtle: var(--tone-gray-blue-subtle);
+	--color-tone-gray-blue-muted: var(--tone-gray-blue-muted);
+	--color-tone-blue-light: var(--tone-blue-light);
+	--color-tone-blue-light-subtle: var(--tone-blue-light-subtle);
+	--color-tone-blue-light-muted: var(--tone-blue-light-muted);
+	--color-tone-indigo: var(--tone-indigo);
+	--color-tone-indigo-subtle: var(--tone-indigo-subtle);
+	--color-tone-indigo-muted: var(--tone-indigo-muted);
+	--color-tone-purple: var(--tone-purple);
+	--color-tone-purple-subtle: var(--tone-purple-subtle);
+	--color-tone-purple-muted: var(--tone-purple-muted);
+	--color-tone-pink: var(--tone-pink);
+	--color-tone-pink-subtle: var(--tone-pink-subtle);
+	--color-tone-pink-muted: var(--tone-pink-muted);
+	--color-tone-orange: var(--tone-orange);
+	--color-tone-orange-subtle: var(--tone-orange-subtle);
+	--color-tone-orange-muted: var(--tone-orange-muted);
 
 	/* ---------- Brand ramp (rosewood) ---------- */
 	--color-brand-50: var(--rosewood-50);
@@ -380,6 +423,84 @@
 	--info-900: #002b52;
 	--info-950: #001a33;
 
+	/* ---------- Primitives: gray-blue ---------- */
+	--gray-blue-50: #fcfcfd;
+	--gray-blue-100: #f8f9fc;
+	--gray-blue-200: #eaecf5;
+	--gray-blue-300: #d5d9eb;
+	--gray-blue-400: #b3b8db;
+	--gray-blue-500: #717bbc;
+	--gray-blue-600: #4e5ba6;
+	--gray-blue-700: #3e4784;
+	--gray-blue-800: #363f72;
+	--gray-blue-900: #293056;
+	--gray-blue-950: #101323;
+
+	/* ---------- Primitives: blue-light ---------- */
+	--blue-light-50: #f0f9ff;
+	--blue-light-100: #e0f2fe;
+	--blue-light-200: #b9e6fe;
+	--blue-light-300: #7cd4fd;
+	--blue-light-400: #36bffa;
+	--blue-light-500: #0ba5ec;
+	--blue-light-600: #0086c9;
+	--blue-light-700: #026aa2;
+	--blue-light-800: #065986;
+	--blue-light-900: #0b4a6f;
+	--blue-light-950: #062c41;
+
+	/* ---------- Primitives: indigo ---------- */
+	--indigo-50: #eef4ff;
+	--indigo-100: #e0eaff;
+	--indigo-200: #c7d7fe;
+	--indigo-300: #a4bcfd;
+	--indigo-400: #8098f9;
+	--indigo-500: #6172f3;
+	--indigo-600: #444ce7;
+	--indigo-700: #3538cd;
+	--indigo-800: #2d31a6;
+	--indigo-900: #2d3282;
+	--indigo-950: #1f235b;
+
+	/* ---------- Primitives: purple ---------- */
+	--purple-50: #f4f3ff;
+	--purple-100: #ebe9fe;
+	--purple-200: #d9d6fe;
+	--purple-300: #bdb4fe;
+	--purple-400: #9b8afb;
+	--purple-500: #7a5af8;
+	--purple-600: #6938ef;
+	--purple-700: #5925dc;
+	--purple-800: #4a1fb8;
+	--purple-900: #3e1c96;
+	--purple-950: #27115f;
+
+	/* ---------- Primitives: pink ---------- */
+	--pink-50: #fdf2fa;
+	--pink-100: #fce7f6;
+	--pink-200: #fcceee;
+	--pink-300: #faa7e0;
+	--pink-400: #f670c7;
+	--pink-500: #ee46bc;
+	--pink-600: #dd2590;
+	--pink-700: #c11574;
+	--pink-800: #9e165f;
+	--pink-900: #851651;
+	--pink-950: #4e0d30;
+
+	/* ---------- Primitives: orange ---------- */
+	--orange-50: #fef6ee;
+	--orange-100: #fdead7;
+	--orange-200: #f9dbaf;
+	--orange-300: #f7b27a;
+	--orange-400: #f38744;
+	--orange-500: #ef6820;
+	--orange-600: #e04f16;
+	--orange-700: #b93815;
+	--orange-800: #932f19;
+	--orange-900: #772917;
+	--orange-950: #511c10;
+
 	/* ---------- Radius primitives ---------- */
 	--radius-none-val: 0px;
 	--radius-xs-val: 0.125rem;
@@ -399,7 +520,7 @@
 	--radius-popover-role: var(--radius-xl-val);
 	--radius-modal-role: var(--radius-4xl-val);
 	--radius-chip-role: var(--radius-lg-val);
-	--radius-badge-role: var(--radius-full-val);
+	--radius-badge-role: var(--radius-md-val);
 	--radius-pill-role: var(--radius-full-val);
 	--radius-select-item-role: var(--radius-lg-val);
 	--radius-select-content-role: var(--radius-xl-val);
@@ -421,6 +542,11 @@
 	--card-foreground: var(--foreground);
 	--card-subtle: var(--neutral-50);
 	--card-muted: var(--neutral-100);
+
+	/* Figma: next-steps-card/background, next-steps-card/border — a
+	   component-specific pair with no shared ramp, bound only by NextStepCard. */
+	--next-steps-card-background: #fdfbfc;
+	--next-steps-card-border: #c6b2b4;
 
 	--popover: var(--white);
 	--popover-foreground: var(--foreground);
@@ -475,22 +601,76 @@
 	--icon-on-brand: var(--white);
 
 	/* ---------- Semantic: status ---------- */
-	--destructive: var(--destructive-500);
+	--destructive: var(--destructive-400);
 	--destructive-foreground: var(--white);
 	--destructive-subtle: var(--destructive-50);
 	--destructive-muted: var(--destructive-100);
 
-	--success: var(--success-600);
+	--success: var(--success-700);
 	--success-subtle: var(--success-50);
-	--success-muted: var(--success-100);
+	--success-muted: var(--success-200);
 
-	--warning: var(--warning-600);
+	--warning: var(--warning-700);
 	--warning-subtle: var(--warning-50);
-	--warning-muted: var(--warning-100);
+	--warning-muted: var(--warning-200);
 
-	--info: var(--info-600);
+	--info: var(--info-700);
 	--info-subtle: var(--info-50);
-	--info-muted: var(--info-100);
+	--info-muted: var(--info-200);
+
+	/* ---------- Tone roles (Figma color/tone/*) ----------
+	   Badge's 12-tone axis: each tone resolves to a subtle fill, a muted
+	   border, and a strong text/icon color. Distinct from the semantic
+	   status roles above (--destructive/--warning/--success/--info) even
+	   where they share the same underlying primitive steps, since Figma
+	   models them as a separate variable group with its own name. */
+	--tone-brand: var(--rosewood-800);
+	--tone-brand-subtle: var(--rosewood-50);
+	--tone-brand-muted: var(--rosewood-100);
+
+	--tone-neutral: var(--neutral-700);
+	--tone-neutral-subtle: var(--neutral-50);
+	--tone-neutral-muted: var(--neutral-200);
+
+	--tone-destructive: var(--destructive-400);
+	--tone-destructive-subtle: var(--destructive-50);
+	--tone-destructive-muted: var(--destructive-100);
+
+	--tone-warning: var(--warning-700);
+	--tone-warning-subtle: var(--warning-50);
+	--tone-warning-muted: var(--warning-200);
+
+	--tone-success: var(--success-700);
+	--tone-success-subtle: var(--success-50);
+	--tone-success-muted: var(--success-200);
+
+	--tone-info: var(--info-700);
+	--tone-info-subtle: var(--info-50);
+	--tone-info-muted: var(--info-200);
+
+	--tone-gray-blue: var(--gray-blue-700);
+	--tone-gray-blue-subtle: var(--gray-blue-50);
+	--tone-gray-blue-muted: var(--gray-blue-200);
+
+	--tone-blue-light: var(--blue-light-700);
+	--tone-blue-light-subtle: var(--blue-light-50);
+	--tone-blue-light-muted: var(--blue-light-200);
+
+	--tone-indigo: var(--indigo-700);
+	--tone-indigo-subtle: var(--indigo-50);
+	--tone-indigo-muted: var(--indigo-200);
+
+	--tone-purple: var(--purple-700);
+	--tone-purple-subtle: var(--purple-50);
+	--tone-purple-muted: var(--purple-200);
+
+	--tone-pink: var(--pink-700);
+	--tone-pink-subtle: var(--pink-50);
+	--tone-pink-muted: var(--pink-200);
+
+	--tone-orange: var(--orange-700);
+	--tone-orange-subtle: var(--orange-50);
+	--tone-orange-muted: var(--orange-200);
 
 	/* ---------- Fill surfaces ---------- */
 	--fill: var(--neutral-100);

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { AccountMenu } from "./account-menu";
+import { AccountTrigger } from "./account-trigger";
 
-const meta: Meta<typeof AccountMenu> = {
-  title: "Buttons/AccountMenu",
-  component: AccountMenu,
+const meta: Meta<typeof AccountTrigger> = {
+  title: "Buttons/AccountTrigger",
+  component: AccountTrigger,
   tags: ["autodocs"],
   args: {
     name: "Theresa Smith",
@@ -19,7 +19,7 @@ const meta: Meta<typeof AccountMenu> = {
   ],
 };
 export default meta;
-type Story = StoryObj<typeof AccountMenu>;
+type Story = StoryObj<typeof AccountTrigger>;
 
 export const Expanded: Story = {};
 
@@ -30,8 +30,8 @@ export const Collapsed: Story = {
 export const AllVariants: Story = {
   render: (args) => (
     <div className="flex flex-col gap-4">
-      <AccountMenu {...args} />
-      <AccountMenu {...args} collapsed />
+      <AccountTrigger {...args} />
+      <AccountTrigger {...args} collapsed />
     </div>
   ),
 };

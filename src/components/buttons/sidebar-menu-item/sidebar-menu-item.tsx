@@ -6,21 +6,19 @@ import { cn } from "@/lib/utils";
 import { SidebarTooltip, SidebarTooltipTrigger } from "@/components/overlays/sidebar-tooltip";
 
 /**
- * Figma states → code (relabeled 2026-09-06 — Hover/Active were swapped from
- * the initial sync; the two non-default treatments' visuals didn't change,
- * only which state name they belong to):
+ * Figma states → code (updated 2026-09-07 — all three states now use medium
+ * weight; Default/Hover previously used regular weight):
  * - Default: neutral-600 text/icon, no fill.
- * - Hover (`data-hovered`): rosewood text/icon (`text-primary`), regular
- *   weight, no fill.
+ * - Hover (`data-hovered`): rosewood text/icon (`text-primary`), no fill.
  * - Active/current page (`aria-current="page"` → React Aria's `data-current`):
- *   rosewood text/icon like hover, but medium weight, `bg-primary-subtle`
- *   fill, and a 4px outside outline in the same `primary-subtle` color
- *   (Figma: an OUTSIDE-aligned stroke, so `outline` rather than `border` to
- *   match its layout-non-affecting behavior) — a deliberately distinct third
- *   state, not hover reused.
+ *   rosewood text/icon like hover, plus `bg-primary-subtle` fill and a 4px
+ *   outside outline in the same `primary-subtle` color (Figma: an
+ *   OUTSIDE-aligned stroke, so `outline` rather than `border` to match its
+ *   layout-non-affecting behavior) — a deliberately distinct third state,
+ *   not hover reused.
  */
 const sidebarMenuItemVariants = cva(
-  "inline-flex w-full items-center gap-3.5 rounded-full px-2 py-[7px] text-sm font-normal text-neutral-600 outline-4 outline-transparent data-[hovered]:text-primary data-[current]:bg-primary-subtle data-[current]:font-medium data-[current]:text-primary data-[current]:outline-primary-subtle data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 [&_svg]:size-5 [&_svg]:shrink-0",
+  "inline-flex w-full items-center gap-3.5 rounded-full px-2 py-[7px] text-sm font-medium text-neutral-600 outline-4 outline-transparent data-[hovered]:text-primary data-[current]:bg-primary-subtle data-[current]:text-primary data-[current]:outline-primary-subtle data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 [&_svg]:size-5 [&_svg]:shrink-0",
 );
 
 interface SidebarMenuItemProps extends Omit<LinkProps, "children" | "className"> {

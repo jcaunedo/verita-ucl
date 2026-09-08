@@ -17,10 +17,11 @@ import { cn } from "@/lib/utils";
  * a background rather than hardcoding one of Figma's sample colors.
  *
  * The `i1` sample used `Google Sans Flex:SemiBold` for initials — the
- * design system's actual font — while the separate `AccountMenu` Figma
- * component's embedded avatar instance used `Inter:Bold`. Treated the
- * latter as a stray, out-of-sync copy (this file already uses the correct
- * font elsewhere) rather than a second intentional typeface.
+ * design system's actual font — while the separate `Account Menu` Figma
+ * component's (code: `AccountTrigger`) embedded avatar instance used
+ * `Inter:Bold`. Treated the latter as a stray, out-of-sync copy (this file
+ * already uses the correct font elsewhere) rather than a second intentional
+ * typeface.
  */
 const avatarVariants = cva(
   "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full",

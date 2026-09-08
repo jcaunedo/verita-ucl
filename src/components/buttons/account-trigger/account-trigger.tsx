@@ -8,10 +8,12 @@ import { Avatar, type AvatarProps } from "@/components/data-display/avatar";
 /**
  * Figma `Account Menu` COMPONENT_SET (Property1: Expanded, Expanded Hover,
  * Collapsed, Collapsed Hover) — the sidebar footer's account trigger.
- * Trigger only for now: Figma doesn't yet show what opens on press (no
- * menu/popover contents defined), so this renders the button exactly as
- * designed and exposes `onPress` — a future `MenuTrigger`/`Popover` can wrap
- * it without changing this component.
+ * Named `AccountTrigger` in code (not `AccountMenu`) — that name is
+ * reserved for the future component wrapping the actual dropdown menu that
+ * opens on press. Trigger only for now: Figma doesn't yet show what opens on
+ * press (no menu/popover contents defined), so this renders the button
+ * exactly as designed and exposes `onPress` — a future `AccountMenu`
+ * (`MenuTrigger`/`Popover`) can wrap it without changing this component.
  *
  * Hover fill uses the shared `--hover` token (Figma: `color/hover`, 4%
  * neutral-700) — same token `Button`'s `secondary` hover uses — expressed as
@@ -31,7 +33,7 @@ import { Avatar, type AvatarProps } from "@/components/data-display/avatar";
  * of what's passed in `avatar`, since `Avatar` itself still supports the dot
  * for other consumers.
  */
-interface AccountMenuProps
+interface AccountTriggerProps
   extends Omit<AriaButtonProps, "children" | "className"> {
   /** User's display name. Hidden when `collapsed`. */
   name: string;
@@ -47,17 +49,17 @@ interface AccountMenuProps
 }
 
 /** The sidebar footer's account trigger — avatar + name/email + chevron, collapsing to avatar-only. Figma: `Account Menu`. */
-function AccountMenu({
+function AccountTrigger({
   name,
   email,
   avatar,
   collapsed = false,
   className,
   ...props
-}: AccountMenuProps) {
+}: AccountTriggerProps) {
   return (
     <AriaButton
-      data-slot="account-menu"
+      data-slot="account-trigger"
       data-collapsed={collapsed ? true : undefined}
       className={cn(
         "group inline-flex items-center gap-2 rounded-full outline-8 outline-transparent transition duration-100 ease-linear",
@@ -91,4 +93,4 @@ function AccountMenu({
   );
 }
 
-export { AccountMenu, type AccountMenuProps };
+export { AccountTrigger, type AccountTriggerProps };

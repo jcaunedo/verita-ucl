@@ -3,13 +3,11 @@ import { motion } from "motion/react";
 import {
   BankNote01,
   Bell01,
-  Briefcase02,
   Compass03,
   FlexAlignLeft,
   FlexAlignRight,
   HomeLine,
   LifeBuoy02,
-  MessageTextCircle01,
   UsersPlus,
 } from "@untitledui/icons";
 
@@ -18,7 +16,33 @@ import { enterTransition, useMotionPreference } from "@/lib/motion";
 import { Logo } from "@/components/branding/logo";
 import { Button } from "@/components/buttons/button";
 import { SidebarMenuItem } from "@/components/buttons/sidebar-menu-item";
-import { AccountMenu } from "@/components/buttons/account-menu";
+import { AccountTrigger } from "@/components/buttons/account-trigger";
+
+/**
+ * Figma: `briefcase-business` (flat case + top handle + notch, and a
+ * lid-seam line) — not in the installed `@untitledui/icons` package (which
+ * only ships the plain `Briefcase01`/`Briefcase02`), so defined locally
+ * matching that package's icon API (24x24, `currentColor` stroke) until
+ * it's added upstream.
+ */
+function BriefcaseBusiness({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={24}
+      height={24}
+      stroke="currentColor"
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M12 12H12.01M16 6V4C16 3.47 15.789 2.961 15.414 2.586C15.039 2.211 14.53 2 14 2H10C9.47 2 8.961 2.211 8.586 2.586C8.211 2.961 8 3.47 8 4V6M22 13C19.033 14.959 15.556 16.003 12 16.003C8.444 16.003 4.967 14.959 2 13M4 6H20C21.105 6 22 6.895 22 8V18C22 19.105 21.105 20 20 20H4C2.895 20 2 19.105 2 18V8C2 6.895 2.895 6 4 6Z" />
+    </svg>
+  );
+}
 
 /** Measured from Figma: `Sidebar` COMPONENT_SET's Expanded/Collapsed frame widths. */
 const EXPANDED_WIDTH = 280;
@@ -27,14 +51,13 @@ const COLLAPSED_WIDTH = 84;
 const NAV_ITEMS = [
   { key: "home", icon: HomeLine, label: "Home", href: "/home" },
   { key: "discover", icon: Compass03, label: "Discover", href: "/discover" },
-  { key: "engagements", icon: Briefcase02, label: "Engagements", href: "/engagements" },
+  { key: "engagements", icon: BriefcaseBusiness, label: "Engagements", href: "/engagements" },
   { key: "earnings", icon: BankNote01, label: "Earnings", href: "/earnings" },
   { key: "referrals", icon: UsersPlus, label: "Referrals", href: "/referrals" },
 ] as const;
 
 const FOOTER_ITEMS = [
   { key: "notifications", icon: Bell01, label: "Notifications" },
-  { key: "feedback", icon: MessageTextCircle01, label: "Send feedback" },
   { key: "support", icon: LifeBuoy02, label: "Support" },
 ] as const;
 
@@ -50,15 +73,20 @@ const FOOTER_ITEMS = [
  * width animates between the two Figma-measured states via Motion's
  * `enterTransition` (rather than an instant class-swap); the whole rail is
  * also a click target for toggling, via `onClick` on the root plus
- * `stopPropagation` on each content wrapper so real controls (nav items,
- * buttons, account menu) don't also toggle the rail — only genuinely empty
- * space reaches the root's handler, verified via real DOM event bubbling
- * rather than z-index/hit-testing layering (which proved unreliable for the
- * empty rows between nav items); and the collapsed logo swaps to the same
- * `LayoutLeft` toggle icon on hover, hinting "click to expand" (Figma's
- * Collapsed state has no visible toggle button at all, so this hover hint
- * is this component's own affordance for discovering the expand action,
- * same as bethere's).
+ * `stopPropagation` on each content wrapper (the top nav block and bottom
+ * footer block) so real controls (nav items, buttons, account menu) don't
+ * also toggle the rail — only the genuinely empty rail background outside
+ * those two wrappers (e.g. between the nav list and the footer list) reaches
+ * the root's handler; the small gaps between adjacent items within a list
+ * (e.g. between "Home" and "Discover", or "Notifications" and "Support") sit
+ * inside a `stopPropagation` wrapper and were never click-to-toggle either,
+ * so `cursor-default` is applied there on the list containers to match that
+ * — only the actually-toggleable rail background keeps the
+ * `cursor-w-resize`/`cursor-e-resize` inherited from the root. The collapsed
+ * logo swaps to the same `LayoutLeft` toggle icon on hover, hinting "click to
+ * expand" (Figma's Collapsed state has no visible toggle button at all, so
+ * this hover hint is this component's own affordance for discovering the
+ * expand action, same as bethere's).
  */
 function Sidebar() {
   const [collapsed, setCollapsed] = React.useState(false);
@@ -131,7 +159,7 @@ function Sidebar() {
           )}
         </div>
 
-        <div className="flex w-full flex-col items-start gap-3">
+        <div className="flex w-full cursor-default flex-col items-start gap-3">
           {NAV_ITEMS.map(({ key, icon: Icon, label, href }) => (
             <SidebarMenuItem
               key={key}
@@ -150,7 +178,7 @@ function Sidebar() {
         className="relative z-10 flex w-full flex-col items-start justify-end gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex w-full flex-col items-start gap-3">
+        <div className="flex w-full cursor-default flex-col items-start gap-3">
           {FOOTER_ITEMS.map(({ key, icon: Icon, label }) => (
             <SidebarMenuItem
               key={key}
@@ -166,7 +194,7 @@ function Sidebar() {
           <div className="h-px w-full bg-border" />
         </div>
 
-        <AccountMenu
+        <AccountTrigger
           name="Theresa Smith"
           email="theresa@email.com"
           avatar={{ initials: "TS", className: "bg-success" }}
