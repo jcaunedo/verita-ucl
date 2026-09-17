@@ -60,9 +60,11 @@ const CALLOUTS = [
 function Dashboard() {
   return (
     <div className="flex min-h-screen w-full items-start gap-14 bg-white">
-      <Sidebar />
+      <div className="sticky top-0 shrink-0">
+        <Sidebar />
+      </div>
       <div className="flex min-w-px flex-1 flex-col items-center pr-[216px]">
-        <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 py-10">
+        <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
               <Typography size="3xl" weight="semibold">
@@ -82,9 +84,9 @@ function Dashboard() {
                   Complete these to unlock more opportunities and improve your matches.
                 </Typography>
               </div>
-              <div className="flex h-[248px] w-full items-start gap-6">
+              <div className="grid h-[248px] w-full grid-cols-4 gap-6">
                 {NEXT_STEPS.map(({ key, ...step }) => (
-                  <NextStepCard key={key} {...step} className="w-auto flex-1" />
+                  <NextStepCard key={key} {...step} className="h-full w-auto" />
                 ))}
               </div>
             </div>

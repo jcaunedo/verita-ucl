@@ -32,6 +32,11 @@ import { Avatar, type AvatarProps } from "@/components/data-display/avatar";
  * source — `showStatusDot` is forced off on the embedded `Avatar` regardless
  * of what's passed in `avatar`, since `Avatar` itself still supports the dot
  * for other consumers.
+ *
+ * `h-10` (40px) is explicit in both states — Figma's root is `h-[40px]`
+ * whether expanded or collapsed, not just the collapsed 36px-avatar-only
+ * case; left content-driven, the expanded row would compute to only the
+ * 36px avatar height.
  */
 interface AccountTriggerProps
   extends Omit<AriaButtonProps, "children" | "className"> {
@@ -62,10 +67,10 @@ function AccountTrigger({
       data-slot="account-trigger"
       data-collapsed={collapsed ? true : undefined}
       className={cn(
-        "group inline-flex items-center gap-2 rounded-full outline-8 outline-transparent transition duration-100 ease-linear",
+        "group inline-flex h-10 items-center gap-2 rounded-full outline-8 outline-transparent transition duration-100 ease-linear",
         "data-[hovered]:outline-hover data-[hovered]:bg-hover",
         "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
-        collapsed ? "h-10 w-9 outline-4" : "w-full",
+        collapsed ? "w-9 outline-4" : "w-full",
         className,
       )}
       {...props}

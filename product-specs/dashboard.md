@@ -1,8 +1,8 @@
 <!--
 Created: Aug 28, 2026
 Created by: Julio Caunedo
-Last updated: Aug 30, 2026
-Scope: Verita AI professional Home/Dashboard after sign-in across onboarding, matching, applications, offers, engagements, training, and payments.
+Last updated: Sep 16, 2026
+Scope: Verita AI professional Home/Dashboard after sign-in — onboarding, matching, task orchestration, and the Home-page previews of Applications/Offers/Contracts. Full Engagements-page detail (Applications, Offers, Contracts, Assessments, Talent Network, Training, Payments) lives in product-specs/engagements.md.
 Purpose: Define the product, UX, information architecture, state, and data requirements needed to design the Dashboard.
 -->
 
@@ -11,136 +11,24 @@ Purpose: Define the product, UX, information architecture, state, and data requi
 **Status:** Draft for product and design alignment  
 **Primary users:** Independent professionals and experts across various fields and professions who use Verita to find, apply to, and get paid for project-based work opportunities.
 
-## 1. Summary
+## 1. Context
 
-Verita AI is an AI-powered marketplace that connects experienced independent professionals with remote, project-based work. A professional describes their expertise; Verita interviews them, matches them with relevant opportunities, and trains them for engagements.
+- Verita: AI-powered marketplace matching independent professionals to remote, project-based work.
+- Dashboard = the signed-in landing page. State-driven orchestration, not fixed widgets or a generic job board — content, order, and CTAs adapt to lifecycle state, unresolved requirements, time-sensitive events, match quality, application activity, and active engagements.
+- Primary user: an independent professional whose profile, qualification, application, or engagement status may be incomplete or changing.
+- Non-goals: the complete onboarding flow; full opportunity-detail/application/interview/contract/training/payment/referral flows; the employer/partner experience; match-scoring algorithm internals or exposing a numeric score; legal/identity/work-authorization/tax/background-check/payment-provider requirements; replacing dedicated marketplace, profile, applications, or work-management pages.
 
-The Dashboard is the professional's landing page after sign-in. It must not behave like a fixed collection of widgets or a generic job board. It must operate as a state-driven orchestration layer that helps the professional understand:
+## 2. Experience rules
 
-1. What do I need to do now?
-2. Which opportunities fit me?
-3. What is happening with opportunities or work I have already engaged with?
+- **State before sections:** page hierarchy responds to lifecycle state — not a fixed module order.
+- **Opportunity-anchored requirements:** when a task blocks a specific opportunity, keep the opportunity as the anchor and explain the required action in that context (e.g. "You're a strong match for Senior Product Designer — complete your AI interview to apply").
+- **One dominant action** (§7.1): the highest-priority unresolved item gets the strongest visual emphasis; other actions remain available but must not compete equally.
+- **Explain fit, not scoring machinery:** plain-language tier (e.g. "Strong match") plus a concise reason. Never expose internal scores or confidence values by default.
+- **Progressive requirements:** ask for information when it becomes useful or necessary — don't front-load work-authorization, payout, tax, or training tasks before their journey stage unless policy requires it.
+- **Honest status:** never imply an application, interview, offer, contract, training module, or payment has advanced when it hasn't. State whether the next action belongs to the professional, Verita, or a partner.
+- **Stable navigation, adaptive content:** primary navigation stays predictable while Dashboard content changes with state.
 
-Dashboard content, order, and calls to action must adapt to the professional's lifecycle state, unresolved requirements, time-sensitive events, match quality, application activity, and active engagements.
-
-## 2. Problem
-
-Onboarding contains both required and skippable questions. Some skipped items may become necessary only when the professional wants to apply, accept an offer, begin work, train, or receive payment. A static Dashboard risks:
-
-- Giving all tasks equal visual weight even when their consequences differ.
-- Showing profile administration without explaining why it matters.
-- Showing open roles instead of explaining why a role fits.
-- Separating a matched opportunity from the requirement blocking its application.
-- Continuing to prioritize job discovery after the professional has active work.
-- Hiding application, offer, training, or payment actions in secondary areas.
-
-The Dashboard needs to convert these states into a clear, prioritized next step while preserving access to the broader marketplace and account details.
-
-## 3. Product objective
-
-Create a personalized Home experience that makes Verita's AI value visible by connecting professional data, opportunity data, and workflow state into contextual recommendations and actions.
-
-### Goals
-
-- Surface one clearly dominant next best action.
-- Explain why recommended opportunities fit the professional.
-- Convert missing requirements into contextual, actionable guidance.
-- Show the state and next step of active applications.
-- Adapt the information hierarchy when the professional receives an offer or begins an engagement.
-- Let professionals understand what is required now, required later, recommended, or optional.
-- Support the full journey from incomplete onboarding to completed engagement and renewed availability.
-- Give design and engineering a reusable task and priority model rather than hard-coded Dashboard cards.
-
-### Non-goals
-
-- Defining the complete onboarding flow.
-- Defining opportunity-detail, application, interview, contract, training, payment, or referral flows in full.
-- Designing the employer or partner experience.
-- Finalizing match-scoring algorithms or exposing an internal numeric score.
-- Finalizing legal, identity, work-authorization, tax, background-check, or payment-provider requirements.
-- Replacing dedicated marketplace, profile, applications, or work-management pages.
-
-## 4. Primary user
-
-An experienced independent professional seeking remote, project-based work whose profile, qualification, application, or engagement status may be incomplete or changing.
-
-### Core user needs
-
-- Understand what Verita needs from me and why.
-- See roles that fit my expertise, availability, preferences, and rate.
-- Know whether I can apply now, and if not, exactly what's missing and how to fix it.
-- Resolve application blockers without losing the opportunity context.
-- Track applications and know the next action and its owner.
-- Respond to interviews, offers, contracts, training, and payment setup on time.
-- Manage active work without irrelevant discovery content dominating the page.
-
-## 5. Experience principles
-
-### 5.1 State before sections
-
-The page hierarchy must respond to the professional's current lifecycle rather than always rendering the same modules in the same order.
-
-### 5.2 Opportunity-anchored requirements
-
-When a task blocks a specific opportunity, keep the opportunity as the anchor and explain the required action in that context.
-
-Example:
-
-> **You're a strong match for Senior Product Designer**  
-> Complete your AI interview to apply.
-
-### 5.3 One dominant action
-
-The highest-priority unresolved action should receive the strongest visual emphasis. Other actions remain available but must not compete equally.
-
-### 5.4 Explain fit, not scoring machinery
-
-Use a plain-language tier such as **Strong match** and a concise reason based on relevant evidence. Internal scores and confidence values should not be exposed by default.
-
-### 5.5 Progressive requirements
-
-Ask for information when it becomes useful or necessary. Do not front-load work-authorization, payout, tax, or training tasks before the corresponding journey stage unless policy requires it.
-
-### 5.6 Honest status
-
-Never imply that an application, interview, offer, contract, training module, or payment has advanced when it has not. Identify whether the next action belongs to the professional, Verita, or a partner.
-
-### 5.7 Stable navigation, adaptive content
-
-Primary navigation should remain predictable while Dashboard content changes with state.
-
-## 6. Success measures
-
-### Primary metrics
-
-- Next-best-action completion rate.
-- Percentage of eligible professionals who begin an application from a match.
-- Application completion and submission rate.
-- Median time from a blocking task being shown to completion.
-- Interview, offer, contracting, and engagement-onboarding response times.
-- Percentage of users with current availability data.
-
-### Supporting metrics
-
-- Match-card view-to-apply conversion.
-- Match dismissal rate and dismissal-reason distribution.
-- Resume or portfolio completion when prompted contextually.
-- Return visits to application status.
-- Training completion before deadline.
-- Payout setup completed before first payment.
-- Dashboard task snooze and dismissal rates.
-
-### Guardrail metrics
-
-- Incorrect or ineligible match reports.
-- Application attempts blocked after the Dashboard indicated readiness.
-- Stale or contradictory task states.
-- Missed time-sensitive actions.
-- Support contacts related to unclear status or requirements.
-
-> ⚠️ **Decision needed:** Set baseline values, target improvements, attribution windows, and the launch evaluation period.
-
-## 7. User lifecycle model
+## 3. User lifecycle model
 
 The Dashboard must support these product-level lifecycle states:
 
@@ -162,7 +50,7 @@ The lifecycle is not strictly linear. A professional may have multiple applicati
 
 > ⚠️ **Decision needed:** Define the canonical lifecycle enum, transition rules, precedence when multiple states coexist, and whether `Inactive` is user-selected, system-derived, or both.
 
-## 8. Dashboard priority engine
+## 4. Dashboard priority engine
 
 The system must rank candidate Dashboard items before rendering the page.
 
@@ -178,8 +66,8 @@ The system must rank candidate Dashboard items before rendering the page.
 
 - Rank by priority class first.
 - Within a class, consider deadline, lifecycle relevance, opportunity strength, age, and whether the item was already seen.
-- A P0 or P1 item tied to an active opportunity, offer, or engagement should usually become the next best action.
-- Do not let a generic profile recommendation outrank an application, interview, offer, contract, training, or payment deadline.
+- A P0 or P1 task should rank at the top of its module (e.g. the lead card in Next steps or Applications) — this ranking governs order within and across modules, and is independent of whether an item also qualifies as an Opportunity alert (§7.1), which is scoped to externally-initiated offer/interview/contract events only, not to task urgency generally.
+- Do not let a generic profile recommendation (Next steps) outrank an application, interview, offer, contract, training, or payment deadline.
 - Suppress completed, expired, superseded, and inapplicable items.
 - Avoid duplicating the same underlying action in multiple modules.
 - When several items share priority, use deterministic tie-breaking so the page does not reorder unpredictably.
@@ -187,7 +75,7 @@ The system must rank candidate Dashboard items before rendering the page.
 
 > ⚠️ **Decision needed:** Define scoring weights, tie-break rules, caps per module, refresh cadence, and whether operations can manually override ranking.
 
-## 9. Task requirement taxonomy
+## 5. Task requirement taxonomy
 
 Every task must have one of four requirement levels:
 
@@ -197,6 +85,8 @@ Every task must have one of four requirement levels:
 | Required later | Will be required before a known future step                 | Explain the future trigger; allow deferral until it becomes blocking                |
 | Recommended    | Improves matching likelihood, readiness, or profile quality | Encourage without implying that it is mandatory                                     |
 | Optional       | Adds value but has no workflow consequence                  | Low emphasis; may be dismissed                                                      |
+
+> ℹ️ In the Next steps module specifically, `Optional` never renders as a visible badge — see [`product-specs/next-steps-card.md` §2.3](next-steps-card.md#23-precise-behavior-per-level): every task shown there must have an identifiable benefit or dependency (`Recommended`, `Required later`, or `Required now`), so a task with no established benefit simply isn't shown rather than being labeled `Optional`. This taxonomy's four levels remain the system-wide model; the restriction is scoped to Next steps' rendering rule, not a change to the taxonomy itself.
 
 Examples from the source model:
 
@@ -213,133 +103,78 @@ Examples from the source model:
 
 > ⚠️ **Policy validation:** The table above reflects the source proposal, not confirmed Verita policy. Each task's requirement level and trigger must be approved by product, operations, legal, and engineering as applicable.
 
-## 10. Information architecture
+## 6. Information architecture
 
 The Dashboard may draw from these modules. Visibility and order are state-dependent.
 
-1. **Next best action** — the highest-priority action now (§11.1).
-2. **Next steps** — a row of individual blocking, required-later, and recommended tasks, shown only while at least one is applicable (§11.2).
-3. **Contracts** — the professional's active and upcoming secured work, when any exists (§10.2 object model, §11.7).
-4. **Matching opportunities** — AI-selected opportunities with fit explanations and readiness state (§10.3).
-5. **Your applications** — active applications, current stage, and next action.
-6. **Offers** — offers awaiting the professional's response, when any exist (§11.6).
+1. **Opportunity alert** — an externally-initiated opportunity event (new offer, interview requested, contract ready to sign), shown only when one exists (§7.1).
+2. **Next steps** — a row of individual blocking, required-later, and recommended tasks, shown only while at least one is applicable. Filtered top-of-list surface over `product-specs/next-steps-card.md` — full card content, badge model, and visibility rule live there (§7.2).
+3. **Contracts** — the professional's active and upcoming contracts, when any exist. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Contracts` view/object — full field list, status model, and resolved notes live there.
+4. **Matching opportunities** — AI-selected opportunities with fit explanations and readiness state (§6.3).
+5. **Your applications** — active applications, current stage, and next action. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Applications` view — full row content lives in [`engagements.md` §3](engagements.md#3-applications).
+6. **Offers** — offers awaiting the professional's response, when any exist. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Offers` view — full definition, fields, and resolved notes live in [`engagements.md` §4](engagements.md#4-offers-and-contracting).
 7. **Discover more opportunities** — entry to broader marketplace browsing.
 8. **Referrals** — secondary unless a referral event requires attention.
 
-> ✅ **Resolved — "Contracts" names both a Home module and an Engagements view:** this follows the same pattern already established for Matches (§10.3): the Home module is a filtered, top-of-list surface over the same underlying `Contract` objects as the full Engagements → Contracts view (§10.2), not a competing or differently-scoped concept. The Home module shows active and upcoming contracts only; the Engagements view shows the full history (upcoming, active, completed, terminated, per §10.2's Contracts definition). Per §11.7, when a contract is active it must outrank job discovery — so unlike other Home modules, Contracts is not merely present, it is the most prominent content on the page whenever at least one exists. This supersedes the earlier "Current work" module name.
+> ✅ **Resolved — "Contracts"/"Applications"/"Offers" name both a Home module and an Engagements view:** this follows the same pattern already established for Matches (§6.3): each Home module is a filtered, top-of-list surface over the same underlying objects as the full Engagements view ([`engagements.md` §2](engagements.md#2-engagement-views)), not a competing or differently-scoped concept. The Home module shows only what's active/upcoming/awaiting response; the Engagements view shows the full history. For Contracts specifically: when a contract is active it must outrank job discovery ([`engagements.md` §5](engagements.md#5-active-engagement)) — so unlike other Home modules, Contracts is not merely present, it is the most prominent content on the page whenever at least one exists. This supersedes the earlier "Current work" module name.
 >
-> ⚠️ **Decision needed:** confirm whether "Next steps" is a new, distinct module or supersedes/renames what this list previously called "Complete your profile" — the Figma design reviewed for §11.2 mixes blocking and required-later tasks into this module, not just non-blocking profile improvements, so the two names may now describe the same thing under different scopes.
+> ✅ **Resolved:** "Next steps" supersedes what this list previously called "Complete your profile" — it is the final, deliberately generic module name, not scoped to profile-completion tasks alone. See [`product-specs/next-steps-card.md` §1](next-steps-card.md#1-what-next-steps-is) for the full naming rationale.
 
-### 10.1 Main navigation
+### 6.1 Main navigation
 
-Primary navigation is fixed and state-independent (per §5.7). Each item and its naming rationale:
+Moved to `product-specs/main-navigation.md`. That doc is the source of truth for the 5 nav items (Home, Opportunities, Engagements, Earnings, Referrals), their purpose, naming rationale, naming history, and the lifecycle-sequence mental model — split out of this doc once it became clear the nav model governs more than just Home.
 
-| Navigation item | Purpose                                                                                                                                                                                                                                               | Rationale for the name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Home            | Gives the user a personalized overview of what requires attention now: next steps, active applications, matches, active engagements, and relevant updates.                                                                                            | Home is the clearest label for the primary landing destination. It signals a personalized starting point rather than a specific workflow.                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Browse Work     | Takes the user to the marketplace to review available work, evaluate fit, and decide what to apply to — including project-based, one-time, retainer, or other engagement types. Includes a personalized Matches view (§10.3).                         | Balances clarity, action, and breadth. "Browse" signals an exploratory action without implying the user already knows exactly what they want. "Work" is broader than "Jobs" or "Roles," supporting project-based, one-time, retainer, contract, and full-time opportunities. More explicit than "Discover," less generic than "Explore." Avoids overusing "Opportunities" while still clearly communicating that this is where available work is found. See resolved note below for full rationale, including competitive differentiation. |
-| Engagements     | Houses the user's ongoing and historical interactions with opportunities, organized into views: Saved, Applications, Assessments, Offers, and Contracts (§10.2). Can include project details, stage/status, hours, requirements, and related actions. | Engagements represents the user's relationship with opportunities after discovery. It provides a single destination for saved opportunities, applications, qualification activity, offers, and secured work across different opportunity models.                                                                                                                                                                                                                                                                                           |
-| Earnings        | Gives the user visibility into compensation generated through their engagements, including earned, pending, paid, and upcoming payouts.                                                                                                               | Earnings communicates the user outcome directly. It is broader and more intuitive than "Payments," which can sound like a transaction or billing-management area.                                                                                                                                                                                                                                                                                                                                                                          |
-| Referrals       | Lets users invite other professionals, track their referrals, understand referral status, and see any associated rewards.                                                                                                                             | Referrals is established marketplace terminology and immediately communicates both the action and the program. There is little benefit in introducing a more branded or abstract term here.                                                                                                                                                                                                                                                                                                                                                |
+> ⚠️ **Decision needed:** Confirm whether "Your applications," "Contracts," and "Offers" (§6, modules 3/5/6) remain distinct Home-page modules pointing into the Engagements destination, or should be merged/renamed to match [`engagements.md` §2](engagements.md#2-engagement-views)'s view names.
 
-The overall IA follows a lifecycle sequence:
+### 6.2 Engagements
 
-`Home` (what matters now) → `Browse Work` (work I can pursue) → `Engagements` (work I've taken action on) → `Earnings` (what I've earned) → `Referrals` (people I've introduced)
+Moved to a dedicated PRD — see `product-specs/engagements.md`. That doc covers Engagement views (Applications, Offers, Contracts, Assessments, Talent Network), the Applications row model, Offers and contracting, Active engagement, Training, Payments, the Application status enum, and Application/Talent-Network fields. This Dashboard PRD keeps only the brief Home-module pointers in §6's list above; the `Engagements` nav item itself is defined in `product-specs/main-navigation.md`.
 
-This gives navigation a coherent mental model — find work → do work → get paid — with Home as the orchestration layer (§1, §3) and Referrals as a secondary growth feature (§11.10).
+### 6.3 Opportunity views
 
-> ✅ **Resolved (2026-08-30) — nav item renamed to "Browse Work":** the nav item previously called "Opportunities" is now **"Browse Work."** This is a decided rename, not an open option — the underlying `Opportunity` entity name (§13.1, §15, §10.2's object model) is unchanged; only the nav label changes. Full rationale:
->
-> 1. **Balances clarity, action, and breadth.** "Browse" signals an exploratory action without implying the user already knows exactly what they want. "Work" is broader than "Jobs" or "Roles," so it supports project-based, one-time, retainer, contract, and full-time opportunities without stretching any one term.
-> 2. **Positioned between the alternatives already considered.** More explicit than "Discover," less generic than "Explore" (§10.1's earlier-considered, not-adopted options).
-> 3. **Avoids overusing "Opportunities"** as both the nav label and the underlying entity name, while still clearly communicating that this is where available work is found.
-> 4. **Differentiates from Mercor**, a main competitor — a deliberate naming choice distinct from competitor conventions, not just an internal taxonomy fit.
-> 5. **Completes a clean two-destination mental model with Engagements:** `Browse Work` is where the professional finds new work; `Engagements` is where they manage work or opportunities they've already interacted with. The pairing reads as _find something relevant_ → _manage what I've acted on_.
->
-> "Discover more opportunities" and "Explore opportunities" remain the action-oriented CTA labels that route into this destination from elsewhere on the page (e.g. Home) — nav items name destinations, CTAs name actions, per §16's requirement to name the destination inside the action. Those CTAs should be revisited for consistency with the new nav label (e.g. "Browse more work" / "Explore open work") — not yet updated everywhere in this doc.
->
-> ✅ **Resolved:** "Engagements" is broader than secured work only — it represents the user's relationship with opportunities after discovery, providing a single destination for the user's ongoing and historical interactions with opportunities (saved opportunities, applications, qualification activity, offers, and secured work). This is deliberately worded as "interactions with" rather than "actions taken on," since some items — like an assessment — may be assigned by Verita rather than initiated by the user. It is organized into **Engagement views** (§10.2): `Saved`, `Applications`, `Assessments`, `Offers`, and `Contracts`. These are different marketplace objects/relationships, not sequential lifecycle stages or mutually exclusive buckets — an opportunity's history can appear under more than one view at once (e.g. a rejected application still shows under `Applications` even if it once produced an entry under `Offers`). This supersedes the earlier "sequential application lifecycle" framing of this tab and the narrower "secured work only" description in §10's "Current work" module. **Engagement views are distinct from Opportunity types** (§15.1: Project-based, One-time, Talent Network, Full Time, etc.) — Opportunity type describes the work arrangement being offered; an Engagement view describes which marketplace object the user is looking at.
->
-> ⚠️ **Decision needed:** Confirm whether "Your applications" (§10 module 5) and "Contracts" (§10 module 3) and "Offers" (§10 module 6) remain distinct Home-page modules pointing into this Engagements destination, or should be merged/renamed to match the §10.2 view names.
->
-> ℹ️ **Superseded by the "Browse Work" rename above** — kept for historical reference only. "Opportunities" over "Jobs": "Jobs" was considered and rejected in favor of "Opportunities," which was itself later renamed to "Browse Work." Reasoning at the time:
->
-> 1. **Fits the taxonomy, not just the vibe.** §15.1 includes non-job-shaped Opportunity types — `One-time` (e.g. "Review 50 AI-generated designs for $300") and `Talent Network` (e.g. "Join the Product Design expert network" — no active work at all). Neither is a "job" in the common sense; "Opportunities" covers all three types without stretching the word.
-> 2. **Matches the underlying entity name.** `Opportunity` is the core entity throughout the doc (§13.1 data model, §15 opportunity data, §10.2's object model: `Opportunity` → discoverable work). Naming the nav item "Jobs" would create a mismatch between the nav label and the entity it actually points to everywhere else in the system.
-> 3. **Avoids unintended employment framing.** "Jobs" can carry employee/W2 connotations that may work against a marketplace positioned around independent, contract-based engagements.
->
-> Counterpoint noted for completeness: "Jobs" is shorter, more familiar in everyday language, and immediately legible without onboarding. This counterpoint predates the "Browse Work" rename and is not an open question either way.
->
-> ℹ️ **"Discover" alternative — superseded, not adopted:** "Discover" was raised as a possible alternative to "Opportunities" for team discussion. The nav item has since been renamed to "Browse Work" instead, so "Discover" was not adopted. Kept for reference: it would have traded the entity-alignment argument above (`Opportunity` is the core entity throughout §13.1, §15, §10.2) and collided with the existing "Discover more opportunities" CTA — neither concern applies to "Browse Work."
+**Opportunities:** everything the user can discover and pursue — the full, unfiltered set of open roles and engagements in the marketplace, independent of whether any given one fits this professional. This is the broadest term in the IA; `Matches`, `Saved`, and `Browse / Search` (below) are all views *into* this same underlying set, not separate pools of content.
 
-### 10.2 Engagement views
+**Matches:** opportunities identified as relevant to this professional based on their profile, expertise, and preferences. A Match is not a copy of the Opportunity — it's the system's relevance judgment layered on top of one (see the object model below), which is why it carries its own tier and fit reasons rather than just being a filtered list. The full relevance signal set is broader than the one-line definition above — profile, expertise, and preferences, plus availability, rate, and eligibility (detailed in the views table below).
 
-Views within Engagements (§10.1) that organize the user's interactions with opportunities. These views represent different marketplace objects or relationships, not stages of a single sequential lifecycle — an opportunity's history can span more than one view at once (e.g. an application that led to an offer stays visible under `Applications` even after the offer appears under `Offers`).
-
-| View         | Meaning                                                                                                                                                                                                                                                                                                                                                                        |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Saved        | Opportunities the user has bookmarked for later consideration.                                                                                                                                                                                                                                                                                                                 |
-| Applications | All opportunities the user has applied to, including active and historical applications and their current stage — user-facing labels: `Submitted`, `In review`, `Interview`, `On hold`, `Not selected`, or `Withdrawn` (backed by the system status enum, §13.5.1). Rejected and withdrawn applications remain visible here rather than being removed from the user's history. |
-| Assessments  | Tests, AI interviews, screening exercises, or other qualification activities used to establish expertise or qualify the user for specific opportunities — whether general (not tied to a role) or opportunity-specific.                                                                                                                                                        |
-| Offers       | Opportunities for which the user has received an offer, including pending, accepted, declined, or expired offers.                                                                                                                                                                                                                                                              |
-| Contracts    | Secured work that has reached the contractual stage, including upcoming, active, completed, or terminated work.                                                                                                                                                                                                                                                                |
-
-Object model this supports:
-
-`Opportunity` → discoverable work
-`Match` → system-identified relevance between a professional and an opportunity (§10.3)
-`Saved` → user bookmark relationship
-`Application` → pursuit of an opportunity
-`Assessment` → qualification activity
-`Offer` → proposal of work
-`Contract` → formalized work
-
-> ✅ **Resolved — Applications preserves history:** an application is never removed or "graduated out" of the `Applications` view when it progresses to an offer or ends in rejection/withdrawal — it stays accessible there with its terminal stage shown, while the offer (if any) also appears under `Offers`. This avoids silently erasing records from the user's mental model.
->
-> ✅ **Resolved — Assessment is a first-class object, not an opportunity attribute:** `Assessment` is its own object (general or opportunity-specific), not "an opportunity where an assessment is pending." This matches the AI-marketplace model, where qualification activity (e.g. a general AI interview) can exist independently of any single opportunity.
->
-> ✅ **Resolved — no separate Interviews view:** an interview is represented as an `Interview` stage within `Applications` and/or an interview-type `Assessment`, not a sixth top-level view. Adding a dedicated category here would fragment the workflow; a dedicated scheduling surface can be introduced later if interview volume warrants it, without changing this taxonomy.
->
-> ✅ **Resolved — Contracts over Active Work:** `Contracts` is the durable container name; `Active` is one possible status a contract can hold (alongside `Awaiting start`, `Paused`, `Completed`, `Terminated`). `Active Work` would misdescribe most non-active contract states, so the container keeps the neutral name and status is tracked separately. This is the resolution to the naming question raised under §10.1.
->
-> ✅ **Resolved — Applications stage list backed by system enum:** the `Applications` stage list above now maps to the canonical system status enum documented in §13.5.1, rather than standing as an independent, informally-defined list. §11.5's stage model still needs reconciling against this same enum (flagged there).
->
-> ⚠️ **Decision needed:** Confirm whether an `Assessment` can be linked to more than one `Opportunity` at once (e.g. a general assessment reused across several applications).
-
-### 10.3 Opportunity views
-
-Views within Browse Work (§10.1) that organize how the professional discovers work. Unlike the browsable marketplace at large, **Matches** is a personalized view:
-
-Matches is a personalized Browse Work view showing roles the system has identified as relevant based on the user's profile, expertise, preferences, availability, rate, and eligibility signals.
+Views within Opportunities ([`main-navigation.md` §2.2](main-navigation.md#22-opportunities)) that organize how the professional discovers work — Matches, Saved, and Browse / Search are all views into the same underlying Opportunities set defined above, not separate pools of content:
 
 | View            | Meaning                                                                                                                                                                                              |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Matches         | Opportunities the system has proactively identified as relevant to this professional, ranked by fit. Surfaced both within Browse Work and, when strong, promoted to the Home module described below. |
-| Browse / Search | The full open marketplace, unfiltered by personalization — the entry point named `Discover more opportunities` / `Explore opportunities` elsewhere in this doc (§10.1, resolved).                    |
+| Matches         | Opportunities the system has proactively identified as relevant to this professional, ranked by fit. Surfaced both within Opportunities and, when strong, promoted to the Home module described below. |
+| Saved           | Opportunities the user has bookmarked for later consideration — moved here from Engagements ([`engagements.md` §2](engagements.md#2-engagement-views), resolved) since bookmarking starts no actual relationship with the opportunity; it is pre-engagement intent, not pursuit. |
+| Browse / Search | The full open marketplace, unfiltered by personalization — the entry point named `Discover more opportunities` / `Explore opportunities` elsewhere in this doc ([`main-navigation.md` §2.2](main-navigation.md#22-opportunities), resolved). |
 
-A `Match` is not a copy of an `Opportunity` — it is a relationship object layered on top of one: the system's assessment of relevance between a specific professional and a specific opportunity, carrying its own tier, fit reasons, and readiness state independent of the opportunity's own data (§13.4 Match fields already models this distinction).
+A `Match` additionally carries a readiness state independent of the opportunity's own data (§9.4 Match fields already models this distinction).
 
-**Home module — "Matching opportunities":** this is the Home-page surface for the Matches view (§10 module 4), not a separate destination. It promotes the professional's strongest current matches — same underlying `Match` objects as the full Matches view within Browse Work, just the top few, ranked per the priority engine (§8). Selecting one takes the professional to the same match detail used within Browse Work.
+Object model:
 
-> ⚠️ **Decision needed:** Confirm the cap on matches shown in the Home "Matching opportunities" module (e.g. top 2–4) versus the full, paginated Matches view within Browse Work, and whether "Browse / Search" needs its own named view or stays an unstructured entry point into Browse Work.
+`Opportunity` → discoverable work
+`Match` → system-identified relevance between a professional and an opportunity
+`Saved` → user bookmark relationship (moved from Engagements, [`engagements.md` §2](engagements.md#2-engagement-views), resolved)
+
+**Home module — "Matching opportunities":** this is the Home-page surface for the Matches view (§6 module 4), not a separate destination. It promotes the professional's strongest current matches — same underlying `Match` objects as the full Matches view within Opportunities, just the top few, ranked per the priority engine (§4). Selecting one takes the professional to the same match detail used within Opportunities.
+
+> ⚠️ **Decision needed:** Confirm the cap on matches shown in the Home "Matching opportunities" module (e.g. top 2–4) versus the full, paginated Matches view within Opportunities, and whether "Browse / Search" needs its own named view or stays an unstructured entry point into Opportunities.
 
 ### State-driven hierarchy
 
 | Dominant state                         | Primary content order                                                                    | Primary intent                      |
 | -------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------- |
-| Profile started                        | Next best action → Complete your profile → Matches preview or discovery                  | Reach useful matching readiness     |
-| Qualification pending                  | Next best action → Qualification status → Relevant matches                               | Complete qualification with purpose |
-| Marketplace ready / matches available  | Best match or next best action → Matches → Applications → Profile improvements           | Evaluate and apply                  |
+| Profile started                        | Next steps → Matches preview or discovery                                                | Reach useful matching readiness     |
+| Qualification pending                  | Next steps → Qualification status → Relevant matches                                     | Complete qualification with purpose |
+| Marketplace ready / matches available  | Best match or Next steps → Matches → Applications → Profile improvements                 | Evaluate and apply                  |
 | Application active / interviewing      | Next application action → Applications → New matches → Profile improvements              | Advance active applications         |
-| Offer received                         | Offer action → Offer summary → Applications → New matches                                | Review before expiration            |
+| Offer received                         | Opportunity alert → Offer summary → Applications → New matches                           | Review before expiration            |
 | Engagement onboarding                  | Contracting/onboarding action → Training/setup → Engagement summary                      | Become ready to work                |
 | Active engagement                      | Current engagement → Required actions → Milestones/training/payments → New opportunities | Deliver current work                |
 | Engagement completed / available again | Completion or payment status → Confirm availability → New matches                        | Close out and re-enter matching     |
 | Inactive                               | Availability/status action → Relevant history                                            | Restore or manage availability      |
 
+> ✅ **Resolved:** rows above use `Next steps` for onboarding/qualification-stage dominance and `Opportunity alert` for externally-initiated offer/interview/contract events, matching the §7.1 rename — no row here should read "Next best action" as a named module going forward.
+
 ### Desktop layout guidance
 
-- Keep the next best action in the first meaningful viewport.
+- Keep the dominant module (Opportunity alert when present, otherwise Next steps or the top lifecycle content) in the first meaningful viewport.
 - Use a primary content column for the dominant journey and a secondary region only for lower-priority context.
 - Do not make every module a same-sized card grid.
 - Allow opportunity and application cards enough width for fit reason, status, key terms, and action.
@@ -353,58 +188,51 @@ A `Match` is not a copy of an `Opportunity` — it is a relationship object laye
 - Avoid horizontal card carousels when they hide status or create ambiguous ordering.
 - Keep primary CTAs reachable without obscuring content or system navigation.
 
-## 11. Key Dashboard experiences
+## 7. Key Dashboard experiences
 
-### 11.1 Next best action
+### 7.1 Opportunity alert
 
-The Dashboard must render one primary action when an unresolved P0–P2 item exists.
+> ✅ **Resolved (renamed from "Next best action"):** this module is scoped specifically to **externally-initiated opportunity events** — an offer received, an interview requested, a contract ready to sign — not to onboarding or profile-improvement tasks, and not to a generic "whatever is currently most urgent" slot. The distinction: Next steps (§7.2 / `next-steps-card.md`) holds tasks the professional does *to themselves* — building or completing their profile, self-directed and onboarding-flavored. An Opportunity alert is something that happens *to* the professional — a partner or client (or Verita on their behalf) has taken an action that produces real work, which is the core outcome Verita exists to deliver. That category difference, not urgency alone, is why it gets a dedicated top-of-page module rather than being folded into or ranked alongside Next steps. A Next steps task can still be urgent (`Blocking` per §5) without ever qualifying as an Opportunity alert — urgency and category are independent.
 
-The module must include:
+Opportunity alert is a single-emphasis module: it surfaces exactly one opportunity event at a time, sourced from the Offers or Applications objects ([`engagements.md` §2](engagements.md#2-engagement-views)), never from Next steps.
 
-- Action title.
-- Short explanation of why it matters now.
-- Relationship to an opportunity, application, offer, engagement, training, or payment when applicable.
-- Deadline or estimated time when useful.
-- One primary CTA.
-- A secondary details action only when needed.
+Qualifying events (non-exhaustive):
 
-If there is no urgent action, the Dashboard may promote the strongest new match or confirm that no action is required.
+- A new offer has been received.
+- An interview has been requested.
+- A contract is ready to sign.
 
-### 11.2 Next steps
+When the module is populated, it must include:
 
-Next steps is the onboarding- and profile-improvement task module referenced in §10 module 2. It renders as a row of individually-tappable task cards rather than a single dominant action.
+- Event title (e.g. "You have a new offer").
+- The opportunity, partner, and key terms (compensation, engagement type) when applicable.
+- Deadline or expiration when material (e.g. an offer's expiration date/time).
+- One primary CTA (e.g. "View offer").
 
-> ℹ️ Next steps and Next best action (§11.1) are two different modules. Next best action is the single, most-emphasized action on the page when a P0–P2 item exists (§5.3 "one dominant action"). Next steps is a multi-card module that can show several same-weight tasks at once. When a task shown in Next steps is also the current highest-priority item, it should be promoted into the Next best action module rather than only appearing here — Next steps must not become a second place the same top-priority item competes for attention (§8 "Avoid duplicating the same underlying action in multiple modules").
+If no qualifying event exists, the module does not render — it must not be replaced with a placeholder or generic empty state; the Dashboard falls through to its next-highest content (Active work, Applications, Matches, or the "no active work" empty state per §7.3, §7.5–§7.6).
 
-Each Next steps card must include:
+> ⚠️ **Decision needed:** confirm the full, exhaustive list of qualifying event types (does a returned assessment result or a rejected application ever qualify, or only forward-moving opportunity events?), and confirm behavior when more than one qualifying event exists at once (e.g. two pending offers) — does the module show the single most urgent one, stack multiple, or route to a list?
 
-- Requirement-level badge, using the §9 taxonomy label that applies to that task (`Blocking`, `Required later`, `Recommended`, or `Optional`) — not a free-form or two-value label.
-- Task title, stated as a specific, destination-named action (§16).
-- Short explanation of why it matters or what it unlocks.
-- One primary CTA routed to the task.
+### 7.2 Next steps
 
-> ⚠️ **Gap:** a design of this module has only used two badge values (`Required`, `Recommended`) rather than the four §9 levels. `Required` is ambiguous between `Blocking` and `Required later` — these two levels carry different urgency and dismissal rules per §9 and must remain visually distinguishable, not collapsed into one badge.
+Moved to `product-specs/next-steps-card.md`. This Dashboard PRD's §6 module list (item 2) and §7.1 (distinction from Opportunity alert) reference this module; the full card content, requirement-level badge model, and visibility rule now live in that doc.
 
-#### Visibility rule
+### 7.3 Matching opportunities
 
-The Next steps module renders only while at least one applicable (incomplete, non-dismissed, non-expired) task exists for the professional. Once every task in the module is completed, dismissed, or no longer applicable, the module is removed from the Dashboard entirely — it must not remain visible in an empty state. This follows §FR-9's broader empty-state principle ("no urgent tasks: confirm that nothing requires attention") but goes further for this specific module: the empty case is no module, not a confirmation message in its place.
-
-### 11.3 Matching opportunities
-
-The Home module and Browse Work → Matches view (§10.3) share the same card content.
+The Home module and Opportunities → Matches view (§6.3) share the same card content.
 
 | Field                       | Content                                                                                                                                                   | Source       |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| Opportunity title           | The role or engagement name.                                                                                                                              | §15          |
-| Partner                     | Partner name or an approved anonymized label, per partner-visibility policy.                                                                              | §15          |
-| Opportunity type            | Project-based, One-time, Talent Network, etc. — shown as a plain-language badge.                                                                          | §15.1        |
-| Match tier                  | Plain-language fit tier (e.g. "Strong match"). Never the internal numeric score.                                                                          | §13.4, §5.4  |
-| Fit explanation             | Concise reason grounded in supported professional and opportunity signals — what the professional will recognize as evidence, not scoring machinery.      | §13.4, §16   |
-| Compensation & terms        | Compensation, engagement type, remote/location constraints, hours, and duration, when available.                                                          | §15          |
-| Deadline / urgency          | Shown only when material to the decision (e.g. a closing date) — not shown as a generic freshness indicator.                                              | §15          |
-| Application-readiness state | One of: not a fit, potential fit with missing data, matched but blocked, ready to apply (§FR-4).                                                          | §FR-4, §13.6 |
-| Missing-requirement summary | When blocked, names the specific missing requirement inline on the card rather than requiring a separate screen (§11.4 contextual blocker).               | §11.4, §13.4 |
-| Saved state                 | Whether the professional has bookmarked this match — surfaces the card in the Saved view (§10.2) and lets the affordance be toggled from the card itself. | §13.4, §10.2 |
+| Opportunity title           | The role or engagement name.                                                                                                                              | §11          |
+| Partner                     | Partner name or an approved anonymized label, per partner-visibility policy.                                                                              | §11          |
+| Opportunity type            | Project-based, One-time, Talent Network, etc. — shown as a plain-language badge.                                                                          | §11.1        |
+| Match tier                  | Plain-language fit tier (e.g. "Strong match"). Never the internal numeric score.                                                                          | §9.4, §2  |
+| Fit explanation             | Concise reason grounded in supported professional and opportunity signals — what the professional will recognize as evidence, not scoring machinery.      | §9.4, §12   |
+| Compensation & terms        | Compensation, engagement type, remote/location constraints, hours, and duration, when available.                                                          | §11          |
+| Deadline / urgency          | Shown only when material to the decision (e.g. a closing date) — not shown as a generic freshness indicator.                                              | §11          |
+| Application-readiness state | One of: not a fit, potential fit with missing data, matched but blocked, ready to apply (§FR-4).                                                          | §FR-4, §9.6 |
+| Missing-requirement summary | When blocked, names the specific missing requirement inline on the card rather than requiring a separate screen (§7.5 contextual blocker).               | §7.5, §9.4 |
+| Saved state                 | Whether the professional has bookmarked this match — surfaces the card in the Saved view (§6.3) and lets the affordance be toggled from the card itself. | §9.4, §6.3 |
 | Recommended action          | The single primary CTA for this card's current state.                                                                                                     | —            |
 
 Possible recommended actions:
@@ -420,9 +248,39 @@ Possible recommended actions:
 
 The system should not expose the internal numeric match score by default.
 
-> ⚠️ **Decision needed:** Confirm whether Deadline/urgency and the Missing-requirement summary should always render on the card or only when applicable (to avoid empty/placeholder states crowding the default card), and confirm the Saved toggle's interaction pattern (icon affordance vs. menu action) against §17 motion requirements.
+> ⚠️ **Decision needed:** Confirm whether Deadline/urgency and the Missing-requirement summary should always render on the card or only when applicable (to avoid empty/placeholder states crowding the default card), and confirm the Saved toggle's interaction pattern (icon affordance vs. menu action) against §13 motion requirements.
 
-### 11.4 Contextual application blocker
+### 7.4 Matching opportunities: empty states
+
+The Matching opportunities module (§7.3) has no matches to show under two different circumstances, and they must not share the same copy or visibility rule.
+
+> ⚠️ **Gap:** the general empty-state guidance in FR-9 ("No matches: explain what Verita is doing and recommend the most useful profile or preference action") does not yet distinguish *when* that empty state should appear versus stay hidden, or that a returning professional needs different copy than a first-time one. This section supersedes FR-9's one-line treatment with the fuller model below.
+
+**Visibility logic:**
+
+| Professional state                                | Behavior                                                                             |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| New professional, matching-readiness not yet met     | Hide the module entirely. Prioritize Next steps and profile completion (§4, §6). |
+| Matching-readiness met, matching not yet run         | Hide the module; do not show an empty state prematurely.                              |
+| Matching in progress                                 | Show a loading/processing state (§15), not "No matches yet."                          |
+| Matching completed, zero results                     | Show **No matches yet** (below), with a constructive next action.                     |
+| Matching completed, results available                | Show the matched opportunities (§7.3's card content).                                 |
+| Professional has previously seen matches, none active now | Show **No new matches** (below) instead of "No matches yet."                     |
+
+> ✅ **Resolved — matching readiness is not the same threshold as profile completion:** a professional can become eligible for matching without completing every profile field. Rather than gating this module on an arbitrary profile-completion percentage (already discouraged generally — §21, "Is `Profile completeness` useful..."; §22 defers an exposed completeness percentage), the module's visibility is gated on a **minimum matching-readiness threshold** — the specific set of fields matching actually requires (§9.6's `Application readiness` derivation is the closest existing analog, though that's opportunity-specific readiness rather than this global matching-eligibility gate). Once that threshold is met and matching has run, the module can render its result — zero or more matches — rather than waiting on full profile completion.
+
+**Empty-state copy:**
+
+| State | Title | Body | CTA |
+| --- | --- | --- | --- |
+| First-time, zero results | No matches yet | We haven't found opportunities that align with your profile. Keep your experience and preferences up to date to improve future matches. | Review your profile |
+| Previously had matches, none currently available | No new matches | *(Copy not yet drafted — same constructive framing as "No matches yet," but must not read as a first-time message.)* |  🙋 See open question below. |
+
+> ✅ **Resolved — empty-state copy avoids implying fault or a guarantee:** "No matches yet" deliberately does not suggest the professional did something wrong, and does not promise that completing their profile guarantees matches — it frames profile/preference upkeep as improving *future* matches, not as a fix for a failure.
+>
+> ✅ **Resolved — first-time vs. returning empty states must be visually and textually distinct:** a professional who has already seen matches before, but currently has none available, is in a materially different situation (temporary unavailability) than a professional who has never had a match (first-time discovery). Reusing "No matches yet" for both would misrepresent the returning professional's history. `No new matches` is the distinct state for the second case.
+
+### 7.5 Contextual application blocker
 
 When the professional is a match but cannot apply:
 
@@ -433,124 +291,15 @@ When the professional is a match but cannot apply:
 - Return the professional to the role or resume the application after task completion.
 - Recalculate readiness immediately or explain any processing delay.
 
-### 11.5 Applications
+### 7.6 Applications, Offers, Active engagement, Training, Payments
 
-Each application summary must include:
+Moved to [`product-specs/engagements.md` §3–7](engagements.md#3-applications). This Dashboard PRD's §6 module list (items 3, 5, 6) covers only the brief Home-page previews of these; the full row content, Offer definition/fields, active-engagement summary, Training, and Payments requirements now live in that doc.
 
-- Opportunity title and partner label.
-- Current stage and status.
-- Last meaningful update.
-- Next action.
-- Next-action owner: professional, Verita, or partner.
-- Deadline when applicable.
-- Progress only when it maps to meaningful completed requirements; avoid cosmetic percentages.
-
-#### Row interaction
-
-The entire application row is a single click target routing to the application detail (where the full next-action and owner state live) — there is no separate CTA button on the row itself. On hover, reveal a trailing arrow affordance to signal the row is interactive, consistent with §17's motion requirements (restrained, no delay to interactivity).
-
-> ⚠️ **Decision needed — next-action owner scoped to the professional for now:** at this stage, outstanding steps shown on an application (e.g. "2 of 4 steps completed") are modeled as always belonging to the professional — not yet distinguishing "waiting on you" from "waiting on Verita" or "waiting on partner" inline on the row. This narrows the "Next-action owner: professional, Verita, or partner" requirement above to professional-only for the row summary; whether owner must still surface inline (vs. only after clicking through to detail) needs confirmation with product before this is treated as final. Until decided, §5.6's "distinguish waiting on Verita/partner from action required" is not fully satisfied by the row alone.
-
-Suggested application lifecycle:
-
-`Interested → Application started → Requirements pending → Submitted → Under review → Interview → Selected → Offer → Contracting → Onboarding → Active → Completed`
-
-Terminal alternatives must include at least rejected and withdrawn.
-
-> ⚠️ **Decision needed:** This lifecycle predates the canonical system status enum now documented in §13.5.1 and does not fully align with it (e.g. the enum has no `Selected` distinct from `ACCEPTED`, and stages past `Offer` belong to the `Contract` object per §10.2, not the `Application`). Reconcile this suggested lifecycle against §13.5.1 — likely narrowing it to the pre-offer stages only, since `Offer`/`Contracting`/`Onboarding`/`Active`/`Completed` are separate objects (`Offer`, `Contract`) in the §10.2 model, not later Application stages.
-
-### 11.6 Offers and contracting
-
-> ⚠️ **Decision needed:** The Offer definition, flow position, and field list below are a proposed model, not yet confirmed with product. Verify against actual marketplace/operating-model behavior before treating this as final.
-
-**Offer:** a formal proposal for the professional to perform work, issued after they have been selected for an opportunity and before the engagement is finalized.
-
-An Offer is typically created after the company or Verita decides they want to engage the professional. It means _"we want to work with you under these proposed terms"_ and sits at a specific point in the flow:
-
-`Opportunity → Application / Match → Review / Assessment → Offer → Contract → Active work`
-
-An Offer can include:
-
-- Role or project
-- Company or partner
-- Compensation or rate
-- Engagement type
-- Expected hours
-- Start date
-- Duration
-- Scope or responsibilities
-- Offer expiration date
-- Any conditions or remaining requirements
-
-The professional can then:
-
-- Accept
-- Decline
-- Potentially request changes or discuss terms, depending on the marketplace model
-
-Once accepted, the offer typically moves into Contract or contract preparation.
-
-> ℹ️ Depending on Verita's operating model, the offer may technically come from Verita on behalf of the client rather than directly from the company — hence the generic definition above rather than one naming a specific issuing party.
->
-> ⚠️ **Decision needed:** A dedicated "Offer fields" data-model subsection (parallel to §13.4 Match fields, §13.5 Application fields) is intentionally not added yet — hold until the definition above is confirmed with product, so the data model isn't built on an unconfirmed object shape.
-
-> ✅ **Resolved — Offer is not a Match:** a `Match` means the system thinks the opportunity is a good fit for the professional (§10.3, §13.4) — it is a system-generated relevance signal, produced before the professional applies. An `Offer` means the company (or Verita on its behalf) has actually selected the professional and is proposing work — it is a real proposal issued after selection. These are different objects at opposite ends of the flow above and must not be conflated in card content, CTAs, or status language.
->
-> ✅ **Resolved — Offer cards show expiration, not a match tier:** a concrete consequence of the above — an Offer card (Home module or Engagements → Offers view) must not display a fit tier (`Strong match`, `Good match`, etc.); that vocabulary belongs to `Match` (§10.3, §11.2) and no longer applies once an opportunity has produced an offer. Instead, the Offer card's primary supporting fact is its **expiration** — the offer is available for a limited timeframe for the professional to accept, so the card must surface the expiration date/time prominently (§16: material deadlines get date, time, and timezone), not a relevance signal. **Confirmed in Figma (2026-08-30):** the Offers card now shows "Expires on [date]" in place of a match tier.
->
-> ✅ **Resolved — an opportunity with an active Offer is suppressed from Matches:** once an opportunity has produced an offer, it must not also surface in the Matches view or the Home "Matching opportunities" module — the Offers module becomes the single place that opportunity is shown. This directly applies §8's "avoid duplicating the same underlying action in multiple modules": a professional who already has an offer for a role has something more advanced to act on than a match, so re-surfacing it as "Strong match"/"Good match" elsewhere is both redundant and confusing about what stage they're actually at.
->
-> ✅ **Confirmed in Figma (2026-08-30):** the Offers card now shows a different opportunity ("Sleep Specialist, Behavioral Sleep Medicine Professional") than any listed under `Matches for you` — the earlier duplication (the same "Clinical Expert" card appearing in both modules) is resolved.
-
-An offer must become a distinct, high-priority state rather than being buried inside applications. The Dashboard must support:
-
-- Offer ready for review.
-- Offer expiration.
-- Contract ready to sign.
-- Background check, tax paperwork, or payment setup when required.
-- Training or orientation dependencies.
-
-### 11.7 Active engagement
-
-When work is active, current engagement information must outrank job discovery. The summary may include:
-
-- Engagement and partner.
-- Status, dates, expected hours, and rate.
-- Current-week progress where supported.
-- Required actions.
-- Deliverables and upcoming milestones.
-- Training status.
-- Earnings and next payment where supported.
-- Relevant messages or notifications.
-
-### 11.8 Training
-
-Training is a first-class workflow related to an engagement. The Dashboard must support:
-
-- Required versus optional training.
-- Module and overall completion status.
-- Estimated time.
-- Deadline.
-- Continue action.
-- Completion, score, attempt, certification, or expiration data only where relevant and approved for display.
-
-### 11.9 Payments
-
-Payment setup should appear contextually when an engagement or first payment makes it relevant. The Dashboard may show:
-
-- Setup or verification status.
-- Required tax or payout action.
-- Earnings balance and pending payout.
-- Next payout.
-- Payment issue.
-
-Sensitive payment details must remain in the dedicated payment flow and must not be exposed on the Dashboard.
-
-### 11.10 Referrals
+### 7.7 Referrals
 
 Referrals remain secondary to the professional's work journey. Promote them when there is a meaningful event, such as an accepted referral or pending reward. Otherwise provide a lower-priority entry point.
 
-## 12. Functional requirements
+## 8. Functional requirements
 
 ### FR-1: Personalization
 
@@ -608,9 +357,9 @@ Referrals remain secondary to the professional's work journey. Promote them when
 - No active engagement: hide current-work modules.
 - Data error: preserve navigation, explain the issue, and provide retry or support as appropriate.
 
-## 13. Core data model
+## 9. Core data model
 
-### 13.1 Entities
+### 9.1 Entities
 
 - `User`
 - `ProfessionalProfile`
@@ -630,19 +379,20 @@ Referrals remain secondary to the professional's work journey. Promote them when
 - `Engagement`
 - `Training`
 - `Payment`
+- `TalentNetworkMembership`
 - `Referral`
 - `Notification`
 
-### 13.2 Relationships
+### 9.2 Relationships
 
-This diagram shows entity ownership: which object each `User` owns directly, and what each of those objects in turn owns. It answers "what data hangs off what" — not the same question as §10.2's Engagement views, which group these same objects into user-facing navigation (§10.2's `Engagement` isn't this diagram's `Engagements` entity; see the note below the tree).
+This diagram shows entity ownership: which object each `User` owns directly, and what each of those objects in turn owns. It answers "what data hangs off what" — not the same question as [`engagements.md` §2](engagements.md#2-engagement-views)'s Engagement views, which group these same objects into user-facing navigation (this diagram's `Engagements` node is a data-ownership grouping, not that doc's `Engagement views` concept).
 
 How to read it:
 
-- Each line is an entity from §13.1.
+- Each line is an entity from §9.1.
 - Indentation and `├──`/`└──` mark a child owned by the entity above it (e.g. `Expertise`, `Skills`, `WorkPreferences`, `CompensationPreference`, and `Availability` all belong to one `ProfessionalProfile`).
 - A childless entity (e.g. `Verifications`, `Tasks`, `Referrals`) is a direct, flat collection on `User` with no further nesting shown here.
-- The tree tracks ownership/containment only — it is not a sequence or lifecycle order, and a line's position top-to-bottom carries no priority meaning (contrast with §8's priority classes or §11.5's lifecycle sequence).
+- The tree tracks ownership/containment only — it is not a sequence or lifecycle order, and a line's position top-to-bottom carries no priority meaning (contrast with §4's priority classes or [`engagements.md` §3](engagements.md#3-applications)'s lifecycle sequence).
 
 ```text
 User
@@ -664,11 +414,13 @@ User
 ├── Engagements
 │   ├── Training
 │   └── Payments
+├── TalentNetworkMemberships
+│   └── Opportunity
 ├── Referrals
 └── Notifications
 ```
 
-### 13.3 Task fields
+### 9.3 Task fields
 
 At minimum:
 
@@ -689,7 +441,7 @@ At minimum:
 | `estimated_completion_time`                 | Optional effort guidance                                                           |
 | `sort_priority`                             | Deterministic ordering within a class                                              |
 
-### 13.4 Match fields
+### 9.4 Match fields
 
 At minimum:
 
@@ -703,41 +455,11 @@ At minimum:
 - Viewed, saved, dismissed, dismissal reason, and interested states.
 - Recommended action.
 
-### 13.5 Application fields
+### 9.5 Application fields and status enum
 
-At minimum:
+Moved to `product-specs/engagements.md` [§8](engagements.md#8-application-status-enum) (status enum) and [§9](engagements.md#9-application-fields) (fields).
 
-- Application, opportunity, and user IDs.
-- Source: match-generated or user-discovered.
-- Started and submitted timestamps.
-- Current stage and status.
-- Required and completed screening, assessment, and interview steps.
-- Last meaningful update.
-- Next action and next-action owner.
-- Deadline.
-- Rejection or withdrawal reason when applicable.
-
-#### 13.5.1 Application status enum
-
-`Current stage and status` above is backed by a canonical system enum, distinct from the plain-language stage labels used for display in §10.2 and §11.5. The Dashboard must map the system enum to user-facing language rather than surface these values directly.
-
-| System status       | Meaning                                                         | User-facing label |
-| ------------------- | --------------------------------------------------------------- | ----------------- |
-| `APPLIED`           | Initial state after submission.                                 | Submitted         |
-| `SCORING_PENDING`   | Waiting for AI scoring.                                         | In review         |
-| `INTERVIEW_PENDING` | Scheduled for AI interview.                                     | Interview         |
-| `UNDER_REVIEW`      | Ops is evaluating.                                              | In review         |
-| `INTERVIEW`         | In interview stage.                                             | Interview         |
-| `ACCEPTED`          | Offer extended — creates an `Offer` object (§10.2 Offers view). | Offer received    |
-| `REJECTED`          | Declined by ops.                                                | Not selected      |
-| `ON_HOLD`           | Parked for later.                                               | On hold           |
-| `WITHDRAWN`         | Candidate withdrew.                                             | Withdrawn         |
-
-> ✅ **Resolved:** `ACCEPTED` is an **Application** status, not a Contract or Engagement status — it marks the moment an offer is extended and creates a corresponding `Offer` object (§10.2's object model: `Offer` → proposal of work). The application itself stays visible under `Applications` with this status, per §10.2's "Applications preserves history" resolution — it does not move to the `Offers` view, the `Offer` object does.
->
-> ⚠️ **Decision needed:** `ON_HOLD` has no equivalent in the §10.2 Applications stage list (`In progress, Submitted, In review, Interview, Not selected, Withdrawn`) or the §11.5 suggested lifecycle. Confirm whether "On hold" should be added as a user-facing stage in both places, and reconcile `SCORING_PENDING` vs. `UNDER_REVIEW` — both map to "In review" here; confirm whether that distinction (AI scoring vs. ops review) should be visible to the professional or stays an internal-only distinction.
-
-### 13.6 Derived values
+### 9.6 Derived values
 
 The Dashboard should derive rather than independently store:
 
@@ -751,7 +473,7 @@ The Dashboard should derive rather than independently store:
 
 Derived values must identify their source data and calculation version for debugging and analytics.
 
-## 14. Profile and matching data
+## 10. Profile and matching data
 
 The professional profile may include:
 
@@ -771,12 +493,12 @@ Internal confidence or evaluation data may improve matching but must not be show
 
 > ⚠️ **Privacy and fairness review:** Determine which profile and assessment signals may be used for matching, which require consent, how users can review or correct them, and how bias, provenance, retention, and explainability will be managed.
 
-## 15. Opportunity data required by the Dashboard
+## 11. Opportunity data required by the Dashboard
 
 At minimum:
 
 - ID, title, partner, and partner-visibility policy.
-- Opportunity type (§15.1) and work arrangement.
+- Opportunity type (§11.1) and work arrangement.
 - Location and authorization constraints.
 - Compensation type, range, currency, and expected hours.
 - Duration and start date.
@@ -786,9 +508,9 @@ At minimum:
 
 Internal application counts or capacity should not be shown unless product explicitly approves their meaning and user value.
 
-### 15.1 Opportunity types
+### 11.1 Opportunity types
 
-These describe the kind of work arrangement an **Opportunity** offers before a professional applies — not the status of a secured Engagement (§10.1).
+These describe the kind of work arrangement an **Opportunity** offers before a professional applies — not the status of a secured Engagement (§6.2).
 
 | Type           | Definition                                                                                                                             | Example                                       |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
@@ -798,7 +520,7 @@ These describe the kind of work arrangement an **Opportunity** offers before a p
 
 > ⚠️ **Decision needed:** These three types are a starting taxonomy, not final. Confirm naming, whether additional types are needed, and how each maps to application readiness, contracting, and Dashboard treatment before implementation.
 
-## 16. UX content requirements
+## 12. UX content requirements
 
 - State the action before supporting detail.
 - Explain why an action matters and what it unlocks.
@@ -811,7 +533,7 @@ These describe the kind of work arrangement an **Opportunity** offers before a p
 - Do not present internally generated profile or assessment claims as user-confirmed facts.
 - Show deadlines with date, time, and timezone when the time is material.
 
-## 17. Interaction and motion requirements
+## 13. Interaction and motion requirements
 
 - Completing a task should update related readiness and CTA state without disorienting reflow.
 - When a blocking action resolves, the related opportunity should transition to its new state and remain easy to find.
@@ -820,7 +542,7 @@ These describe the kind of work arrangement an **Opportunity** offers before a p
 - Do not delay action availability for animation.
 - Respect reduced-motion preferences and preserve equivalent state feedback without motion.
 
-## 18. Accessibility requirements
+## 14. Accessibility requirements
 
 - Meet WCAG 2.2 AA for the Dashboard experience.
 - Preserve a logical heading hierarchy and landmark structure.
@@ -833,7 +555,7 @@ These describe the kind of work arrangement an **Opportunity** offers before a p
 - Maintain readable touch targets, contrast, zoom behavior, and responsive reflow.
 - Keep deadlines and compensation understandable to screen readers, including currency, rate unit, date, time, and timezone.
 
-## 19. Loading, error, and edge states
+## 15. Loading, error, and edge states
 
 Design must cover:
 
@@ -855,7 +577,7 @@ Design must cover:
 - Professional changes availability to unavailable.
 - Data unavailable, unauthorized, or out of sync.
 
-## 20. Analytics events
+## 16. Analytics events
 
 Instrument at minimum:
 
@@ -870,12 +592,12 @@ Instrument at minimum:
 
 Events must include the priority class, lifecycle state, related entity type, and surface position where applicable. Do not include sensitive profile, assessment, authorization, payment, or partner-confidential values in analytics payloads.
 
-## 21. Acceptance criteria
+## 17. Acceptance criteria
 
 ### State and hierarchy
 
-- Given a professional with a P0 blocker, the Dashboard displays that blocker as the dominant next best action.
-- Given a time-sensitive interview or offer action and a generic profile recommendation, the time-sensitive action ranks higher.
+- Given a professional with a pending offer, interview request, or contract-ready-to-sign event, the Dashboard displays it as the dominant Opportunity alert (§7.1).
+- Given a time-sensitive interview or offer event and a generic profile recommendation (Next steps), the Opportunity alert ranks above Next steps.
 - Given an active engagement, current work appears before new opportunities.
 - Given no applicable content for a module, the module is hidden or replaced by a purposeful state rather than an empty shell.
 
@@ -905,7 +627,7 @@ Events must include the priority class, lifecycle state, related entity type, an
 - Keyboard, screen-reader, reduced-motion, zoom, and responsive behavior are defined and verified.
 - Analytics contain no prohibited sensitive values.
 
-## 22. Design deliverables
+## 18. Design deliverables
 
 The UX/UI design phase should produce:
 
@@ -913,14 +635,14 @@ The UX/UI design phase should produce:
 2. A priority and collision matrix for P0–P4 items.
 3. Low-fidelity layouts for each dominant lifecycle state.
 4. Responsive desktop and mobile layouts.
-5. Component states for next best action, task, match, application, offer, engagement, training, payment, notification, and empty/error states.
+5. Component states for Opportunity alert, task, match, application, offer, engagement, training, payment, notification, and empty/error states.
 6. A match/readiness state matrix including eligible, blocked, processing, closed, saved, dismissed, application started, and applied.
 7. Interaction flows for completing a contextual blocker and returning to the opportunity.
 8. Content examples for every requirement level and next-action owner.
 9. Accessibility annotations and keyboard order.
 10. A prototype covering incomplete profile → strong match → blocker → apply → interview → offer → engagement onboarding → active work.
 
-## 23. Dependencies
+## 19. Dependencies
 
 - Canonical professional profile and preference schema.
 - Opportunity and requirement schema.
@@ -932,7 +654,7 @@ The UX/UI design phase should produce:
 - Analytics taxonomy and privacy review.
 - Operations tooling for exceptions, overrides, and support.
 
-## 24. Risks
+## 20. Risks
 
 - Incorrect prioritization can hide a deadline or block progression.
 - Poor match explanations can reduce trust or reveal sensitive/internal logic.
@@ -944,65 +666,65 @@ The UX/UI design phase should produce:
 - Contextual tasks can become repetitive if the same underlying requirement is rendered once per opportunity.
 - Partner status latency can create contradictory next actions.
 
-## 25. Open questions
+## 21. Open questions
 
 ### Product and policy
 
-- Which onboarding fields are truly required, skippable, recommended, or optional?
-- Which requirements apply globally, per opportunity, before engagement, or before payment?
-- Can a professional browse, save, or express interest before they are eligible to apply?
-- Which partner and client names may be shown?
-- Is `Profile completeness` useful to professionals, or should the product show only specific improvements?
-- When should a professional be considered inactive or unavailable?
+- 🙋 Which onboarding fields are truly required, skippable, recommended, or optional?
+- 🙋 Which requirements apply globally, per opportunity, before engagement, or before payment?
+- 🙋 Can a professional browse, save, or express interest before they are eligible to apply?
+- 🙋 Which partner and client names may be shown?
+- 🙋 Is `Profile completeness` useful to professionals, or should the product show only specific improvements?
+- 🙋 When should a professional be considered inactive or unavailable?
 
 ### Matching
 
-- Which signals drive matching, and which are hard eligibility gates?
-- What defines Strong, Good, and Possible match tiers?
-- How should missing or low-confidence profile data affect recommendations?
-- What rationale is safe, accurate, and useful to expose?
-- How quickly are matches refreshed after profile, rate, or availability changes?
+- 🙋 Which signals drive matching, and which are hard eligibility gates?
+- 🙋 What defines Strong, Good, and Possible match tiers?
+- 🙋 How should missing or low-confidence profile data affect recommendations?
+- 🙋 What rationale is safe, accurate, and useful to expose?
+- 🙋 How quickly are matches refreshed after profile, rate, or availability changes?
 
 ### Priority engine
 
-- What are the exact rank weights and tie-break rules?
-- How are multiple deadlines compared?
-- Can users pin, snooze, or reorder tasks?
-- Can operations promote, suppress, or correct an item?
-- How many items appear before the user must open a full task view?
+- 🙋 What are the exact rank weights and tie-break rules?
+- 🙋 How are multiple deadlines compared?
+- 🙋 Can users pin, snooze, or reorder tasks?
+- 🙋 Can operations promote, suppress, or correct an item?
+- 🙋 How many items appear before the user must open a full task view?
 
 ### Applications and engagements
 
-- What is the canonical application stage/status model?
-- Which system owns next-action state and deadlines?
-- Can professionals have multiple active engagements?
-- What engagement progress, earnings, and performance data is appropriate for Home?
-- What happens when an opportunity closes while a professional completes a prerequisite?
+Moved to [`product-specs/engagements.md` §12](engagements.md#12-open-questions), plus one Home-specific question retained here:
+
+- 🙋 What engagement progress, earnings, and performance data is appropriate for Home (vs. the full Engagements page)?
 
 ### UX/UI
 
-- Should the next best action be a dedicated hero, the first item in a feed, or a stateful summary panel?
-- How much application and engagement history belongs on Home versus dedicated pages?
-- What is the navigation model for Dashboard, Opportunities, Applications, Work, Profile, and Referrals?
-- Should match reasons be always visible or progressively disclosed?
-- What content order feels stable enough while still adapting to lifecycle changes?
+- 🙋 What is the exact "No new matches" copy (§7.4) for a professional who has previously seen matches but currently has none — needs the same constructive framing as "No matches yet" without reading as a first-time message.
+- 🙋 Should the Opportunity alert be a dedicated hero, the first item in a feed, or a stateful summary panel?
+- 🙋 How much application and engagement history belongs on Home versus dedicated pages?
+- 🙋 What is the navigation model for Dashboard, Opportunities, Applications, Work, Profile, and Referrals?
+- 🙋 Should match reasons be always visible or progressively disclosed?
+- 🙋 What content order feels stable enough while still adapting to lifecycle changes?
 
 ### Technical and operations
 
-- Which proposed entities and fields already exist?
-- What freshness guarantees are available for partner status and opportunity data?
-- What is the fallback when match rationale or priority calculation fails?
-- How are task deduplication, supersession, and audit history handled?
-- What administrative tools are required to diagnose a wrong task or status?
+- 🙋 Which proposed entities and fields already exist?
+- 🙋 What freshness guarantees are available for partner status and opportunity data?
+- 🙋 What is the fallback when match rationale or priority calculation fails?
+- 🙋 How are task deduplication, supersession, and audit history handled?
+- 🙋 What administrative tools are required to diagnose a wrong task or status?
 
-## 26. Recommended MVP boundary
+## 22. Recommended MVP boundary
 
 The MVP should validate the central orchestration model before implementing every downstream domain.
 
 Include:
 
 - Dominant lifecycle state.
-- Next best action.
+- Opportunity alert.
+- Next steps.
 - Generic task model with P0–P4 priority and four requirement levels.
 - Matches with plain-language fit explanation.
 - Opportunity-specific application readiness and blocker handling.

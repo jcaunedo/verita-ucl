@@ -839,14 +839,14 @@ If the app builds forms with **Formik + Yup**, UCL can ship Formik-connected fie
 
 ## Key Files
 
-| File                     | Purpose                                                              |
-| ------------------------ | -------------------------------------------------------------------- |
-| `src/index.ts`           | Public API — all consumer-facing exports                             |
-| `src/styles/theme.css`   | Design tokens, `@theme inline`, CSS variables — shipped to consumers |
-| `src/styles/globals.css` | Storybook entry CSS — imports Tailwind + theme                       |
-| `src/lib/utils.ts`       | `cn()` class merge utility                                           |
-| `tsup.config.ts`         | Library build configuration                                          |
-| `.storybook/main.ts`     | Storybook + Tailwind + path alias setup                              |
+| File                     | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/index.ts`           | Public API — all consumer-facing exports                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `src/styles/theme.css`   | Design tokens, `@theme inline`, CSS variables — shipped to consumers                                                                                                                                                                                                                                                                                                                                                                                   |
+| `src/styles/globals.css` | Storybook entry CSS — imports Tailwind + theme                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `src/lib/utils.ts`       | `cn()` class merge utility                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `tsup.config.ts`         | Library build configuration                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `.storybook/main.ts`     | Storybook + Tailwind + path alias setup                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `DESIGN.md`              | Durable design/component contracts — rules that took real iteration to land on and would otherwise get silently re-broken. **Read before creating or editing any component, and before touching `theme.css`** — check whether a rule there already governs what you're about to change (e.g. the global cursor-pointer rule) rather than re-deriving or re-breaking it. Add an entry when you land a fix/convention that fits its own stated criteria. |
 
 ## Updating Colors
@@ -870,6 +870,7 @@ Every inline prose note that flags a gap, risk, decision, confirmation, or fix g
 - ⚠️ for anything unresolved, misaligned, or needing attention — paired with a bold label naming the specific kind of issue: `**Gap:**`, `**Constraint:**`, `**Risk:**`, `**Decision needed:**`, `**Accessibility:**`, or another word that accurately describes the note. Don't default to "Gap" if a more specific word fits better.
 - ✅ for anything verified resolved, confirmed, or matching — paired with a bold label naming what was resolved: `**Resolved:**`, `**Confirmed in Figma:**`, `**Copy fix:**`, or similar.
 - ℹ️ for purely informative or framing notes — context, scope clarification, "here's why this note exists" — with **no bold label**. If it's not actually flagging a problem or a fix, it isn't ⚠️ or ✅.
+- 🙋 for any question that needs to be addressed by product, design, or engineering before the spec is final — every line in an "Open Questions" section gets this marker, no bold label needed (the emoji already names what it is).
 
 Examples:
 
@@ -878,8 +879,10 @@ Examples:
 > ✅ **Confirmed in Figma (2026-08-05):** the performance scale renders left-to-right as At Risk → Off Track → On Track.
 >
 > ℹ️ Note: the desktop and mobile widget orders intentionally differ per the source design notes.
+>
+> 🙋 Can a professional belong to more than one Talent Network pool at once?
 
-**Where this applies:** inline prose notes (sentences/paragraphs within a section). Not needed on already-scannable bulleted lists where every line starts with the same emoji (e.g. a "Key Decisions" or "Open Questions" list) — the list structure itself already provides the scan pattern.
+**Where this applies:** inline prose notes (sentences/paragraphs within a section) get ⚠️/✅/ℹ️ as above. Bulleted "Open Questions" lists get 🙋 on every line instead — the one bulleted-list case that still needs a marker, since the marker itself is the content (an unanswered question), not a status flag on top of other content. Other already-scannable bulleted lists where every line starts with the same emoji (e.g. a "Key Decisions" list) still don't need one.
 
 **Why:** specs need to be scannable for status at a glance. The emoji alone isn't enough — the word names the status so a reader isn't relying on color/icon recognition alone, and isn't misled into treating framing text as an open risk (or vice versa).
 
@@ -896,3 +899,7 @@ Scope: one or two lines on which spec doc(s) this file governs.
 Purpose: one or two lines on why the file exists.
 -->
 ```
+
+### Cross-document references
+
+Cross-document references (e.g. `` `dashboard.md` §6.3 ``) must be written as clickable relative Markdown links with a heading anchor, e.g. `[dashboard.md §6.3](dashboard.md#63-...)`, so they're clickable in the editor. Same-document section references (e.g. plain `§6` inside `dashboard.md` referring to `dashboard.md`'s own §6) don't need this treatment.

@@ -29,12 +29,16 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * Destructive, Warning, Success, Info, Gray blue, Blue light, Indigo,
  * Purple, Pink, Orange), each resolving to a subtle fill and a strong text
  * color from the semantic `color/tone/<name>/*` layer (`theme.css`'s
- * `--tone-*` tokens). Figma previously also offered a "Modern" style (white
- * card fill, neutral border, shadow/xs, tone driving only the dot/icon
- * color) but that axis has since been removed from the design system — only
- * the tonal-fill style remains, so `Badge` has no `style` prop. Figma also
- * dropped the border from every tone/size combination (2026-09) — the fill
- * alone now carries the tone, no `border-tone-*-muted` outline.
+ * `--tone-*` tokens) — except `warning`'s fill, which binds a dedicated
+ * `badge/warning/background` variable (`--badge-warning-background`,
+ * `#fff8d6`) instead of the shared `--tone-warning-subtle` (`#fef4ec`);
+ * text color still uses `text-tone-warning`. Figma previously also offered a
+ * "Modern" style (white card fill, neutral border, shadow/xs, tone driving
+ * only the dot/icon color) but that axis has since been removed from the
+ * design system — only the tonal-fill style remains, so `Badge` has no
+ * `style` prop. Figma also dropped the border from every tone/size
+ * combination (2026-09) — the fill alone now carries the tone, no
+ * `border-tone-*-muted` outline.
  *
  * `size`: `sm` (22px, `text-xs`), `md` (26px, `text-sm`), `lg` (30px,
  * `text-sm`) — the type ramp comes from the file's `xs`/`sm` text styles,
@@ -53,7 +57,7 @@ const badgeVariants = cva(
         neutral: "bg-tone-neutral-subtle text-tone-neutral",
         brand: "bg-tone-brand-subtle text-tone-brand",
         destructive: "bg-tone-destructive-subtle text-tone-destructive",
-        warning: "bg-tone-warning-subtle text-tone-warning",
+        warning: "bg-badge-warning-background text-tone-warning",
         success: "bg-tone-success-subtle text-tone-success",
         info: "bg-tone-info-subtle text-tone-info",
         "gray-blue": "bg-tone-gray-blue-subtle text-tone-gray-blue",

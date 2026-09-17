@@ -73,6 +73,7 @@
 	--color-card-foreground: var(--card-foreground);
 	--color-next-steps-card-background: var(--next-steps-card-background);
 	--color-next-steps-card-border: var(--next-steps-card-border);
+	--color-badge-warning-background: var(--badge-warning-background);
 	--color-popover: var(--popover);
 	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
@@ -547,6 +548,11 @@
 	   component-specific pair with no shared ramp, bound only by NextStepCard. */
 	--next-steps-card-background: #fdfbfc;
 	--next-steps-card-border: #c6b2b4;
+
+	/* Figma: badge/warning/background — a component-specific override for
+	   Badge's warning tone, diverging from the shared --tone-warning-subtle
+	   (#fef4ec) ramp. Bound only by Badge's warning tone. */
+	--badge-warning-background: #fff8d6;
 
 	--popover: var(--white);
 	--popover-foreground: var(--foreground);
