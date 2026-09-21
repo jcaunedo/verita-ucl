@@ -2,6 +2,7 @@ import * as React from "react";
 import { DotsHorizontal } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { AvatarCompanies } from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import { Typography } from "@/components/typography";
 
@@ -32,10 +33,22 @@ import { Typography } from "@/components/typography";
  * a separate concern for the consumer to wire up (e.g. an `overlays` menu
  * component), since Figma's Hover variant only shows the trigger, not the
  * open menu state.
+ *
+ * `partnerName` renders as a small eyebrow line above `title` (Figma's
+ * `partner-name`, revised out of the terms row) rather than inline with
+ * `compensation`/`engagementTerms`, per `product-specs/applications-card.md`
+ * §2.3/§6.2. `duration` is a separate optional terms-row element from
+ * `engagementTerms` (§2.3.2) — shown only when a confirmed timeframe exists;
+ * its leading separator is toggled with it as one unit so the row never
+ * dangles a trailing `·`.
+ *
+ * The avatar composes `AvatarCompanies` (`company="partner"`) rather than
+ * reproducing its letterboxed white-tile markup inline — Figma's
+ * `avatar-companies` node this card's `Logo` slot references.
  */
 interface ApplicationCardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  /** Partner/opportunity logo. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. */
+  /** Partner/opportunity logo, forwarded to `AvatarCompanies`. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. */
   logoSrc?: string;
   /** Alt text for `logoSrc`. Required semantically whenever `logoSrc` is set. */
   logoAlt?: string;
@@ -43,9 +56,11 @@ interface ApplicationCardProps
   title: string;
   /** Agreed/advertised compensation display string, already formatted per its unit, e.g. "$85/hour". Omit when unavailable — never a bare number. */
   compensation?: string;
-  /** Engagement terms — time commitment and/or duration, e.g. "Up to 30 hrs/week · 3 months" (Figma's `Engagement terms`). Never a categorical type label or a location value, per `product-specs/applications-card.md` §2.3. Omit when neither is available. */
+  /** Engagement terms — time commitment only, e.g. "Up to 30 hrs/week" (Figma's `Engagement terms`). Never a categorical type label or a location value, per `product-specs/applications-card.md` §2.3. Omit when unavailable. */
   engagementTerms?: string;
-  /** Partner name or approved fallback (Figma's `Partner name`). */
+  /** Expected duration of the opportunity, e.g. "3 months", "2 weeks", "Ongoing" (Figma's `duration`) — a separate field from `engagementTerms`, never combined into one string. Shown only when a confirmed timeframe exists; omit rather than showing a placeholder (`product-specs/applications-card.md` §2.3.2). */
+  duration?: string;
+  /** Partner name or approved fallback (Figma's `partner-name`). Rendered as a small eyebrow line above `title`. */
   partnerName: string;
   /** Application status label (Figma's `badge` instance, e.g. "In review"). Always shown — required, never omitted or approximated per the PRD §2.3. */
   statusLabel: string;
@@ -69,6 +84,7 @@ function ApplicationCard({
   title,
   compensation,
   engagementTerms,
+  duration,
   partnerName,
   statusLabel,
   statusTone = "neutral",
@@ -79,7 +95,7 @@ function ApplicationCard({
   className,
   ...props
 }: ApplicationCardProps) {
-  const detailParts = [compensation, engagementTerms, partnerName].filter(
+  const termsParts = [compensation, engagementTerms, duration].filter(
     Boolean,
   );
 
@@ -87,51 +103,54 @@ function ApplicationCard({
     <div
       data-slot="application-card"
       className={cn(
-        "group flex w-full items-center gap-4 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
+        "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
         "hover:bg-row-hover",
         className,
       )}
       {...rowProps}
       {...props}
     >
-      <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#f9f1f2]">
-        {logoSrc && (
-          <img
-            src={logoSrc}
-            alt={logoAlt ?? ""}
-            className="size-8 object-contain"
-          />
-        )}
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
-        <div className="flex w-full flex-col items-start">
-          <Typography
-            as="h3"
-            weight="semibold"
-            className="w-full text-foreground"
-          >
-            {title}
-          </Typography>
-          {detailParts.length > 0 && (
-            <Typography className="flex items-center gap-1 whitespace-nowrap">
-              {detailParts.map((part, index) => (
-                <React.Fragment key={index}>
-                  {index > 0 && (
-                    <span aria-hidden="true" className="text-foreground-muted">
-                      ·
-                    </span>
-                  )}
-                  <span className="text-foreground">{part}</span>
-                </React.Fragment>
-              ))}
+      <div className="flex min-w-0 flex-1 items-center gap-5">
+        <AvatarCompanies company="partner" logoSrc={logoSrc} logoAlt={logoAlt} />
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
+          <div className="flex w-full flex-col items-start gap-0.5">
+            <Typography size="xs" className="w-full text-foreground-muted">
+              {partnerName}
+            </Typography>
+            <Typography
+              as="h3"
+              weight="semibold"
+              className="w-full text-foreground"
+            >
+              {title}
+            </Typography>
+            {termsParts.length > 0 && (
+              <Typography
+                size="sm"
+                className="flex items-center gap-1 whitespace-nowrap"
+              >
+                {termsParts.map((part, index) => (
+                  <React.Fragment key={index}>
+                    {index > 0 && (
+                      <span
+                        aria-hidden="true"
+                        className="text-foreground-muted"
+                      >
+                        ·
+                      </span>
+                    )}
+                    <span className="text-foreground">{part}</span>
+                  </React.Fragment>
+                ))}
+              </Typography>
+            )}
+          </div>
+          {supportingText && (
+            <Typography size="sm" className="w-full text-foreground-muted">
+              {supportingText}
             </Typography>
           )}
         </div>
-        {supportingText && (
-          <Typography size="sm" className="w-full text-foreground-muted">
-            {supportingText}
-          </Typography>
-        )}
       </div>
       <Badge tone={statusTone} label={statusLabel} size="md" />
       {onActionsPress && (

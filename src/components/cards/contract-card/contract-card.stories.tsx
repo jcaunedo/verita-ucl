@@ -8,8 +8,8 @@ const meta: Meta<typeof ContractCard> = {
   args: {
     title: "Product Design Advisor",
     compensation: "$85/hour",
-    workArrangement: "Project-based",
     partnerName: "Verita partner",
+    engagementTerms: "Up to 30 hrs/week",
   },
   decorators: [
     (Story) => (
@@ -24,6 +24,13 @@ type Story = StoryObj<typeof ContractCard>;
 
 export const Default: Story = {
   args: {
+    primaryActionLabel: "Open work",
+  },
+};
+
+export const WithDuration: Story = {
+  args: {
+    duration: "3 months",
     primaryActionLabel: "Open work",
   },
 };
@@ -50,6 +57,8 @@ export const ActionRequired: Story = {
   args: {
     statusLabel: "Action required",
     statusTone: "warning",
+    instructions: "Submit availability before Sep 21, 8:00 AM EDT",
+    instructionsUrgent: true,
     progress: {
       metricLabel: "12 of 30 hours used",
       percentageLabel: "40%",
@@ -59,11 +68,20 @@ export const ActionRequired: Story = {
   },
 };
 
+export const WithInstructionsNotUrgent: Story = {
+  args: {
+    statusLabel: "Action required",
+    statusTone: "warning",
+    instructions: "Submit availability before Sep 25, 8:00 AM EDT",
+    primaryActionLabel: "Submit availability",
+  },
+};
+
 export const Paused: Story = {
   args: {
     statusLabel: "Paused",
     compensation: "$1,500 per project",
-    workArrangement: "One-time",
+    engagementTerms: "One-time",
   },
 };
 
@@ -82,6 +100,7 @@ export const AllVariants: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-4">
       <ContractCard {...args} primaryActionLabel="Open work" />
+      <ContractCard {...args} duration="3 months" primaryActionLabel="Open work" />
       <ContractCard
         {...args}
         statusLabel="Awaiting start"
@@ -100,6 +119,8 @@ export const AllVariants: Story = {
         {...args}
         statusLabel="Action required"
         statusTone="warning"
+        instructions="Submit availability before Sep 21, 8:00 AM EDT"
+        instructionsUrgent
         progress={{
           metricLabel: "12 of 30 hours used",
           percentageLabel: "40%",
@@ -111,7 +132,7 @@ export const AllVariants: Story = {
         {...args}
         statusLabel="Paused"
         compensation="$1,500 per project"
-        workArrangement="One-time"
+        engagementTerms="One-time"
       />
       <ContractCard
         {...args}

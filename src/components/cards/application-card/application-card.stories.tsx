@@ -9,10 +9,10 @@ const meta: Meta<typeof ApplicationCard> = {
     title: "Strategic Finance Expert",
     compensation: "$56/hour",
     engagementTerms: "Up to 30 hrs/week",
+    duration: "3 months",
     partnerName: "Bank of America",
     statusLabel: "In review",
     statusTone: "success",
-    supportingText: "Applied 2 days ago",
   },
   decorators: [
     (Story) => (
@@ -39,7 +39,7 @@ export const Applied: Story = {
   args: {
     statusLabel: "Applied",
     statusTone: "info",
-    supportingText: "Applied just now",
+    supportingText: undefined,
   },
 };
 
@@ -47,7 +47,7 @@ export const InReview: Story = {
   args: {
     statusLabel: "In review",
     statusTone: "success",
-    supportingText: "Applied 2 days ago",
+    supportingText: undefined,
   },
 };
 
@@ -79,7 +79,7 @@ export const OnHold: Story = {
   args: {
     statusLabel: "On hold",
     statusTone: "purple",
-    supportingText: "Placed on hold Sep 18",
+    supportingText: undefined,
   },
 };
 
@@ -87,7 +87,7 @@ export const OfferReceived: Story = {
   args: {
     statusLabel: "Offer received",
     statusTone: "success",
-    supportingText: "Offer received Sep 18",
+    supportingText: undefined,
   },
 };
 
@@ -95,7 +95,7 @@ export const NotSelected: Story = {
   args: {
     statusLabel: "Not selected",
     statusTone: "neutral",
-    supportingText: "Application closed Sep 18",
+    supportingText: undefined,
   },
 };
 
@@ -103,13 +103,19 @@ export const Withdrawn: Story = {
   args: {
     statusLabel: "Withdrawn",
     statusTone: "neutral",
-    supportingText: "Withdrawn Sep 18",
+    supportingText: undefined,
   },
 };
 
 export const NoSupportingText: Story = {
   args: {
     supportingText: undefined,
+  },
+};
+
+export const NoDuration: Story = {
+  args: {
+    duration: undefined,
   },
 };
 
@@ -127,6 +133,7 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Not submitted"
         statusTone="neutral"
@@ -136,19 +143,19 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Applied"
         statusTone="info"
-        supportingText="Applied just now"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="In review"
         statusTone="success"
-        supportingText="Applied 2 days ago"
         actionsMenuLabel="More actions"
         onActionsPress={() => {}}
       />
@@ -156,6 +163,7 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="In review · Action required"
         statusTone="warning"
@@ -165,6 +173,7 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Interview"
         statusTone="success"
@@ -174,6 +183,7 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Interview · Action required"
         statusTone="warning"
@@ -183,37 +193,37 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="On hold"
         statusTone="purple"
-        supportingText="Placed on hold Sep 18"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Offer received"
         statusTone="success"
-        supportingText="Offer received Sep 18"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Not selected"
         statusTone="neutral"
-        supportingText="Application closed Sep 18"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
         partnerName="Bank of America"
         statusLabel="Withdrawn"
         statusTone="neutral"
-        supportingText="Withdrawn Sep 18"
       />
     </div>
   ),

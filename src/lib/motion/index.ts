@@ -13,6 +13,8 @@ export {
   fadeVariants,
   revealVariants,
   dismissVariants,
+  cardDismissVariants,
+  cardEnterFromRightVariants,
   overlayVariants,
   panelVariants,
   slideVariants,

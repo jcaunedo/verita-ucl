@@ -14,6 +14,8 @@ export {
   fadeVariants,
   revealVariants,
   dismissVariants,
+  cardDismissVariants,
+  cardEnterFromRightVariants,
   overlayVariants,
   panelVariants,
   slideVariants,
@@ -66,11 +68,18 @@ export {
 
 export { AccountTrigger, type AccountTriggerProps } from "./components/buttons/account-trigger";
 
+export { Hyperlink, hyperlinkVariants, type HyperlinkProps } from "./components/buttons/hyperlink";
+
 /* -------------------------------------------------------------------------- */
 /* Data display                                                               */
 /* -------------------------------------------------------------------------- */
 
 export { Avatar, avatarVariants, type AvatarProps } from "./components/data-display/avatar";
+
+export {
+  AvatarCompanies,
+  type AvatarCompaniesProps,
+} from "./components/data-display/avatar-companies";
 
 export { Badge, badgeVariants, type BadgeProps } from "./components/data-display/badge";
 
@@ -88,7 +97,11 @@ export {
   type ContractCardProgress,
 } from "./components/cards/contract-card";
 
+export { MatchCard, type MatchCardProps } from "./components/cards/match-card";
+
 export { NextStepCard, type NextStepCardProps } from "./components/cards/next-step-card";
+
+export { OfferCard, type OfferCardProps } from "./components/cards/offer-card";
 
 export {
   SectionEmptyState,
@@ -99,7 +112,7 @@ export {
 /* Navigation                                                                 */
 /* -------------------------------------------------------------------------- */
 
-export { Sidebar } from "./components/navigation/sidebar";
+export { Sidebar, type SidebarProps } from "./components/navigation/sidebar";
 
 /* -------------------------------------------------------------------------- */
 /* Overlays                                                                   */

@@ -48,13 +48,20 @@ function BriefcaseBusiness({ className }: { className?: string }) {
 const EXPANDED_WIDTH = 280;
 const COLLAPSED_WIDTH = 84;
 
-const NAV_ITEMS = [
+type NavKey = "home" | "discover" | "engagements" | "earnings" | "referrals";
+
+const NAV_ITEMS: {
+  key: NavKey;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  href: string;
+}[] = [
   { key: "home", icon: HomeLine, label: "Home", href: "/home" },
   { key: "discover", icon: Compass03, label: "Discover", href: "/discover" },
   { key: "engagements", icon: BriefcaseBusiness, label: "Engagements", href: "/engagements" },
   { key: "earnings", icon: BankNote01, label: "Earnings", href: "/earnings" },
   { key: "referrals", icon: UsersPlus, label: "Referrals", href: "/referrals" },
-] as const;
+];
 
 const FOOTER_ITEMS = [
   { key: "notifications", icon: Bell01, label: "Notifications" },
@@ -87,16 +94,48 @@ const FOOTER_ITEMS = [
  * expand" (Figma's Collapsed state has no visible toggle button at all, so
  * this hover hint is this component's own affordance for discovering the
  * expand action, same as bethere's).
+ *
+ * `collapsed`/`onCollapsedChange` make the rail a standard controlled/
+ * uncontrolled component — omit both and it manages its own state (e.g. the
+ * standalone Storybook story); pass both when a consumer (e.g. `Dashboard`)
+ * needs to react to the collapse toggle itself, such as adjusting the
+ * canvas's own padding to match.
  */
-function Sidebar() {
-  const [collapsed, setCollapsed] = React.useState(false);
-  const [activeNavKey, setActiveNavKey] = React.useState<
-    (typeof NAV_ITEMS)[number]["key"]
-  >("home");
+interface SidebarProps {
+  /** Controlled collapsed state. Omit to let Sidebar manage its own state. */
+  collapsed?: boolean;
+  /** Notified on every toggle, controlled or not, with the new value. */
+  onCollapsedChange?: (collapsed: boolean) => void;
+  /**
+   * Overrides a main nav item's `href` by key, e.g.
+   * `{ home: "https://..." }`. This repo has no router (Sidebar and each
+   * `layouts/*` composition are independently-previewed Storybook stories,
+   * not routed pages of one app), so the default `href`s (`/home`,
+   * `/discover`, etc.) are illustrative placeholders — this override exists
+   * for a consumer that wants a real destination for one or more items
+   * without forking the component, e.g. a clickable Storybook prototype
+   * that links "Home" to another story's URL. Items not listed keep their
+   * default `href`.
+   */
+  navHrefOverrides?: Partial<Record<NavKey, string>>;
+}
+
+function Sidebar({
+  collapsed: collapsedProp,
+  onCollapsedChange,
+  navHrefOverrides,
+}: SidebarProps = {}) {
+  const [uncontrolledCollapsed, setUncontrolledCollapsed] = React.useState(false);
+  const collapsed = collapsedProp ?? uncontrolledCollapsed;
+  const [activeNavKey, setActiveNavKey] = React.useState<NavKey>("home");
   const [isRailHovered, setIsRailHovered] = React.useState(false);
   const { resolve } = useMotionPreference();
 
-  const toggleCollapsed = () => setCollapsed((c) => !c);
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setUncontrolledCollapsed(next);
+    onCollapsedChange?.(next);
+  };
 
   return (
     <motion.div
@@ -141,7 +180,7 @@ function Sidebar() {
             </button>
           ) : (
             <>
-              <Logo className="h-8 w-auto" />
+              <Logo className="h-7 w-auto" />
               <Button
                 color="tertiary"
                 size="xs"
@@ -165,7 +204,7 @@ function Sidebar() {
               key={key}
               icon={<Icon />}
               label={label}
-              href={href}
+              href={navHrefOverrides?.[key] ?? href}
               collapsed={collapsed}
               current={activeNavKey === key}
               onPress={() => setActiveNavKey(key)}
@@ -205,4 +244,4 @@ function Sidebar() {
   );
 }
 
-export { Sidebar };
+export { Sidebar, type SidebarProps };

@@ -29,11 +29,15 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
 /**
  * Figma `button` COMPONENT_SET → `color` (Style + Tone):
  * - Solid/Brand → primary, Solid/Destructive → primary-destructive.
- *   `primary`'s hover was re-synced twice on 2026-09-07: first to a 15% white
- *   overlay, now to a flat, directly-bound `rosewood/600` (`#88353f`) fill —
- *   no overlay/gradient this time, just a solid color-mix-free swap. Don't
- *   normalize this to match Solid/Destructive's hover, which is still an
- *   unrelated 10% black darken over its own base fill (untouched both times).
+ *   `primary` re-synced 2026-09-21 — dropped the rosewood scale entirely for
+ *   the neutral/brand grayscale used across the rest of the library
+ *   (`tone-brand`, `#222a34`/neutral-800): base fill, a 20% black darken on
+ *   hover (Figma: a flat `color-mix`-style overlay, back to matching Solid/
+ *   Destructive's own hover treatment), and a `neutral-300`-ish disabled fill
+ *   (Figma's literal `#caccce` is a near-exact but not identical match for
+ *   `--neutral-300`/`#c6cbd2` — treated as the same token, not a new one).
+ *   Text stays `primary-foreground` (white) across Default/Hover/Disabled,
+ *   matching Figma's `on-brand` binding in every state.
  * - Outlined/Neutral → secondary (white + border + shadow-xs)
  * - Outlined/Destructive → secondary-destructive (added 2026-09-06, Text only
  *   — no Icon-only variant exists in Figma for this tone). Uses the raw
@@ -106,7 +110,7 @@ const buttonVariants = cva(
       },
       color: {
         primary:
-          "bg-primary text-primary-foreground hover:bg-rosewood-600 disabled:bg-primary-muted",
+          "bg-tone-brand text-primary-foreground hover:bg-[color-mix(in_srgb,var(--tone-brand)_80%,black)] disabled:bg-neutral-300",
         "primary-destructive":
           "bg-destructive-400 text-white hover:bg-[color-mix(in_srgb,var(--destructive-400)_90%,black)] disabled:bg-fill-muted",
         secondary:

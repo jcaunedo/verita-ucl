@@ -14,10 +14,16 @@ import { Typography } from "@/components/typography";
  * required.
  *
  * Hover uses the shared `--hover` overlay token (Figma: `state/hover`,
- * `neutral-700` at ~3%), the same mechanism as other no-solid-fill hover
- * treatments, rather than a card-specific darken. The arrow icon's own
- * rosewood-200 → rosewood-800 hover recolor is unchanged from Figma's
- * flattened preview, since no separate icon-color variable is bound there.
+ * `neutral-700` at ~2%, matching the existing ~4% `--hover` token within
+ * flattened-export precision), the same mechanism as other no-solid-fill
+ * hover treatments, rather than a card-specific darken.
+ *
+ * The arrow icon has no bound color variable in Figma (a flattened vector,
+ * same as the callout's own no-variable icon slot) — updated 2026-09-21 by
+ * sampling its rendered pixels directly: `neutral-300` (`#c6cbd2`) default →
+ * `tone-brand` (`#222a34` exactly) on hover, replacing the old
+ * rosewood-200/rosewood-800 pairing from before the library's
+ * rosewood→brand-grayscale shift.
  */
 interface CalloutCardProps
   extends Omit<AriaLinkProps, "children" | "className"> {
@@ -64,7 +70,7 @@ function CalloutCard({
           {description}
         </Typography>
       </div>
-      <ArrowUpRight className="size-6 shrink-0 text-rosewood-200 transition duration-100 ease-linear group-data-[hovered]:text-rosewood-800" />
+      <ArrowUpRight className="size-6 shrink-0 text-neutral-300 transition duration-100 ease-linear group-data-[hovered]:text-tone-brand" />
     </AriaLink>
   );
 }

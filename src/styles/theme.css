@@ -592,7 +592,7 @@
 	--accent-foreground: var(--foreground);
 
 	--overlay: rgb(0 0 0 / 0.4);
-	--link: var(--rosewood-800);
+	--link: #2b73da; /* Figma: state/link — a dedicated blue, not on the rosewood/brand scale */
 	/* Figma: color/hover = COMPOSE_COLOR(neutral-700, 4%) — a generic subtle
 	   hover-overlay tint, used across Button (secondary/secondary-destructive/
 	   tertiary) and similar no-solid-fill hover treatments. Supersedes an

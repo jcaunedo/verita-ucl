@@ -5,8 +5,12 @@ import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
+import { Hyperlink } from "@/components/buttons/hyperlink";
 import { NextStepCard } from "@/components/cards/next-step-card";
-import { SectionEmptyState } from "@/components/cards/section-empty-state";
+import { OfferCard } from "@/components/cards/offer-card";
+import { ContractCard } from "@/components/cards/contract-card";
+import { ApplicationCard } from "@/components/cards/application-card";
+import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
 
 /**
@@ -16,21 +20,30 @@ import { CalloutCard } from "@/components/cards/callout-card";
  */
 const NEXT_STEPS = [
   {
-    key: "interview",
+    key: "upload-document",
     badgeTone: "destructive",
     label: "Required now",
-    title: "Complete AI interview",
-    description: "Help us understand your expertise and match you with better-fit roles.",
-    buttonLabel: "Start interview",
+    title: "Upload document",
+    description: "Restorative Sleep Institute requested an updated document for your contract.",
+    buttonLabel: "Upload document",
     dismissible: false,
   },
   {
-    key: "availability",
+    key: "submit-availability",
     badgeTone: "warning",
     label: "Required later",
-    title: "Confirm availability",
-    description: "Set your schedule so we can recommend roles that fit.",
-    buttonLabel: "Set availability",
+    title: "Submit availability",
+    description: "Contracts need your planned hours by Monday to schedule your work.",
+    buttonLabel: "Submit availability",
+    dismissible: false,
+  },
+  {
+    key: "complete-training",
+    badgeTone: "warning",
+    label: "Required later",
+    title: "Complete training",
+    description: "Required before your contract starts on Oct 1, no rush yet.",
+    buttonLabel: "Start training",
     dismissible: false,
   },
   {
@@ -42,18 +55,117 @@ const NEXT_STEPS = [
     buttonLabel: "Connect LinkedIn",
     dismissible: true,
   },
-  {
-    key: "resume",
-    badgeTone: "info",
-    label: "Recommended",
-    title: "Upload resume",
-    description: "Upload your resume as a PDF, it will improve your matches.",
-    buttonLabel: "Upload PDF",
-    dismissible: true,
-  },
 ] as const;
 
 type NextStepKey = (typeof NEXT_STEPS)[number]["key"];
+
+/** Active/upcoming work agreements (Figma's "Active work" section, `contract-card` instances). */
+const ACTIVE_WORK = [
+  {
+    key: "backend-integration",
+    title: "Backend Integration Engineer",
+    compensation: "$85/hour",
+    partnerName: "Verita partner",
+    engagementTerms: "Up to 40 hrs/week",
+    duration: "3 months",
+    progress: { metricLabel: "10 of 40 hours used this week", percentageLabel: "25%", percentage: 25 },
+    primaryActionLabel: "Open work",
+  },
+  {
+    key: "compensation-benchmarking",
+    title: "Compensation Benchmarking Report",
+    compensation: "$4,500/project",
+    partnerName: "Amazon Health",
+    engagementTerms: "6 weeks",
+    primaryActionLabel: "Resume work",
+  },
+  {
+    key: "clinical-expert-survey",
+    title: "Clinical Expert, In-Home Health Evaluation Survey",
+    compensation: "$2,000/task",
+    partnerName: "Amazon Health",
+    engagementTerms: "Up to 40 hrs/week",
+    duration: "3 months",
+    progress: { metricLabel: "4 of 5 deliverables submitted", percentageLabel: "80%", percentage: 80 },
+    primaryActionLabel: "Resume work",
+  },
+] as const;
+
+/** Active applications (Figma's "Active Applications" section, stacked `application-card` rows). */
+const ACTIVE_APPLICATIONS = [
+  {
+    key: "senior-financial-analyst",
+    title: "Senior Financial Analyst",
+    partnerName: "Verita partner",
+    compensation: "$95–115k/yr",
+    engagementTerms: "32 hrs/week",
+    duration: "1 year",
+    statusLabel: "Not submitted",
+    statusTone: "neutral",
+    supportingText: "2 of 4 steps completed",
+  },
+  {
+    key: "clinical-data-coordinator",
+    title: "Clinical Data Coordinator",
+    partnerName: "Verita partner",
+    compensation: "$48/hr",
+    engagementTerms: "20 hrs/week",
+    duration: "1 month",
+    statusLabel: "In review · Action required",
+    statusTone: "warning",
+    supportingText: "Complete your assessment (2 of 4 steps completed)",
+  },
+  {
+    key: "movement-physical-activity-expert",
+    title: "Movement & Physical Activity Expert Annotator",
+    partnerName: "Verita partner",
+    compensation: "$50/hr",
+    engagementTerms: "40 hours per week",
+    duration: "8 weeks",
+    statusLabel: "In review",
+    statusTone: "success",
+  },
+  {
+    key: "search-quality-analyst",
+    title: "Search Quality Analyst",
+    partnerName: "Google",
+    compensation: "$60/hr",
+    engagementTerms: "Up to 25 hrs/week",
+    duration: "3 months",
+    statusLabel: "Applied",
+    statusTone: "info",
+  },
+] as const;
+
+/** Most recent matches (Figma's "Matches" section, stacked `match-card` rows). */
+const RECENT_MATCHES = [
+  {
+    key: "clinical-expert-sleep",
+    title: "Clinical Expert, In-Home Health Evaluation Survey",
+    partnerName: "Verita partner",
+    compensation: "56/hr",
+    engagementTerms: "35 hours per week",
+    duration: "5 months",
+    matchTier: "Strong match",
+  },
+  {
+    key: "strategic-finance-expert",
+    title: "Strategic Finance Expert",
+    partnerName: "Apple",
+    compensation: "$85/hr",
+    engagementTerms: "15 hrs/week",
+    matchTier: "Good match",
+  },
+  {
+    key: "retail-operations-contractor",
+    title: "Retail Operations Contractor",
+    partnerName: "Verita partner",
+    compensation: "$42/hr",
+    engagementTerms: "Up to 30 hrs/week",
+    duration: "5 months",
+    matchTier: "Relevant match",
+  },
+] as const;
 
 const CALLOUTS = [
   {
@@ -70,25 +182,40 @@ const CALLOUTS = [
   },
 ] as const;
 
-interface DashboardEmptyStateProps {
+interface DashboardProps {
   /**
    * Passed through to the internal `Sidebar`'s `navHrefOverrides` — this
    * repo has no router, so there's nothing to wire by default. Exists so a
-   * Storybook story can turn this layout into a clickable prototype (e.g.
-   * pointing "Home" at this very story's own URL) without forking the
-   * component to hardcode a demo-only link.
+   * Storybook story can turn this layout into a clickable prototype without
+   * forking the component to hardcode a demo-only link.
    */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
 }
 
 /**
- * Full-page reference layout — the provider portal's home dashboard in its
- * empty state (no active work yet). Figma: Verita → `Dashboard`. A separate
- * `dashboard-empty-state` layout since the fully-populated dashboard (with
- * work-in-progress cards, tables, etc. once those components exist) will be
- * its own `layouts/dashboard/` layout rather than a variant of this one.
+ * Full-page reference layout — the provider portal's home dashboard fully
+ * populated with real work-in-progress content (an offer alert, next steps,
+ * active work, active applications, recent matches, and callout cards).
+ * Figma: Verita → `Dashboard` (`node-id=5642-2263`). A separate layout from
+ * `dashboard-empty-state` (which covers the same page with no active work
+ * yet) per that layout's own JSDoc — this is the "fully-populated dashboard"
+ * variant it anticipated.
+ *
+ * Reuses `dashboard-empty-state`'s sidebar-collapse/responsive-breakpoint
+ * shell verbatim (same `Sidebar` auto-collapse-below-`lg` behavior, same
+ * Next Steps grid column-capping/queueing pattern) — only the section
+ * content below the header differs: `SectionEmptyState` is replaced with the
+ * offer alert, active-work grid, active-applications list, and
+ * recent-matches list Figma shows once the professional has real activity.
+ *
+ * The "Active Applications"/"Matches" sections are plain bordered containers
+ * of stacked `ApplicationCard`/`MatchCard` rows (`divide-y`-style borders
+ * already built into each card) — Figma's `table-application-listing`/
+ * `table-match-listing` instances are not real data-table components, just
+ * this same stacking pattern already used by `ApplicationCard`'s own
+ * `AllVariants` story.
  */
-function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}) {
+function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   /**
    * Below `lg` (1024px) the sidebar auto-collapses — including on initial
@@ -208,6 +335,24 @@ function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
+            <div className="flex w-full flex-col items-start gap-4">
+              <Typography size="xl" weight="semibold">
+                You have a new offer
+              </Typography>
+              <OfferCard
+                title="Sleep Specialist, Behavioral Sleep Medicine Professional"
+                partnerName="Verita partner"
+                compensation="$75 - $95 / hour"
+                engagementTerms="Up to 30 hr per week"
+                duration="Ongoing"
+                expirationDate="Expires on Sep 10"
+                onCtaPress={() => {}}
+                dismissLabel="Dismiss offer"
+                onDismiss={() => {}}
+                className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
+              />
+            </div>
+
             {nextStepsSectionVisible && (
               <div className="flex w-full flex-col items-start gap-4">
                 <div className="flex w-full flex-col items-start gap-0.5">
@@ -243,11 +388,49 @@ function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}
               </div>
             )}
 
-            <SectionEmptyState
-              title="You don’t have any active work yet"
-              description="Browse work and apply to what fits you best."
-              buttonLabel="Discover work"
-            />
+            <div className="flex w-full flex-col items-start gap-4">
+              <Typography size="xl" weight="semibold">
+                Active work
+              </Typography>
+              <div className="grid w-full grid-cols-3 items-start gap-x-5 gap-y-4">
+                {ACTIVE_WORK.map(({ key, ...contract }) => (
+                  <ContractCard key={key} {...contract} primaryActionProps={{ onPress: () => {} }} />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex w-full flex-col items-start gap-4">
+              <Typography size="xl" weight="semibold">
+                Active Applications
+              </Typography>
+              <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+                {ACTIVE_APPLICATIONS.map(({ key, ...application }) => (
+                  <ApplicationCard key={key} {...application} className="border-b border-border last:border-b-0" />
+                ))}
+              </div>
+              <div className="flex items-start gap-5">
+                <Hyperlink href="#" showArrow>
+                  View All
+                </Hyperlink>
+                <Hyperlink href="#" showArrow>
+                  Discover more opportunities
+                </Hyperlink>
+              </div>
+            </div>
+
+            <div className="flex w-full flex-col items-start gap-4">
+              <Typography size="xl" weight="semibold">
+                Most recent matches
+              </Typography>
+              <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+                {RECENT_MATCHES.map(({ key, ...match }) => (
+                  <MatchCard key={key} {...match} className="border-b border-border last:border-b-0" />
+                ))}
+              </div>
+              <Hyperlink href="#" showArrow>
+                View more matches
+              </Hyperlink>
+            </div>
 
             <div className="flex w-full items-start gap-5">
               {CALLOUTS.map(({ key, ...callout }) => (
@@ -261,4 +444,4 @@ function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}
   );
 }
 
-export { DashboardEmptyState };
+export { Dashboard };

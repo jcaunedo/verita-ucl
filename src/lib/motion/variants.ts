@@ -1,6 +1,6 @@
 import type { Variants } from "motion/react";
 
-import { motionDistance, motionStagger } from "./tokens";
+import { motionDistance, motionScale, motionStagger } from "./tokens";
 import { enterTransition, exitTransition, standardTransition } from "./transitions";
 
 /**
@@ -29,6 +29,34 @@ const dismissVariants: Variants = {
   initial: { opacity: 1, y: 0 },
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: motionDistance.hover, transition: exitTransition },
+};
+
+/**
+ * A whole card/surface leaving the layout entirely (e.g. a dismissed
+ * checklist card) — fade + soft scale-down, no directional movement (unlike
+ * `dismissVariants`' downward slide, which suits a smaller toast/notification
+ * rather than a card that's simply disappearing from a grid).
+ */
+const cardDismissVariants: Variants = {
+  initial: { opacity: 1, scale: 1 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: motionScale.dismiss, transition: exitTransition },
+};
+
+/**
+ * Same exit as `cardDismissVariants` (fade + soft scale-down), but enters
+ * with a fade + slide in from the right (CLAUDE.md "Glide") instead of
+ * appearing in place — for a card that's newly revealed by a queue shifting
+ * (e.g. a hidden 4th card taking a slot vacated by a dismissed one), where
+ * the arrival should read as "sliding into the row" rather than an
+ * unrelated existing card animating out. Exit stays the same regardless of
+ * cause (dismissal), since a card is never simultaneously entering and
+ * being dismissed.
+ */
+const cardEnterFromRightVariants: Variants = {
+  initial: { opacity: 0, x: motionDistance.medium, scale: 1 },
+  animate: { opacity: 1, x: 0, scale: 1, transition: enterTransition },
+  exit: { opacity: 0, x: 0, scale: motionScale.dismiss, transition: exitTransition },
 };
 
 /**
@@ -104,6 +132,8 @@ export {
   fadeVariants,
   revealVariants,
   dismissVariants,
+  cardDismissVariants,
+  cardEnterFromRightVariants,
   overlayVariants,
   panelVariants,
   slideVariants,
