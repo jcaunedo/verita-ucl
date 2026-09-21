@@ -1,7 +1,7 @@
 <!--
 Created: Sep 16, 2026
 Created by: Julio Caunedo
-Last updated: Sep 16, 2026
+Last updated: Sep 18, 2026
 Scope: Verita AI professional-facing main navigation — the primary nav items and their naming rationale, shared across every page-level PRD.
 Purpose: Give a single, high-level reference for the site's top-level destinations and the naming decisions behind them, split out of the Dashboard PRD (product-specs/dashboard.md) [§6.1](dashboard.md#61-main-navigation) once it became clear this content governs more than just Home.
 -->
@@ -33,7 +33,7 @@ Primary navigation is fixed and state-independent ([`dashboard.md` §2](dashboar
 | Navigation item | Concept | Purpose | Rationale for the name |
 | --- | --- | --- | --- |
 | Home | Your personal command center | Gives the user a personalized overview of what requires attention now: next steps, active applications, matches, active engagements, and relevant updates. | Familiar and universally understood as the primary entry point, without committing to a single task the way a name like "Dashboard" or "Overview" would. |
-| Opportunities | Discover what's available | Takes the user to the marketplace to review available work, evaluate fit, and decide what to apply to — including project-based, one-time, retainer, or other engagement types. Includes a personalized Matches view ([`dashboard.md` §6.3](dashboard.md#63-opportunity-views)). | Matches the underlying `Opportunity` entity and covers non-job-shaped types (`One-time`, `Talent Network`) without straining the word "job" or "work." More explicit than "Explore"/"Discover" (which name an action, not a destination); avoids "Browse Work," which could imply work already secured. |
+| Opportunities | Discover what's available | Takes the user to the marketplace to review available work, evaluate fit, and decide what to apply to — spanning a range of engagement terms (time commitment, duration) or Talent Network membership. Includes a personalized Matches view ([`dashboard.md` §6.3](dashboard.md#63-opportunity-views)). | Matches the underlying `Opportunity` entity and covers the non-job-shaped `Talent Network` type without straining the word "job" or "work." More explicit than "Explore"/"Discover" (which name an action, not a destination); avoids "Browse Work," which could imply work already secured. |
 | Engagements | Manage everything you're pursuing or committed to | Houses the user's ongoing and historical interactions with opportunities the user is actively pursuing — applications, assessments, offers, contracts, and Talent Network membership. Full definition in `engagements.md`. | Broader than "Applications" or "Contracts," since the relationship continues beyond applying and not every engagement reaches the contractual stage. Creates one centralized destination instead of fragmenting into several. |
 | Earnings | Understand your compensation | Gives the user visibility into compensation generated through their engagements, including earned, pending, paid, and upcoming payouts. | More user-centered than "Billing"/"Finance" (internal-sounding) and more comprehensive than "Payments" (transaction-focused, not an outcome view). |
 | Referrals | Grow the network through trusted connections | Lets users invite other professionals, track their referrals, understand referral status, and see any associated rewards. | Established marketplace terminology that communicates both the action and the program — a more branded or abstract term would trade away instant legibility for no real gain in clarity. |
@@ -57,13 +57,13 @@ Design rationale:
 
 **Concept:** Discover what's available.
 
-Opportunities is the discovery destination for available projects, roles, and potential work aligned with the user's expertise and interests — including project-based, one-time, retainer, or other engagement types. Includes a personalized Matches view ([`dashboard.md` §6.3](dashboard.md#63-opportunity-views)).
+Opportunities is the discovery destination for available projects, roles, and potential work aligned with the user's expertise and interests — spanning a range of engagement terms (time commitment, duration) or Talent Network membership. Includes a personalized Matches view ([`dashboard.md` §6.3](dashboard.md#63-opportunity-views)).
 
 Design rationale:
 
 - Matches the underlying `Opportunity` entity ([`dashboard.md` §9.1](dashboard.md#91-entities), [§11](dashboard.md#11-opportunity-data-required-by-the-dashboard)), so the nav label matches what it actually points to.
 - More explicit than "Explore" or "Discover," which describe an action rather than the destination.
-- Broader than "Jobs," accommodating projects, contracts, and other work arrangements — including non-job-shaped Opportunity types like `One-time` and `Talent Network` ([`dashboard.md` §11.1](dashboard.md#111-opportunity-types)) that aren't a "job" in the common sense.
+- Broader than "Jobs," accommodating projects, contracts, and single scoped deliverables — including the non-job-shaped Opportunity type `Talent Network` ([`dashboard.md` §11.1](dashboard.md#111-opportunity-types)) that isn't a "job" in the common sense.
 - Avoids "Browse Work," which could imply work already secured rather than work still under consideration.
 - Establishes a clear separation between potential work and the user's existing relationships with opportunities.
 - Supports searching, browsing, filtering, and evaluating opportunities.

@@ -1,7 +1,7 @@
 <!--
 Created: Aug 28, 2026
 Created by: Julio Caunedo
-Last updated: Sep 16, 2026
+Last updated: Sep 18, 2026
 Scope: Verita AI professional Home/Dashboard after sign-in — onboarding, matching, task orchestration, and the Home-page previews of Applications/Offers/Contracts. Full Engagements-page detail (Applications, Offers, Contracts, Assessments, Talent Network, Training, Payments) lives in product-specs/engagements.md.
 Purpose: Define the product, UX, information architecture, state, and data requirements needed to design the Dashboard.
 -->
@@ -209,7 +209,7 @@ When the module is populated, it must include:
 - Deadline or expiration when material (e.g. an offer's expiration date/time).
 - One primary CTA (e.g. "View offer").
 
-If no qualifying event exists, the module does not render — it must not be replaced with a placeholder or generic empty state; the Dashboard falls through to its next-highest content (Active work, Applications, Matches, or the "no active work" empty state per §7.3, §7.5–§7.6).
+If no qualifying event exists, the module does not render — it must not be replaced with a placeholder or generic empty state; the Dashboard falls through to its next-highest content (Contracts, Applications, Matches — see §7.6's resolved default-empty-state note for what renders when none of those have content either).
 
 > ⚠️ **Decision needed:** confirm the full, exhaustive list of qualifying event types (does a returned assessment result or a rejected application ever qualify, or only forward-moving opportunity events?), and confirm behavior when more than one qualifying event exists at once (e.g. two pending offers) — does the module show the single most urgent one, stack multiple, or route to a list?
 
@@ -225,7 +225,7 @@ The Home module and Opportunities → Matches view (§6.3) share the same card c
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
 | Opportunity title           | The role or engagement name.                                                                                                                              | §11          |
 | Partner                     | Partner name or an approved anonymized label, per partner-visibility policy.                                                                              | §11          |
-| Opportunity type            | Project-based, One-time, Talent Network, etc. — shown as a plain-language badge.                                                                          | §11.1        |
+| Opportunity type            | Engagement or Talent Network — shown as a plain-language badge. Engagement terms (time commitment, duration) are separate content, not part of this badge. | §11.1        |
 | Match tier                  | Plain-language fit tier (e.g. "Strong match"). Never the internal numeric score.                                                                          | §9.4, §2  |
 | Fit explanation             | Concise reason grounded in supported professional and opportunity signals — what the professional will recognize as evidence, not scoring machinery.      | §9.4, §12   |
 | Compensation & terms        | Compensation, engagement type, remote/location constraints, hours, and duration, when available.                                                          | §11          |
@@ -294,6 +294,12 @@ When the professional is a match but cannot apply:
 ### 7.6 Applications, Offers, Active engagement, Training, Payments
 
 Moved to [`product-specs/engagements.md` §3–7](engagements.md#3-applications). This Dashboard PRD's §6 module list (items 3, 5, 6) covers only the brief Home-page previews of these; the full row content, Offer definition/fields, active-engagement summary, Training, and Payments requirements now live in that doc.
+
+> ✅ **Resolved — Applications is the Dashboard's default empty state, not a separate "no active work" placeholder:** [Empty State — A](https://www.figma.com/design/hdxBo3xOg3uMSovZwidJF5/Verita?node-id=5642-2215) confirms that when a professional has no active engagement yet, the Dashboard does not fall through to a generic "no active work" placeholder (the phrase used earlier in §7.1 before this note) — there is no such separate empty state to design or build. Applications is the natural step before an active Contract exists, so it is the module that carries the empty condition itself: the **Your applications** module (§6 item 5) always renders in this state and shows its own empty-state content inline — title "No applications yet," description "Find opportunities that fit your expertise and interests.," and a single primary CTA "Discover opportunities" routing into opportunity discovery ([`main-navigation.md` §2.2](main-navigation.md#22-opportunities)). This reuses [`applications-card.md` §5.1](applications-card.md#51-zero-state-on-engagements--applications)'s zero-state pattern for the Engagements → Applications destination, applied here to the Home module instead of a bespoke Home-specific empty state.
+>
+> Once an application progresses far enough to become an active Contract, the **Contracts** module (§6 item 3) takes over as the dominant module per its existing "outranks job discovery" resolution above — the Applications module's empty state is specifically the pre-Contract, pre-any-application starting point, not a state that persists once real engagement activity exists.
+>
+> This resolves the dangling "no active work empty state" reference in §7.1 — no such state is defined or needed separately from the Applications module's own empty content.
 
 ### 7.7 Referrals
 
@@ -498,8 +504,8 @@ Internal confidence or evaluation data may improve matching but must not be show
 At minimum:
 
 - ID, title, partner, and partner-visibility policy.
-- Opportunity type (§11.1) and work arrangement.
-- Location and authorization constraints.
+- Opportunity type (§11.1) and engagement terms (time commitment, duration — see [`contract-card.md` §3.2](contract-card.md#32-engagement-terms)).
+- Authorization constraints. Location is not a modeled dimension for Verita's marketplace (§11.1).
 - Compensation type, range, currency, and expected hours.
 - Duration and start date.
 - Required and preferred expertise, skills, seniority, and industry.
@@ -510,15 +516,18 @@ Internal application counts or capacity should not be shown unless product expli
 
 ### 11.1 Opportunity types
 
-These describe the kind of work arrangement an **Opportunity** offers before a professional applies — not the status of a secured Engagement (§6.2).
+These describe the kind of Opportunity being offered before a professional applies — not the status of a secured Engagement (§6.2).
+
+**Simplified from a three-way taxonomy to a two-way distinction.** `Project-based` and `One-time` previously stood as separate "types," but for Verita every engagement is one-off and contract-based — classifying them into named categories the way a traditional job board classifies employment type (Contract vs. Project-based vs. etc.) didn't provide meaningful differentiation, since every engagement here already is a contract. The only distinction that actually matters at the Opportunity-type level is whether the Opportunity offers secured work at all:
 
 | Type           | Definition                                                                                                                             | Example                                       |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| Project-based  | Hired for a defined project over a period of time, usually with ongoing work and an expected weekly capacity.                          | Product Designer for 20 hrs/week for 3 months |
-| One-time       | A single, clearly scoped task or deliverable. The engagement ends once it's completed.                                                 | Review 50 AI-generated designs for $300       |
+| Engagement     | Secured, contract-based work — a defined project, ongoing capacity, or a single scoped deliverable. Its actual terms (time commitment, duration) are shown as [`contract-card.md` §3.2](contract-card.md#32-engagement-terms)'s Engagement terms, not as a further sub-type here. | Product Designer for 20 hrs/week for 3 months; or Review 50 AI-generated designs for $300 |
 | Talent Network | No immediate project. The professional joins a qualified pool so Verita can match or invite them when relevant work becomes available. | Join the Product Design expert network        |
 
-> ⚠️ **Decision needed:** These three types are a starting taxonomy, not final. Confirm naming, whether additional types are needed, and how each maps to application readiness, contracting, and Dashboard treatment before implementation.
+`Project-based` and `One-time` are retired as Opportunity types — they're now differences in engagement terms (time commitment/duration), not separate categories. `Talent Network` is unaffected: it marks a genuinely different state (no secured work yet), not a terms classification.
+
+> ⚠️ **Decision needed:** Confirm naming for the `Engagement` type above (a placeholder label, not yet product-reviewed), and how it maps to application readiness, contracting, and Dashboard treatment before implementation.
 
 ## 12. UX content requirements
 

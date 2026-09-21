@@ -23,6 +23,12 @@ type Story = StoryObj<typeof CalloutCard>;
 
 export const Default: Story = {};
 
+export const WithIcon: Story = {
+  args: {
+    showIcon: true,
+  },
+};
+
 export const RealisticCopy: Story = {
   args: {
     title: "Explore the API docs",

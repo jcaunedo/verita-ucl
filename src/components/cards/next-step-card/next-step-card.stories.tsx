@@ -24,6 +24,12 @@ type Story = StoryObj<typeof NextStepCard>;
 
 export const Default: Story = {};
 
+export const Dismissible: Story = {
+  args: {
+    dismissible: true,
+  },
+};
+
 export const RealisticCopy: Story = {
   args: {
     label: "Step 1",
@@ -44,6 +50,7 @@ export const AllVariants: Story = {
         description="Confirm your email address to unlock all features."
         buttonLabel="Verify now"
       />
+      <NextStepCard {...args} dismissible label="Recommended" />
     </div>
   ),
 };

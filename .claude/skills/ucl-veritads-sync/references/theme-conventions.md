@@ -4,7 +4,7 @@
 
 ## Structure (top to bottom)
 
-1. `@import url(...Google Sans Flex...)` — **must be the first statement** (also duplicated as the first line of `globals.css` for Storybook).
+1. `@import url(...Inter...)` — **must be the first statement** (also duplicated as the first line of `globals.css` for Storybook).
 2. `@custom-variant dark (&:is(.dark *));`
 3. `@theme { --font-sans; --font-display; }` — **non-inline** so the vars are emitted to `:root` and drive the base font.
 4. `@layer base { html { font-family: var(--font-sans); font-synthesis: none; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-optical-sizing: auto; } }`

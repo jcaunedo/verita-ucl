@@ -1,14 +1,14 @@
 /* ---------- Webfont ----------
-   Google Sans Flex, loaded from Google Fonts. Must be the first statement
+   Inter, loaded from Google Fonts. Must be the first statement
    (also duplicated as the first line of globals.css for Storybook, since
    globals.css imports Tailwind before this file). */
-@import url("https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
 /* =============================================================================
    Verita AI UCL — design tokens
-   Synced from Figma verita.ds (fileKey Q2IVVTNZQaWHDkUiWztX3C), 2026-09-05.
+   Synced from Figma verita.ds (fileKey Q2IVVTNZQaWHDkUiWztX3C), 2026-09-17.
    Two-tier system: primitives (raw scales) → semantic (role) tokens.
    Brand identity: rosewood (maroon) on a cream neutral-warm scale.
    ============================================================================= */
@@ -19,11 +19,11 @@
    --default-font-family, so every component inherits the font without needing
    an explicit `font-sans` class. (In @theme inline the vars are not emitted,
    so base/unclassed text would silently fall back to Tailwind's default sans.)
-   Figma's type scale uses a single family (Google Sans Flex) for every size —
+   Figma's type scale uses a single family (Inter) for every size —
    no separate headline/display family — so both tokens point at the same stack. */
 @theme {
-	--font-sans: "Google Sans Flex", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-	--font-display: "Google Sans Flex", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	--font-display: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* Apply the sans stack at the root so every component inherits it, plus
@@ -102,6 +102,7 @@
 	--color-overlay: var(--overlay);
 	--color-link: var(--link);
 	--color-hover: var(--hover);
+	--color-row-hover: var(--row-hover);
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);
@@ -517,12 +518,12 @@
 	/* ---------- Radius roles (resolved from Figma's semantic aliases) ---------- */
 	--radius-base-role: var(--radius-lg-val);
 	--radius-card-role: var(--radius-xl-val);
-	--radius-input-role: var(--radius-xl-val);
+	--radius-input-role: var(--radius-lg-val);
 	--radius-popover-role: var(--radius-xl-val);
 	--radius-modal-role: var(--radius-4xl-val);
 	--radius-chip-role: var(--radius-lg-val);
 	--radius-badge-role: var(--radius-md-val);
-	--radius-pill-role: var(--radius-full-val);
+	--radius-pill-role: var(--radius-xl-val);
 	--radius-select-item-role: var(--radius-lg-val);
 	--radius-select-content-role: var(--radius-xl-val);
 	--radius-button-xs-role: var(--radius-full-val);
@@ -536,7 +537,7 @@
 	--background-cream: var(--cream-50);
 	--foreground: var(--neutral-700);
 	--foreground-subtle: var(--neutral-400);
-	--foreground-soft: var(--neutral-200);
+	--foreground-soft: var(--neutral-300);
 	--foreground-muted: var(--neutral-500);
 
 	--card: var(--white);
@@ -546,8 +547,8 @@
 
 	/* Figma: next-steps-card/background, next-steps-card/border — a
 	   component-specific pair with no shared ramp, bound only by NextStepCard. */
-	--next-steps-card-background: #fdfbfc;
-	--next-steps-card-border: #c6b2b4;
+	--next-steps-card-background: #fafafa;
+	--next-steps-card-border: var(--neutral-400);
 
 	/* Figma: badge/warning/background — a component-specific override for
 	   Badge's warning tone, diverging from the shared --tone-warning-subtle
@@ -559,8 +560,8 @@
 
 	--border: var(--neutral-200);
 	--border-soft: var(--neutral-100);
-	--input: var(--neutral-200);
-	--input-ring: var(--neutral-300);
+	--input: var(--neutral-300);
+	--input-ring: var(--neutral-600);
 	--ring: var(--rosewood-800);
 
 	/* ---------- Semantic: brand (rosewood) ---------- */
@@ -599,6 +600,14 @@
 	   since-superseded external variable. */
 	--hover: color-mix(in srgb, var(--neutral-700) 4%, transparent);
 
+	/* Figma: state/hover = COMPOSE_COLOR(neutral-700, ~2%) — a distinct,
+	   lighter variable from color/hover above, used for whole-row hover
+	   backgrounds on list-style cards (e.g. application-card) rather than
+	   button surfaces. Figma's own hex export (#31373f05) carries an alpha
+	   channel that some tooling drops when reconstructing a fallback
+	   literal — the intended value is ~2%, not opaque neutral-700. */
+	--row-hover: color-mix(in srgb, var(--neutral-700) 2%, transparent);
+
 	/* ---------- Semantic: icon ---------- */
 	--icon-foreground: var(--neutral-700);
 	--icon-muted: var(--neutral-500);
@@ -630,9 +639,9 @@
 	   status roles above (--destructive/--warning/--success/--info) even
 	   where they share the same underlying primitive steps, since Figma
 	   models them as a separate variable group with its own name. */
-	--tone-brand: var(--rosewood-800);
-	--tone-brand-subtle: var(--rosewood-50);
-	--tone-brand-muted: var(--rosewood-100);
+	--tone-brand: var(--neutral-800);
+	--tone-brand-subtle: var(--neutral-50);
+	--tone-brand-muted: var(--neutral-100);
 
 	--tone-neutral: var(--neutral-700);
 	--tone-neutral-subtle: var(--neutral-50);
@@ -642,7 +651,7 @@
 	--tone-destructive-subtle: var(--destructive-50);
 	--tone-destructive-muted: var(--destructive-100);
 
-	--tone-warning: var(--warning-700);
+	--tone-warning: var(--warning-600);
 	--tone-warning-subtle: var(--warning-50);
 	--tone-warning-muted: var(--warning-200);
 

@@ -40,9 +40,14 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * combination (2026-09) — the fill alone now carries the tone, no
  * `border-tone-*-muted` outline.
  *
- * `size`: `sm` (22px, `text-xs`), `md` (26px, `text-sm`), `lg` (30px,
- * `text-sm`) — the type ramp comes from the file's `xs`/`sm` text styles,
- * so heights differ slightly from Untitled UI's own 22/24/28 scale.
+ * `size`: `sm` (22px, `text-xs`, `gap-0.5`/`px-1.5`), `md` (26px, `text-sm`,
+ * `gap-px`/`px-1.5`), `lg` (30px, `text-sm`, `gap-0.5`/`px-2`) — the type
+ * ramp comes from the file's `xs`/`sm` text styles, so heights differ
+ * slightly from Untitled UI's own 22/24/28 scale. Label weight is regular
+ * (400), not medium, per Figma's bound `font-weight/regular` text style.
+ * Gap/padding re-measured directly from Figma per size (2026-09-17) — each
+ * size's outer gap and horizontal padding are its own literal value, not a
+ * shared token, so don't normalize them to match each other.
  *
  * `dot`, `icon`, `rightIcon`, and `onClose` are boolean-driven slots rather
  * than `cva` variants, matching `Button`'s icon-prop pattern — passing
@@ -50,7 +55,7 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * icon-only badge, per Figma's "Show Label off + Show Icon L on" guidance.
  */
 const badgeVariants = cva(
-  "inline-flex shrink-0 items-center rounded-badge font-medium whitespace-nowrap",
+  "inline-flex shrink-0 items-center rounded-badge font-normal whitespace-nowrap",
   {
     variants: {
       tone: {
@@ -68,9 +73,9 @@ const badgeVariants = cva(
         orange: "bg-tone-orange-subtle text-tone-orange",
       },
       size: {
-        sm: "h-[22px] gap-1 px-2 py-0.5 text-xs",
-        md: "h-[26px] gap-1 px-2.5 py-0.5 text-sm",
-        lg: "h-[30px] gap-1.5 px-3 py-1 text-sm",
+        sm: "h-[22px] gap-0.5 px-1.5 py-0.5 text-xs",
+        md: "h-[26px] gap-px px-1.5 py-0.5 text-sm",
+        lg: "h-[30px] gap-0.5 px-2 py-1 text-sm",
       },
     },
     defaultVariants: { tone: "neutral", size: "sm" },
