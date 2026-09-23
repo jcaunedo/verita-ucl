@@ -52,12 +52,15 @@
 	[data-slot][role="checkbox"]:not([data-disabled]),
 	[data-slot][role="radio"]:not([data-disabled]),
 	[data-slot][role="switch"]:not([data-disabled]),
-	[data-slot][role="option"]:not([aria-disabled="true"]) {
+	[data-slot][role="option"]:not([aria-disabled="true"]),
+	[data-slot][role="menuitem"]:not([aria-disabled="true"]),
+	[data-slot][role="tab"]:not([aria-disabled="true"]) {
 		cursor: pointer;
 	}
 
 	button:disabled,
 	[role="button"][aria-disabled="true"],
+	[data-slot][role="tab"][aria-disabled="true"],
 	select:disabled {
 		cursor: not-allowed;
 	}
@@ -103,7 +106,7 @@
 	--color-overlay: var(--overlay);
 	--color-link: var(--link);
 	--color-hover: var(--hover);
-	--color-row-hover: var(--row-hover);
+	--color-hover-row: var(--hover-row);
 	--color-icon-hover: var(--icon-hover);
 	--color-item-active: var(--item-active);
 
@@ -139,6 +142,7 @@
 
 	/* ---------- Tone roles (color/tone/*, Badge's 12-tone axis) ---------- */
 	--color-tone-brand: var(--tone-brand);
+	--color-tone-brand-hover: var(--tone-brand-hover);
 	--color-tone-brand-subtle: var(--tone-brand-subtle);
 	--color-tone-brand-muted: var(--tone-brand-muted);
 	--color-tone-neutral: var(--tone-neutral);
@@ -381,7 +385,7 @@
 	--black: #000000;
 
 	/* ---------- Primitives: destructive ---------- */
-	--destructive-50: #fce9e9;
+	--destructive-50: #fceded;
 	--destructive-100: #f5cccc;
 	--destructive-200: #e69999;
 	--destructive-300: #d66666;
@@ -600,30 +604,28 @@
 
 	--overlay: rgb(0 0 0 / 0.4);
 	--link: #2b73da; /* Figma: state/link — a dedicated blue, not on the rosewood/brand scale */
-	/* Figma: color/hover = COMPOSE_COLOR(neutral-700, 4%) — a generic subtle
-	   hover-overlay tint, used across Button (secondary/secondary-destructive/
-	   tertiary) and similar no-solid-fill hover treatments. Supersedes an
-	   earlier hardcoded rgba(58,52,40,0.03) approximation sourced from a
-	   since-superseded external variable. */
+	/* Figma: state/hover = foreground/foreground (neutral-700) at 4% — the
+	   generic hover tint for controls and list items: Button (secondary),
+	   AccountTrigger, Select/Menu items. Not for card/table rows — those
+	   use --hover-row (see DESIGN.md "Row hover"). */
 	--hover: color-mix(in srgb, var(--neutral-700) 4%, transparent);
 
-	/* Figma: state/hover = COMPOSE_COLOR(neutral-700, ~2%) — a distinct,
-	   lighter variable from color/hover above, used for whole-row hover
-	   backgrounds on list-style cards (e.g. application-card) rather than
-	   button surfaces. Figma's own hex export (#31373f05) carries an alpha
-	   channel that some tooling drops when reconstructing a fallback
-	   literal — the intended value is ~2%, not opaque neutral-700. */
-	--row-hover: color-mix(in srgb, var(--neutral-700) 2%, transparent);
+	/* Figma: state/hover-row = foreground/foreground (neutral-700) at 2%
+	   (added 2026-09-23). The one hover fill for every card's hover state and
+	   for table rows — see DESIGN.md "Row hover". Lighter than --hover so a
+	   large surface doesn't read heavy. */
+	--hover-row: color-mix(in srgb, var(--neutral-700) 2%, transparent);
 
-	/* Figma: icon-only Ghost/Neutral button hover fill (2026-09-23) — a raw,
-	   unbound rgba(49,55,63,0.06), i.e. neutral-700 at 6%: a stronger
-	   overlay than --hover (4%) so a small icon-only target reads as
-	   hovered. Used by Button's `tertiary` color when icon-only. */
-	--icon-hover: color-mix(in srgb, var(--neutral-700) 6%, transparent);
+	/* Figma: icon-only Ghost/Neutral button hover fill (re-synced
+	   2026-09-23, `button` Type=Icon State=Hover, every size xs–xl) — a raw,
+	   unbound #31373f at 8%, i.e. neutral-700 at 8%: a stronger overlay than
+	   --hover (4%) so a small icon-only target reads as hovered. Used by
+	   Button's `tertiary` color when icon-only. */
+	--icon-hover: color-mix(in srgb, var(--neutral-700) 8%, transparent);
 
 	/* Figma: state/active (#fcf8fa) — the selected-item fill in list-style
 	   pickers (Select Item's Selected state). A distinct variable from
-	   state/hover (--row-hover); no existing ramp step matches it. */
+	   state/hover (--hover); no existing ramp step matches it. */
 	--item-active: #fcf8fa;
 
 	/* ---------- Semantic: icon ---------- */
@@ -658,6 +660,10 @@
 	   where they share the same underlying primitive steps, since Figma
 	   models them as a separate variable group with its own name. */
 	--tone-brand: var(--neutral-800);
+	/* Figma: `button` Solid/Brand State=Hover — `color/tone/brand/brand` with a
+	   raw white @ 20% fill stacked on top (every size, Text + Icon), i.e. the
+	   brand fill lightened 20% toward white. Not a Figma variable itself. */
+	--tone-brand-hover: color-mix(in srgb, var(--tone-brand) 80%, white);
 	--tone-brand-subtle: var(--neutral-50);
 	--tone-brand-muted: var(--neutral-100);
 

@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { partnerLogos } from "@/assets/logos";
+import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
+
+import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { ApplicationCard } from "./application-card";
 
 const meta: Meta<typeof ApplicationCard> = {
@@ -14,8 +17,8 @@ const meta: Meta<typeof ApplicationCard> = {
     duration: "3 months",
     company: "verita",
     partnerName: "Verita partner",
-    statusLabel: "In review",
-    statusTone: "success",
+    statusLabel: "Applied",
+    statusTone: "info",
   },
   decorators: [
     (Story) => (
@@ -40,14 +43,6 @@ export const PartnerLogo: Story = {
   },
 };
 
-export const NotSubmitted: Story = {
-  args: {
-    statusLabel: "Not submitted",
-    statusTone: "neutral",
-    supportingText: "2 of 4 steps completed",
-  },
-};
-
 export const Applied: Story = {
   args: {
     statusLabel: "Applied",
@@ -56,27 +51,38 @@ export const Applied: Story = {
   },
 };
 
+export const ActionRequired: Story = {
+  args: {
+    statusLabel: "Action required",
+    statusTone: "warning",
+    supportingText: "Complete your assessment (2 of 4 steps completed)",
+  },
+};
+
+/** `Action required` with a deadline — the line names the action and its date (`applications-card.md` §2.4.1 copy rules). */
+export const ActionRequiredWithDeadline: Story = {
+  args: {
+    statusLabel: "Action required",
+    statusTone: "warning",
+    supportingText: "Complete your assessment by Sep 28",
+  },
+};
+
+/** A confirmed interview — the badge says "scheduled", so the line is just the date and time. */
+export const InterviewScheduled: Story = {
+  args: {
+    statusLabel: "Interview scheduled",
+    statusTone: "success",
+    supportingText: "Sep 30 at 2 PM EDT",
+  },
+};
+
+/** Interview completed, awaiting an outcome — the only place `In review` is used (`applications-card.md` §2.4.1). */
 export const InReview: Story = {
   args: {
     statusLabel: "In review",
     statusTone: "success",
-    supportingText: undefined,
-  },
-};
-
-export const InReviewActionRequired: Story = {
-  args: {
-    statusLabel: "In review · Action required",
-    statusTone: "warning",
-    supportingText: "Complete your assessment · 2 of 4 steps completed",
-  },
-};
-
-export const Interview: Story = {
-  args: {
-    statusLabel: "Interview",
-    statusTone: "success",
-    supportingText: "Interview scheduled for Sep 24 at 10 AM EDT",
+    supportingText: "Awaiting partner review after your Sep 18 interview",
   },
 };
 
@@ -84,7 +90,7 @@ export const InterviewActionRequired: Story = {
   args: {
     statusLabel: "Interview · Action required",
     statusTone: "warning",
-    supportingText: "Schedule your interview by Sep 22",
+    supportingText: "Schedule your interview by Sep 30",
   },
 };
 
@@ -132,10 +138,18 @@ export const NoDuration: Story = {
   },
 };
 
+/** Hover the row, then open the `···` trigger: View Details, Share, and a destructive Withdraw (PRD §4.1). */
 export const WithActionsMenu: Story = {
   args: {
     actionsMenuLabel: "More actions",
-    onActionsPress: () => {},
+    actionsMenu: (
+      <>
+        <MenuItem icon={AlignLeft}>View Details</MenuItem>
+        <MenuItem icon={Share06}>Share</MenuItem>
+        <MenuSeparator />
+        <MenuItem icon={XCircle} tone="destructive">Withdraw</MenuItem>
+      </>
+    ),
   },
 };
 
@@ -149,29 +163,8 @@ export const AllVariants: Story = {
         duration="3 months"
         company="verita"
         partnerName="Verita partner"
-        statusLabel="Not submitted"
-        statusTone="neutral"
-        supportingText="2 of 4 steps completed"
-      />
-      <ApplicationCard
-        title="Strategic Finance Expert"
-        compensation="$56/hour"
-        engagementTerms="Up to 30 hrs/week"
-        duration="3 months"
-        company="verita"
-        partnerName="Verita partner"
         statusLabel="Applied"
         statusTone="info"
-      />
-      <ApplicationCard
-        title="Strategic Finance Expert"
-        compensation="$56/hour"
-        engagementTerms="Up to 30 hrs/week"
-        duration="3 months"
-        company="verita"
-        partnerName="Verita partner"
-        statusLabel="In review"
-        statusTone="success"
         actionsMenuLabel="More actions"
         onActionsPress={() => {}}
       />
@@ -182,9 +175,9 @@ export const AllVariants: Story = {
         duration="3 months"
         company="verita"
         partnerName="Verita partner"
-        statusLabel="In review · Action required"
+        statusLabel="Action required"
         statusTone="warning"
-        supportingText="Complete your assessment · 2 of 4 steps completed"
+        supportingText="Complete your assessment (2 of 4 steps completed)"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
@@ -193,9 +186,20 @@ export const AllVariants: Story = {
         duration="3 months"
         company="verita"
         partnerName="Verita partner"
-        statusLabel="Interview"
+        statusLabel="Interview scheduled"
         statusTone="success"
-        supportingText="Interview scheduled for Sep 24 at 10 AM EDT"
+        supportingText="Sep 30 at 2 PM EDT"
+      />
+      <ApplicationCard
+        title="Strategic Finance Expert"
+        compensation="$56/hour"
+        engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
+        company="verita"
+        partnerName="Verita partner"
+        statusLabel="In review"
+        statusTone="success"
+        supportingText="Awaiting partner review after your Sep 18 interview"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
@@ -206,7 +210,7 @@ export const AllVariants: Story = {
         partnerName="Verita partner"
         statusLabel="Interview · Action required"
         statusTone="warning"
-        supportingText="Schedule your interview by Sep 22"
+        supportingText="Schedule your interview by Sep 30"
       />
       <ApplicationCard
         title="Strategic Finance Expert"

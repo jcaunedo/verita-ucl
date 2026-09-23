@@ -60,12 +60,15 @@ already covers any real interactive element for free.
 	[data-slot][role="checkbox"]:not([data-disabled]),
 	[data-slot][role="radio"]:not([data-disabled]),
 	[data-slot][role="switch"]:not([data-disabled]),
-	[data-slot][role="option"]:not([aria-disabled="true"]) {
+	[data-slot][role="option"]:not([aria-disabled="true"]),
+	[data-slot][role="menuitem"]:not([aria-disabled="true"]),
+	[data-slot][role="tab"]:not([aria-disabled="true"]) {
 		cursor: pointer;
 	}
 
 	button:disabled,
 	[role="button"][aria-disabled="true"],
+	[data-slot][role="tab"][aria-disabled="true"],
 	select:disabled {
 		cursor: not-allowed;
 	}
@@ -84,7 +87,7 @@ per-component guesswork and keeps the affordance consistent app-wide.
 **How to apply:**
 
 - **New components using a real interactive element or role** (`<button>`,
-  `<a href>`, `<select>`, `role="button"`/`"checkbox"`/`"radio"`/`"switch"`)
+  `<a href>`, `<select>`, `role="button"`/`"checkbox"`/`"radio"`/`"switch"`/`"tab"`)
   get the pointer cursor automatically — do not add a redundant
   `cursor-pointer` class.
 - **Custom non-native interactive elements** (a `<div>` acting as a button,
@@ -95,5 +98,55 @@ per-component guesswork and keeps the affordance consistent app-wide.
 - **If a new interactive role/pattern is added to the library** (e.g. a new
   primitive with its own trigger role) and it doesn't match any selector
   above, extend the shared selector list in `theme.css` rather than
-  patching `cursor-pointer` onto that one new component.
+  patching `cursor-pointer` onto that one new component. Update the copy of
+  the list in this entry in the same change.
+- **Verify it on every new or changed interactive component and layout:**
+  hover each clickable element in Storybook and confirm the pointer cursor
+  (and `not-allowed` when disabled) before calling the work done. A missing
+  pointer means the element's role isn't in the selector list — fix the
+  list, not the component.
+- **Deliberate exceptions** keep their own cursor and are documented where
+  they're set: `Sidebar`'s collapse rail uses `cursor-w-resize`/
+  `cursor-e-resize`, and `Button`'s disabled state uses
+  `cursor-not-allowed` alongside `pointer-events-none`.
 
+✅ **Fixed (2026-09-23):** `role="tab"` was missing from the list, so
+react-aria tabs (`MetricTab`, `TabButton`) showed the default cursor. Added
+`[data-slot][role="tab"]` for the pointer, and its `aria-disabled` form for
+`not-allowed`.
+
+
+---
+
+## Row hover — every card and table row uses `hover-row` (`src/styles/theme.css`)
+
+**Rule:** The hover fill for a card or a table row is always
+`--hover-row` (`bg-hover-row`), Figma's `state/hover-row` — `neutral-700`
+at 2%. It is the one row-hover token: don't give a card or row its own
+tint, and don't reach for `--hover`.
+
+| Token          | Figma              | Value            | Use for                                                      |
+| -------------- | ------------------ | ---------------- | ------------------------------------------------------------ |
+| `--hover-row`  | `state/hover-row`  | neutral-700 @ 2% | Card hover states, table rows (when tables land)             |
+| `--hover`      | `state/hover`      | neutral-700 @ 4% | Controls and list items: Button, AccountTrigger, Select/Menu items |
+| `--icon-hover` | raw fill on `button` Type=Icon | neutral-700 @ 8% | Ghost/Neutral icon-only Button                    |
+
+**Why:** Figma deliberately splits row hover (large surfaces, lighter) from
+control hover (small targets, stronger). The two had previously collapsed
+into one code token (`--row-hover`, bound to `state/hover`) and drifted
+with it — a 2% → 4% change meant for controls silently darkened every card.
+Keeping one code token per Figma variable means a change to one can't leak
+into the other.
+
+**How to apply:**
+
+- **New card or table row:** `hover:bg-hover-row` (or `group-hover:` /
+  `has-[…]:` when the row stays highlighted, e.g. while its menu is open —
+  see `ApplicationCard`). Don't use `bg-hover`, `bg-neutral-*`, or an
+  arbitrary `color-mix`.
+- **Exception — Next Step card:** its hover is a different treatment (the
+  dashed tile turns into a solid white card with a border), not a tint, so
+  it doesn't use `hover-row`.
+- **Adding a hover-ish token:** add it as its own variable mapped to its
+  own Figma variable (`:root` + `@theme inline`), even when its value
+  currently matches an existing one.

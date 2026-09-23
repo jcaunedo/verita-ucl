@@ -71,8 +71,8 @@ const FOOTER_ITEMS = [
 /**
  * The app-shell sidebar — logo, collapse toggle, main nav, footer nav, and
  * account trigger. Figma: `Sidebar` (Expanded / Collapsed). `activeNavKey`
- * tracks which of the 5 main nav items is current (defaults to "home",
- * switches on click); the 3 footer items only support hover/press, no
+ * tracks which of the 5 main nav items is current (starts at
+ * `defaultActiveNavKey`, "home" by default, and switches on click); the 3 footer items only support hover/press, no
  * current-page state, per spec.
  *
  * Behavior/motion adapted from bethere-ucl's `Sidebar` (same underlying
@@ -118,16 +118,19 @@ interface SidebarProps {
    * default `href`.
    */
   navHrefOverrides?: Partial<Record<NavKey, string>>;
+  /** Main nav item that starts as current, e.g. `"engagements"` on the Engagements page. Defaults to `"home"`. */
+  defaultActiveNavKey?: NavKey;
 }
 
 function Sidebar({
   collapsed: collapsedProp,
   onCollapsedChange,
   navHrefOverrides,
+  defaultActiveNavKey = "home",
 }: SidebarProps = {}) {
   const [uncontrolledCollapsed, setUncontrolledCollapsed] = React.useState(false);
   const collapsed = collapsedProp ?? uncontrolledCollapsed;
-  const [activeNavKey, setActiveNavKey] = React.useState<NavKey>("home");
+  const [activeNavKey, setActiveNavKey] = React.useState<NavKey>(defaultActiveNavKey);
   const [isRailHovered, setIsRailHovered] = React.useState(false);
   const { resolve } = useMotionPreference();
 

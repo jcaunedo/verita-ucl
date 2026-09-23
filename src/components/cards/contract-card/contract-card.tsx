@@ -55,7 +55,7 @@ interface ContractCardProgress {
  * onto one row (Figma pairs `partner-name` with the building icon on its
  * own row, and `engagementTerms`/`duration` together on the calendar row).
  * `Property 1=Hover` in Figma is a `:hover` pseudostate preview (fill
- * `card/card` → `state/hover`, i.e. `bg-row-hover`), so it's expressed as a
+ * `card/card` → `state/hover-row`, i.e. `bg-hover-row`), so it's expressed as a
  * `hover:` utility rather than a `cva` variant — same token and approach as
  * `ApplicationCard`'s Default/Hover set.
  *
@@ -151,8 +151,8 @@ function ContractCard({
       data-slot="contract-card"
       className={cn(
         "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-colors duration-150 ease-out",
-        // Figma `Property 1=Hover`: fill → `state/hover` (`bg-row-hover`, same token as `ApplicationCard`'s row hover); border and `card-2` shadow unchanged.
-        "hover:bg-row-hover",
+        // Figma `Property 1=Hover`: fill → `state/hover-row` (`bg-hover-row`, the shared card/table row hover — DESIGN.md "Row hover"); border and `card-2` shadow unchanged.
+        "hover:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -252,10 +252,6 @@ function ContractCard({
             <Button
               size="sm"
               {...primaryActionProps}
-              className={cn(
-                "bg-tone-brand text-white hover:bg-[color-mix(in_srgb,var(--tone-brand)_90%,black)]",
-                primaryActionProps?.className,
-              )}
             >
               {primaryActionLabel}
             </Button>

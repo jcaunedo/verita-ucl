@@ -126,10 +126,38 @@ export {
 /* -------------------------------------------------------------------------- */
 
 export { Sidebar, type SidebarProps } from "./components/navigation/sidebar";
+export {
+  MetricTabs,
+  MetricTabList,
+  MetricTab,
+  MetricTabPanel,
+  metricTabVariants,
+  type MetricTabProps,
+  type MetricTabListProps,
+} from "./components/navigation/metric-tab";
+export {
+  TabButtons,
+  TabButtonList,
+  TabButton,
+  TabButtonPanel,
+  tabButtonVariants,
+  type TabButtonProps,
+  type TabButtonListProps,
+} from "./components/navigation/tab-button";
 
 /* -------------------------------------------------------------------------- */
 /* Overlays                                                                   */
 /* -------------------------------------------------------------------------- */
+
+export {
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  MenuSeparator,
+  menuItemVariants,
+  type MenuContentProps,
+  type MenuItemProps,
+} from "./components/overlays/menu";
 
 export {
   SidebarTooltip,

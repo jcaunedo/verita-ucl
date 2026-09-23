@@ -48,6 +48,15 @@ export const IconOnly: Story = {
   args: { color: "primary", children: undefined, iconLeading: Home01 },
 };
 
+export const TertiaryIconOnly: Story = {
+  args: {
+    color: "tertiary",
+    children: undefined,
+    iconLeading: Home01,
+    "aria-label": "Home",
+  },
+};
+
 export const AsLink: Story = {
   args: { color: "primary", href: "#" },
 };
@@ -89,6 +98,20 @@ export const AllVariants: Story = {
             </div>
           </div>
         ))}
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-muted-foreground">tertiary (icon only)</p>
+          <div className="flex flex-wrap items-center gap-3">
+            {sizes.map((size) => (
+              <Button
+                key={size}
+                color="tertiary"
+                size={size}
+                iconLeading={Home01}
+                aria-label="Home"
+              />
+            ))}
+          </div>
+        </div>
       </div>
     );
   },

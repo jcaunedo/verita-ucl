@@ -66,37 +66,58 @@ function SelectContent<T extends object>({
   renderEmptyState,
   ...props
 }: SelectContentProps<T>) {
-  const { prefersReducedMotion } = useMotionPreference();
-
   return (
     <AriaPopover data-slot="select-content" {...props}>
-      {({ placement }) => {
-        const side = placement === "top" ? "top" : "bottom";
-        return (
-          <motion.div
-            custom={side}
-            variants={popoverVariants}
-            initial={prefersReducedMotion ? { opacity: 0 } : "initial"}
-            animate="animate"
-            style={{ transformOrigin: side === "top" ? "bottom" : "top" }}
-            className={cn(
-              // `p-[7px]` = Figma's 8px padding minus the 1px border (Figma strokes inside the frame), so items sit 8px in and are 200px wide.
-              "w-[216px] overflow-hidden rounded-select-content border border-border bg-background p-[7px] shadow-popover",
-              className,
-            )}
+      {({ placement }) => (
+        <PopoverSurface placement={placement} className={className}>
+          <AriaListBox
+            data-slot="select-listbox"
+            items={items}
+            renderEmptyState={renderEmptyState}
+            className="flex max-h-80 flex-col gap-0.5 overflow-y-auto outline-none"
           >
-            <AriaListBox
-              data-slot="select-listbox"
-              items={items}
-              renderEmptyState={renderEmptyState}
-              className="flex max-h-80 flex-col gap-0.5 overflow-y-auto outline-none"
-            >
-              {children}
-            </AriaListBox>
-          </motion.div>
-        );
-      }}
+            {children}
+          </AriaListBox>
+        </PopoverSurface>
+      )}
     </AriaPopover>
+  );
+}
+
+/**
+ * The animated panel surface shared by `SelectContent` and `MenuContent`
+ * (Figma: `Select Content (Popper)`). Render inside a React Aria `Popover`'s
+ * render function, passing its resolved `placement` so the entrance moves
+ * away from the trigger. Not exported from the package — it's the one place
+ * the panel's look and motion are defined for every dropdown-style overlay.
+ */
+function PopoverSurface({
+  placement,
+  className,
+  children,
+}: {
+  placement: string | null;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const { prefersReducedMotion } = useMotionPreference();
+  const side = placement === "top" ? "top" : "bottom";
+
+  return (
+    <motion.div
+      custom={side}
+      variants={popoverVariants}
+      initial={prefersReducedMotion ? { opacity: 0 } : "initial"}
+      animate="animate"
+      style={{ transformOrigin: side === "top" ? "bottom" : "top" }}
+      className={cn(
+        // `p-[7px]` = Figma's 8px padding minus the 1px border (Figma strokes inside the frame), so items sit 8px in and are 200px wide.
+        "w-[216px] overflow-hidden rounded-select-content border border-border bg-background p-[7px] shadow-popover",
+        className,
+      )}
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -108,9 +129,9 @@ function SelectContent<T extends object>({
 const selectItemVariants = cva(
   [
     "group flex w-full items-center gap-3 rounded-select-item px-3 py-2 font-medium text-foreground outline-none",
-    // Figma `State`: Hover → `state/hover` (`bg-row-hover`); keyboard focus reads the same as hover.
+    // Figma `State`: Hover → `state/hover` (`bg-hover`); keyboard focus reads the same as hover.
     // Selected → `state/active` (`bg-item-active`) + a trailing `tone-brand` check; it wins over hover.
-    "not-data-[selected]:data-[hovered]:bg-row-hover not-data-[selected]:data-[focused]:bg-row-hover",
+    "not-data-[selected]:data-[hovered]:bg-hover not-data-[selected]:data-[focused]:bg-hover",
     "data-[selected]:bg-item-active",
     "data-[focus-visible]:outline-2 data-[focus-visible]:-outline-offset-2 data-[focus-visible]:outline-ring",
   ].join(" "),
@@ -190,6 +211,7 @@ function SelectSeparator({ className, ...props }: Omit<AriaSeparatorProps, "clas
 }
 
 export {
+  PopoverSurface,
   SelectContent,
   SelectItem,
   SelectSeparator,

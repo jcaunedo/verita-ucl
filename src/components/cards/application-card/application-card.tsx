@@ -2,6 +2,7 @@ import * as React from "react";
 import { DotsHorizontal } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/buttons/button";
 import { clickableRowProps } from "@/lib/clickable-row";
 import {
   AvatarCompanies,
@@ -9,6 +10,7 @@ import {
 } from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import { Typography } from "@/components/typography";
+import { MenuContent, MenuTrigger } from "@/components/overlays/menu";
 
 /**
  * A single application row — identity, engagement terms, status, and an
@@ -24,12 +26,9 @@ import { Typography } from "@/components/typography";
  * pseudostate preview, not a prop a consumer sets, so it's expressed as
  * Tailwind `hover:`/`group-hover:` utilities rather than a `cva` variant.
  *
- * The row-level hover background binds to Figma's `state/hover` variable
- * (`#31373f05`, ~2% neutral-700) — a distinct, lighter token from the
- * existing `--hover` (Figma's `color/hover`, ~4%, used by `Button`). Added as
- * `--row-hover`/`bg-row-hover` in `theme.css` rather than reusing `--hover`,
- * since the two are separate Figma variables with different values, not the
- * same token reused in two places.
+ * The row-level hover background binds to Figma's `state/hover-row`
+ * (`bg-hover-row`) — the shared card/table row hover, see DESIGN.md
+ * "Row hover".
  *
  * `onActionsPress` only renders the hover-revealed `···` overflow trigger
  * (Figma's `button` instance in the Hover variant) — the expanded menu itself
@@ -71,7 +70,7 @@ interface ApplicationCardProps
   duration?: string;
   /** Partner name or approved fallback (Figma's `partner-name`). Rendered as a small eyebrow line above `title`. */
   partnerName: string;
-  /** Application status label (Figma's `badge` instance, e.g. "In review"). Always shown — required, never omitted or approximated per the PRD §2.3. */
+  /** Application status label (Figma's `badge` instance, e.g. "Applied"). Always shown — required, never omitted or approximated per the PRD §2.3. */
   statusLabel: string;
   /** Tone for the status badge — see `product-specs/applications-card.md` §3's proposed status→tone table. */
   statusTone?: BadgeProps["tone"];
@@ -81,6 +80,12 @@ interface ApplicationCardProps
   actionsMenuLabel?: string;
   /** Called when the actions-menu trigger is activated. Opens the consumer-owned menu (View Details/Share/Withdraw) — this component does not render the menu itself. Omit to hide the trigger entirely. */
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  /**
+   * The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View Details, Share, Withdraw — PRD §4.1).
+   * When set, the hover-revealed `···` becomes a real menu trigger that opens it (bottom-end aligned) —
+   * takes precedence over `onActionsPress`. While open, the trigger stays revealed and the row keeps its hover tint.
+   */
+  actionsMenu?: React.ReactNode;
   /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the application detail per PRD §4). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
@@ -101,20 +106,24 @@ function ApplicationCard({
   supportingText,
   actionsMenuLabel,
   onActionsPress,
+  actionsMenu,
   rowProps,
   className,
   ...props
 }: ApplicationCardProps) {
-  const termsParts = [compensation, engagementTerms, duration].filter(
-    Boolean,
-  );
+  // Figma: compensation/engagement-terms bind `foreground/foreground`; duration binds `foreground/muted`.
+  const termsParts = [
+    { value: compensation, muted: false },
+    { value: engagementTerms, muted: false },
+    { value: duration, muted: true },
+  ].filter((part) => part.value);
 
   return (
     <div
       data-slot="application-card"
       className={cn(
         "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
-        "hover:bg-row-hover",
+        "hover:bg-hover-row has-[[aria-expanded=true]]:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -150,7 +159,13 @@ function ApplicationCard({
                         ·
                       </span>
                     )}
-                    <span className="text-foreground">{part}</span>
+                    <span
+                      className={
+                        part.muted ? "text-foreground-muted" : "text-foreground"
+                      }
+                    >
+                      {part.value}
+                    </span>
                   </React.Fragment>
                 ))}
               </Typography>
@@ -165,24 +180,35 @@ function ApplicationCard({
       </div>
       <div className="flex shrink-0 items-center">
         <Badge tone={statusTone} label={statusLabel} size="md" />
-        {onActionsPress && (
+        {(actionsMenu || onActionsPress) && (
           // Hover/focus-within reveal: the slot grows 0 → 48px (Figma's 16px gap + 32px button), pushing the badge left, while the button dissolves in.
           // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out` = cubic-bezier(0.4,0,0.2,1)); exit is shorter per CLAUDE.md "Dismiss".
           // Kept mounted (clipped, not unmounted) so keyboard users can still tab to it — focus expands the slot via `group-focus-within`.
+          // The reveal lives on the slot, not the Button, so the Button keeps its own look + hover transition untouched. The 4px `py-1 pr-1`
+          // (cancelled by `-my-1 -mr-1`, hence 52px = 48 + 4) keeps Button's outset focus ring inside the `overflow-hidden` clip.
           <div
             data-slot="application-card-actions"
-            className="flex w-0 justify-end overflow-hidden transition-[width] duration-150 ease-in-out group-focus-within:w-12 group-focus-within:duration-300 group-hover:w-12 group-hover:duration-300 motion-reduce:transition-none"
+            className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-within:w-[52px] group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
           >
-            <button
-              type="button"
-              aria-label={actionsMenuLabel}
-              onClick={onActionsPress}
-              className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-muted opacity-0 transition-opacity duration-150 ease-in-out group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:opacity-100 group-hover:duration-300 hover:text-icon-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-            >
-              <span className="flex items-center px-[3px]">
-                <DotsHorizontal className="size-4" />
-              </span>
-            </button>
+            {actionsMenu ? (
+              <MenuTrigger>
+                <Button
+                  color="tertiary"
+                  size="xs"
+                  iconLeading={DotsHorizontal}
+                  aria-label={actionsMenuLabel}
+                />
+                <MenuContent placement="bottom end">{actionsMenu}</MenuContent>
+              </MenuTrigger>
+            ) : (
+              <Button
+                color="tertiary"
+                size="xs"
+                iconLeading={DotsHorizontal}
+                aria-label={actionsMenuLabel}
+                onClick={(event) => onActionsPress?.(event as React.MouseEvent<HTMLButtonElement>)}
+              />
+            )}
           </div>
         )}
       </div>

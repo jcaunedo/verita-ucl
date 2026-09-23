@@ -1,5 +1,6 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { partnerLogos } from "@/assets/logos";
@@ -14,6 +15,7 @@ import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard } from "@/components/cards/application-card";
 import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
+import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 
 /**
  * `dismissible: true` only for `Recommended` tasks — per
@@ -108,9 +110,9 @@ const ACTIVE_APPLICATIONS = [
     compensation: "$95–115k/yr",
     engagementTerms: "32 hrs/week",
     duration: "1 year",
-    statusLabel: "Not submitted",
-    statusTone: "neutral",
-    supportingText: "2 of 4 steps completed",
+    statusLabel: "Action required",
+    statusTone: "warning",
+    supportingText: "Complete your assessment (2 of 4 steps completed)",
   },
   {
     key: "clinical-data-coordinator",
@@ -120,9 +122,9 @@ const ACTIVE_APPLICATIONS = [
     compensation: "$48/hr",
     engagementTerms: "20 hrs/week",
     duration: "1 month",
-    statusLabel: "In review · Action required",
+    statusLabel: "Action required",
     statusTone: "warning",
-    supportingText: "Complete your assessment (2 of 4 steps completed)",
+    supportingText: "Verify your work authorization",
   },
   {
     key: "movement-physical-activity-expert",
@@ -132,8 +134,8 @@ const ACTIVE_APPLICATIONS = [
     compensation: "$50/hr",
     engagementTerms: "40 hours per week",
     duration: "8 weeks",
-    statusLabel: "In review",
-    statusTone: "success",
+    statusLabel: "Applied",
+    statusTone: "info",
   },
   {
     key: "search-quality-analyst",
@@ -387,7 +389,14 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
                       key={key}
                       {...application}
                       actionsMenuLabel={`More actions for ${application.title}`}
-                      onActionsPress={() => {}}
+                      actionsMenu={
+                      <>
+                        <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
+                        <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
+                        <MenuSeparator />
+                        <MenuItem icon={XCircle} tone="destructive" onAction={() => {}}>Withdraw</MenuItem>
+                      </>
+                    }
                       rowProps={{ onClick: () => {} }}
                       className="border-b border-border last:border-b-0"
                     />

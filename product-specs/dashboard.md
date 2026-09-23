@@ -1,7 +1,7 @@
 <!--
 Created: Aug 28, 2026
 Created by: Julio Caunedo
-Last updated: Sep 18, 2026
+Last updated: Sep 23, 2026
 Scope: Verita AI professional Home/Dashboard after sign-in — onboarding, matching, task orchestration, and the Home-page previews of Applications/Offers/Contracts. Full Engagements-page detail (Applications, Offers, Contracts, Assessments, Talent Network, Training, Payments) lives in product-specs/engagements.md.
 Purpose: Define the product, UX, information architecture, state, and data requirements needed to design the Dashboard.
 -->
@@ -645,7 +645,7 @@ The UX/UI design phase should produce:
 3. Low-fidelity layouts for each dominant lifecycle state.
 4. Responsive desktop and mobile layouts.
 5. Component states for Opportunity alert, task, match, application, offer, engagement, training, payment, notification, and empty/error states.
-6. A match/readiness state matrix including eligible, blocked, processing, closed, saved, dismissed, application started, and applied.
+6. A match/readiness state matrix including eligible, blocked, processing, closed, saved, dismissed, and applied.
 7. Interaction flows for completing a contextual blocker and returning to the opportunity.
 8. Content examples for every requirement level and next-action owner.
 9. Accessibility annotations and keyboard order.

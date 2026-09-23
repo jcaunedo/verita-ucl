@@ -1,4 +1,5 @@
 export {
+  PopoverSurface,
   SelectContent,
   SelectItem,
   SelectSeparator,

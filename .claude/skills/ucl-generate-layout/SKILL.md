@@ -138,6 +138,7 @@ From `verita-ai/`:
 
 - `npm run lint` (`tsc --noEmit`) — must pass.
 - `npm run build` — must succeed (layouts aren't exported, but must not break the build).
+- Pointer cursor: every clickable element shows `cursor: pointer` on hover (`not-allowed` when disabled) via the global rule in `theme.css`, never a per-component `cursor-pointer` class. If one doesn't, add its role to the selector list per DESIGN.md "Global `cursor: pointer` on every clickable element".
 
 ## Stop-and-ask checklist (do not assume)
 

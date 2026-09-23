@@ -31,9 +31,10 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * - Solid/Brand → primary, Solid/Destructive → primary-destructive.
  *   `primary` re-synced 2026-09-21 — dropped the rosewood scale entirely for
  *   the neutral/brand grayscale used across the rest of the library
- *   (`tone-brand`, `#222a34`/neutral-800): base fill, a 20% black darken on
- *   hover (Figma: a flat `color-mix`-style overlay, back to matching Solid/
- *   Destructive's own hover treatment), and a `neutral-300`-ish disabled fill
+ *   (`tone-brand`, `#222a34`/neutral-800): base fill, a 20% white overlay on
+ *   hover (`--tone-brand-hover` — Figma stacks white @ 20% over the brand
+ *   fill, re-synced 2026-09-23; previously a 20% black darken), and a
+ *   `neutral-300`-ish disabled fill
  *   (Figma's literal `#caccce` is a near-exact but not identical match for
  *   `--neutral-300`/`#c6cbd2` — treated as the same token, not a new one).
  *   Text stays `primary-foreground` (white) across Default/Hover/Disabled,
@@ -54,8 +55,8 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  *   `Style=Flat` is retired (2026-09-06), Ghost/Neutral is the only one left
  *   and it *is* Untitled UI's `tertiary`, so the name was corrected to match.
  *   Hover fill differs by type: text buttons hover to `neutral-100`;
- *   icon-only buttons (`data-icon-only`) hover to `--icon-hover`, a 6%
- *   `neutral-700` overlay (Figma 2026-09-23, every size xs–xl).
+ *   icon-only buttons (`data-icon-only`) hover to `--icon-hover`, an 8%
+ *   `neutral-700` overlay (Figma re-sync 2026-09-23, every size xs–xl).
  * - Ghost/Destructive → tertiary-destructive (added 2026-09-06, Text only —
  *   no Icon-only variant exists in Figma for this tone, same as
  *   secondary-destructive). Same shape as `tertiary` (no bg/border idle,
@@ -90,7 +91,8 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  */
 const buttonVariants = cva(
   [
-    "group relative inline-flex items-center justify-center gap-1 rounded-full font-medium whitespace-nowrap outline-none transition duration-100 ease-linear",
+    // Hover feedback: `motionDuration.fast` (160ms) on `standardTransition`'s curve — Tailwind's `ease-in-out` is the same cubic-bezier(0.4,0,0.2,1). CSS rather than Motion: it's a pseudo-class color change, and nothing else animates these properties.
+    "group relative inline-flex items-center justify-center gap-1 rounded-full font-medium whitespace-nowrap outline-none transition duration-160 ease-in-out",
     "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
     "disabled:pointer-events-none disabled:cursor-not-allowed",
     "*:data-[icon]:pointer-events-none *:data-[icon]:shrink-0 *:data-[icon]:transition-inherit-all",
@@ -113,7 +115,7 @@ const buttonVariants = cva(
       },
       color: {
         primary:
-          "bg-tone-brand text-primary-foreground hover:bg-[color-mix(in_srgb,var(--tone-brand)_80%,black)] disabled:bg-neutral-300",
+          "bg-tone-brand text-primary-foreground hover:bg-tone-brand-hover disabled:bg-neutral-300",
         "primary-destructive":
           "bg-destructive-400 text-white hover:bg-[color-mix(in_srgb,var(--destructive-400)_90%,black)] disabled:bg-fill-muted",
         secondary:
@@ -121,7 +123,7 @@ const buttonVariants = cva(
         "secondary-destructive":
           "border border-destructive-200 bg-white text-destructive-400 shadow-xs hover:bg-destructive-subtle disabled:border-destructive-subtle disabled:bg-transparent disabled:text-destructive-200",
         tertiary:
-          // Icon-only hover is its own overlay: Figma `Type=Icon` Ghost/Hover = neutral-700 @ 6% (`--icon-hover`); `Type=Text` = `neutral-100`.
+          // Icon-only hover is its own overlay: Figma `Type=Icon` Ghost/Hover = neutral-700 @ 8% (`--icon-hover`); `Type=Text` = `neutral-100`.
           "bg-transparent text-foreground hover:bg-neutral-100 data-icon-only:hover:bg-icon-hover disabled:text-foreground-subtle",
         "tertiary-destructive":
           "bg-transparent text-destructive-400 hover:bg-destructive-subtle disabled:text-destructive-200",

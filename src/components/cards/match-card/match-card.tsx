@@ -129,7 +129,7 @@ function MatchCard({
       data-slot="match-card"
       className={cn(
         "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
-        "hover:bg-row-hover",
+        "hover:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -206,19 +206,14 @@ function MatchCard({
           </Typography>
         )}
         {onSaveToggle && (
-          <button
-            type="button"
+          <Button
+            color="tertiary"
+            size="xs"
+            iconLeading={isSaved ? BookmarkCheck : Bookmark}
             aria-label={savedToggleLabel}
             aria-pressed={isSaved}
-            onClick={onSaveToggle}
-            className="flex shrink-0 items-center justify-center rounded-full p-2 text-icon-muted transition-colors duration-150 ease-out hover:text-icon-foreground focus-visible:outline-2 focus-visible:outline-ring"
-          >
-            {isSaved ? (
-              <BookmarkCheck className="size-4" />
-            ) : (
-              <Bookmark className="size-4" />
-            )}
-          </button>
+            onClick={(event) => onSaveToggle(event as React.MouseEvent<HTMLButtonElement>)}
+          />
         )}
         {ctaLabel && onCtaPress && (
           <Button size="sm" onPress={onCtaPress}>
@@ -227,16 +222,16 @@ function MatchCard({
         )}
       </div>
       {onActionsPress && (
-        <button
-          type="button"
-          aria-label={actionsMenuLabel}
-          onClick={onActionsPress}
-          className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-muted opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 group-focus-within:opacity-100 hover:text-icon-foreground focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring"
-        >
-          <span className="flex items-center px-[3px]">
-            <DotsHorizontal className="size-4" />
-          </span>
-        </button>
+        // Reveal on a wrapper, not the Button, so the Button keeps its own look + hover transition.
+        <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-focus-within:opacity-100 group-hover:opacity-100">
+          <Button
+            color="tertiary"
+            size="xs"
+            iconLeading={DotsHorizontal}
+            aria-label={actionsMenuLabel}
+            onClick={(event) => onActionsPress(event as React.MouseEvent<HTMLButtonElement>)}
+          />
+        </div>
       )}
     </div>
   );

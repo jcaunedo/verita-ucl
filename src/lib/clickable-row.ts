@@ -2,8 +2,15 @@ import type * as React from "react";
 
 type RowProps = Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
 
-/** True when the event came from a nested control (button/link/role=button) inside the row, not the row itself. */
+/**
+ * True when the event shouldn't count as a click on the row: it came from a
+ * nested control (button/link/role=button) inside the row, or from outside
+ * the row's DOM entirely — React bubbles events from portals (e.g. an actions
+ * menu rendered in a popover) up through their React parents, so a menu-item
+ * click would otherwise also trigger the row.
+ */
 function isFromNestedControl(event: React.SyntheticEvent<HTMLElement>) {
+  if (!event.currentTarget.contains(event.target as Node)) return true;
   const control = (event.target as HTMLElement).closest(
     'button, a[href], [role="button"]',
   );
@@ -21,7 +28,8 @@ function isFromNestedControl(event: React.SyntheticEvent<HTMLElement>) {
  * with only `onClick` gets no pointer), plus Enter/Space activation so it
  * behaves like a real button from the keyboard. Clicks and keys that
  * originate from a nested control (the `···` trigger, CTA, save/dismiss
- * buttons) are ignored, so pressing one never also fires the row's action.
+ * buttons) or from a portal outside the row (an open actions menu) are
+ * ignored, so pressing one never also fires the row's action.
  */
 function clickableRowProps(rowProps: RowProps | undefined): RowProps | undefined {
   const onClick = rowProps?.onClick;

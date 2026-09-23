@@ -109,7 +109,7 @@ function OfferCard({
       data-slot="offer-card"
       className={cn(
         "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
-        "hover:bg-row-hover",
+        "hover:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -178,20 +178,18 @@ function OfferCard({
           {onDismiss && (
             // Same hover/focus-within reveal as `ApplicationCard`'s `···` slot: grows 0 → 48px (Figma's 16px gap + 32px button), pushing the CTA and expiration date left, while the × dissolves in.
             // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out`); exit is shorter per CLAUDE.md "Dismiss". Kept mounted (clipped) so it stays keyboard-reachable.
+            // The reveal lives on the slot so the Button keeps its own look + hover transition; `py-1 pr-1` (cancelled by `-my-1 -mr-1`, hence 52px) keeps its focus ring inside the clip.
             <div
               data-slot="offer-card-dismiss"
-              className="flex w-0 justify-end overflow-hidden transition-[width] duration-150 ease-in-out group-focus-within:w-12 group-focus-within:duration-300 group-hover:w-12 group-hover:duration-300 motion-reduce:transition-none"
+              className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-within:w-[52px] group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 motion-reduce:transition-none"
             >
-              <button
-                type="button"
+              <Button
+                color="tertiary"
+                size="xs"
+                iconLeading={XClose}
                 aria-label={dismissLabel}
-                onClick={onDismiss}
-                className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-foreground opacity-0 transition-opacity duration-150 ease-in-out group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:opacity-100 group-hover:duration-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
-              >
-                <span className="flex items-center px-[3px]">
-                  <XClose className="size-4" />
-                </span>
-              </button>
+                onPress={onDismiss}
+              />
             </div>
           )}
         </div>

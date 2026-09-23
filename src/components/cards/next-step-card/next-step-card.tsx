@@ -28,14 +28,10 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * (destructive/warning/info) via the same underlying `next-step-card`
  * component with a different badge instance tone.
  *
- * The CTA is bound to `--tone-brand`/white text (Figma: `color/tone/brand/
- * brand`, `color/tone/brand/on-brand` — the latter has no dedicated
- * `--tone-*` CSS token, so it's applied as literal `text-white`, matching
- * its resolved value), not `Button`'s own `color="primary"` (`--primary`,
- * rosewood) — a card-specific binding, not a general button color, so it's
- * applied via `className` override rather than a new `Button` color
- * variant. Note `--tone-brand` currently resolves to `neutral-800`
- * (`#222a34`), not rosewood, per the 2026-09-17 token sync.
+ * The CTA is a plain `Button` (`color="primary"`, Figma Solid/Brand) with no
+ * card-specific color override — `primary` itself is bound to `--tone-brand`
+ * since the 2026-09-21 re-sync, so the card inherits the global button look
+ * (including its hover) like every other surface.
  *
  * The card's resting background/border (`--next-steps-card-background`/
  * `--next-steps-card-border`) are a component-specific token pair with no
@@ -48,8 +44,7 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * colored via `currentColor` from `text-next-steps-card-border` on this
  * element. It's only rendered while not hovered (`!isHovered`), since hover
  * switches to a real solid `border` instead (Figma: `background/default`,
- * `border/neutral/border`) rather than a second dashed state — the CTA also
- * darkens ~20% black (`color-mix`) on hover, matching Figma's Hover variant.
+ * `border/neutral/border`) rather than a second dashed state.
  *
  * `dismissible` shows a hover-revealed dismiss (X) button in the top-right
  * corner, per `product-specs/next-steps-card.md` §2.1: only `Recommended`
@@ -211,14 +206,16 @@ function NextStepCard({
         <div className="flex h-[22px] w-full items-center justify-between">
           <Badge tone={badgeTone} label={label} />
           {dismissible && (
-            <button
-              type="button"
-              aria-label="Dismiss"
-              onClick={onDismiss}
-              className="flex size-8 shrink-0 items-center justify-center rounded-full text-icon-muted opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 hover:text-icon-foreground focus-visible:opacity-100"
-            >
-              <XClose className="size-4" />
-            </button>
+            // Reveal on a wrapper, not the Button, so the Button keeps its own look + hover transition.
+            <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 focus-within:opacity-100">
+              <Button
+                color="tertiary"
+                size="xs"
+                iconLeading={XClose}
+                aria-label="Dismiss"
+                onPress={onDismiss}
+              />
+            </div>
           )}
         </div>
         <div className="flex w-full flex-col items-start gap-1.5">
@@ -234,10 +231,6 @@ function NextStepCard({
         size="xs"
         data-next-step-cta
         {...buttonProps}
-        className={cn(
-          "bg-tone-brand text-white hover:bg-[color-mix(in_srgb,var(--tone-brand)_80%,black)]",
-          buttonProps?.className,
-        )}
       >
         {buttonLabel}
       </CtaButton>
