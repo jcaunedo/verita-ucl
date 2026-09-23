@@ -2,7 +2,11 @@ import * as React from "react";
 import { DotsHorizontal } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
-import { AvatarCompanies } from "@/components/data-display/avatar-companies";
+import { clickableRowProps } from "@/lib/clickable-row";
+import {
+  AvatarCompanies,
+  type AvatarCompaniesProps,
+} from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import { Typography } from "@/components/typography";
 
@@ -32,7 +36,9 @@ import { Typography } from "@/components/typography";
  * (View Details/Share/Withdraw, `product-specs/applications-card.md` §4.1) is
  * a separate concern for the consumer to wire up (e.g. an `overlays` menu
  * component), since Figma's Hover variant only shows the trigger, not the
- * open menu state.
+ * open menu state. The trigger takes no space until hover/focus-within: its
+ * slot then grows to Figma's 16px gap + 32px button, pushing the badge left
+ * as the trigger dissolves in (Default → Hover in Figma).
  *
  * `partnerName` renders as a small eyebrow line above `title` (Figma's
  * `partner-name`, revised out of the terms row) rather than inline with
@@ -42,13 +48,16 @@ import { Typography } from "@/components/typography";
  * its leading separator is toggled with it as one unit so the row never
  * dangles a trailing `·`.
  *
- * The avatar composes `AvatarCompanies` (`company="partner"`) rather than
- * reproducing its letterboxed white-tile markup inline — Figma's
- * `avatar-companies` node this card's `Logo` slot references.
+ * The avatar composes `AvatarCompanies` rather than reproducing its tile
+ * markup inline — Figma's `avatar-companies` node this card's `Logo` slot
+ * references. `company` defaults to `"partner"`; pass `company="verita"`
+ * for the bundled Verita mark (Figma's Verita-partner rows).
  */
 interface ApplicationCardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  /** Partner/opportunity logo, forwarded to `AvatarCompanies`. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. */
+  /** Avatar tile treatment, forwarded to `AvatarCompanies` (Figma's `avatar-companies` `Property 1`). `"verita"` renders the bundled Verita mark and ignores `logoSrc`; any other value renders the partner tile. Defaults to `"partner"`. */
+  company?: AvatarCompaniesProps["company"];
+  /** Partner/opportunity logo, forwarded to `AvatarCompanies`. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. Ignored when `company="verita"`. */
   logoSrc?: string;
   /** Alt text for `logoSrc`. Required semantically whenever `logoSrc` is set. */
   logoAlt?: string;
@@ -72,13 +81,14 @@ interface ApplicationCardProps
   actionsMenuLabel?: string;
   /** Called when the actions-menu trigger is activated. Opens the consumer-owned menu (View Details/Share/Withdraw) — this component does not render the menu itself. Omit to hide the trigger entirely. */
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  /** Forwarded to the row's own click target (e.g. `onClick`), which routes to the application detail per PRD §4. */
+  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the application detail per PRD §4). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
 
 /** An Applications card — identity, engagement terms, status, and supporting text for one application. Figma: `application-card`. */
 function ApplicationCard({
+  company = "partner",
   logoSrc,
   logoAlt,
   title,
@@ -105,13 +115,14 @@ function ApplicationCard({
       className={cn(
         "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
         "hover:bg-row-hover",
+        "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
-      {...rowProps}
+      {...clickableRowProps(rowProps)}
       {...props}
     >
       <div className="flex min-w-0 flex-1 items-center gap-5">
-        <AvatarCompanies company="partner" logoSrc={logoSrc} logoAlt={logoAlt} />
+        <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           <div className="flex w-full flex-col items-start gap-0.5">
             <Typography size="xs" className="w-full text-foreground-muted">
@@ -152,19 +163,29 @@ function ApplicationCard({
           )}
         </div>
       </div>
-      <Badge tone={statusTone} label={statusLabel} size="md" />
-      {onActionsPress && (
-        <button
-          type="button"
-          aria-label={actionsMenuLabel}
-          onClick={onActionsPress}
-          className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-muted opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 group-focus-within:opacity-100 hover:text-icon-foreground focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring"
-        >
-          <span className="flex items-center px-[3px]">
-            <DotsHorizontal className="size-4" />
-          </span>
-        </button>
-      )}
+      <div className="flex shrink-0 items-center">
+        <Badge tone={statusTone} label={statusLabel} size="md" />
+        {onActionsPress && (
+          // Hover/focus-within reveal: the slot grows 0 → 48px (Figma's 16px gap + 32px button), pushing the badge left, while the button dissolves in.
+          // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out` = cubic-bezier(0.4,0,0.2,1)); exit is shorter per CLAUDE.md "Dismiss".
+          // Kept mounted (clipped, not unmounted) so keyboard users can still tab to it — focus expands the slot via `group-focus-within`.
+          <div
+            data-slot="application-card-actions"
+            className="flex w-0 justify-end overflow-hidden transition-[width] duration-150 ease-in-out group-focus-within:w-12 group-focus-within:duration-300 group-hover:w-12 group-hover:duration-300 motion-reduce:transition-none"
+          >
+            <button
+              type="button"
+              aria-label={actionsMenuLabel}
+              onClick={onActionsPress}
+              className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-muted opacity-0 transition-opacity duration-150 ease-in-out group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:opacity-100 group-hover:duration-300 hover:text-icon-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+            >
+              <span className="flex items-center px-[3px]">
+                <DotsHorizontal className="size-4" />
+              </span>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

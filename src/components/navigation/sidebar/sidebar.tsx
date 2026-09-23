@@ -180,6 +180,7 @@ function Sidebar({
             </button>
           ) : (
             <>
+              {/* 28px tall (98.25×28 at the 2026-09-22 wordmark's 112.29:32 ratio), centered in the 40px row — deliberately 2px under Figma's 30px `Sidebar 2 / Logo` instance, per design direction. */}
               <Logo className="h-7 w-auto" />
               <Button
                 color="tertiary"

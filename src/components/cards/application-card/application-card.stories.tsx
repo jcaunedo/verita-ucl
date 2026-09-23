@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { partnerLogos } from "@/assets/logos";
 import { ApplicationCard } from "./application-card";
 
 const meta: Meta<typeof ApplicationCard> = {
@@ -6,11 +7,13 @@ const meta: Meta<typeof ApplicationCard> = {
   component: ApplicationCard,
   tags: ["autodocs"],
   args: {
+    rowProps: { onClick: () => {} },
     title: "Strategic Finance Expert",
     compensation: "$56/hour",
     engagementTerms: "Up to 30 hrs/week",
     duration: "3 months",
-    partnerName: "Bank of America",
+    company: "verita",
+    partnerName: "Verita partner",
     statusLabel: "In review",
     statusTone: "success",
   },
@@ -26,6 +29,16 @@ export default meta;
 type Story = StoryObj<typeof ApplicationCard>;
 
 export const Default: Story = {};
+
+/** Partner tile with a logo — `company` set to a partner and `logoSrc` supplied (Figma's `avatar-companies` google variant). */
+export const PartnerLogo: Story = {
+  args: {
+    company: "google",
+    logoSrc: partnerLogos.google,
+    logoAlt: "Google",
+    partnerName: "Google",
+  },
+};
 
 export const NotSubmitted: Story = {
   args: {
@@ -134,7 +147,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Not submitted"
         statusTone="neutral"
         supportingText="2 of 4 steps completed"
@@ -144,7 +158,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Applied"
         statusTone="info"
       />
@@ -153,7 +168,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="In review"
         statusTone="success"
         actionsMenuLabel="More actions"
@@ -164,7 +180,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="In review · Action required"
         statusTone="warning"
         supportingText="Complete your assessment · 2 of 4 steps completed"
@@ -174,7 +191,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Interview"
         statusTone="success"
         supportingText="Interview scheduled for Sep 24 at 10 AM EDT"
@@ -184,7 +202,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Interview · Action required"
         statusTone="warning"
         supportingText="Schedule your interview by Sep 22"
@@ -194,7 +213,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="On hold"
         statusTone="purple"
       />
@@ -203,7 +223,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Offer received"
         statusTone="success"
       />
@@ -212,7 +233,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Not selected"
         statusTone="neutral"
       />
@@ -221,7 +243,8 @@ export const AllVariants: Story = {
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         statusLabel="Withdrawn"
         statusTone="neutral"
       />

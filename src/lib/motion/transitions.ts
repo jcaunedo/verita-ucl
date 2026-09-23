@@ -52,6 +52,18 @@ const layoutSpring: Transition = {
 	damping: 35,
 };
 
+/**
+ * Content reflowing into space freed by a removal (e.g. the page below a
+ * dismissed section gliding up). Deliberately slow and gentle — the move is
+ * large (a whole section's height), so the `standardTransition` curve over
+ * `motionDuration.slow` keeps it calm instead of a fast, harsh jump. Runs
+ * after the dismissed element's own (short) exit.
+ */
+const reflowTransition: Transition = {
+	duration: motionDuration.slow,
+	ease: [0.4, 0, 0.2, 1],
+};
+
 export {
 	standardTransition,
 	enterTransition,
@@ -59,4 +71,5 @@ export {
 	subtleSpring,
 	responsiveSpring,
 	layoutSpring,
+	reflowTransition,
 };

@@ -3,9 +3,15 @@ import { motion } from "motion/react";
 import { XClose } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { clickableRowProps } from "@/lib/clickable-row";
 import { cardDismissVariants, cardEnterFromRightVariants, useMotionPreference } from "@/lib/motion";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
-import { Button, type ButtonProps } from "@/components/buttons/button";
+import {
+  Button,
+  type ButtonComponentProps,
+  type ButtonProps,
+  type LinkButtonProps,
+} from "@/components/buttons/button";
 import { Typography } from "@/components/typography";
 import { DashedBorder } from "@/components/cards/dashed-border";
 
@@ -92,6 +98,12 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * default state, which is what caused the badge to visibly jump on hover
  * (the row had no reserved space for it) before this fix.
  *
+ * The whole card is clickable and performs the CTA's action (it clicks the
+ * CTA itself), with the pointer cursor, focus, and Enter/Space handling from
+ * the shared `clickableRowProps` helper (`role="button"` — DESIGN.md's
+ * global cursor rule). The dismiss (X) and the CTA remain their own targets:
+ * clicks on them never trigger the card.
+ *
  * See `product-specs/next-steps-card.md` for the full card content model,
  * badge-level rules, and dismiss/re-surface behavior this component
  * implements — this file only covers markup/styling, not the product logic
@@ -112,8 +124,10 @@ interface NextStepCardProps
   description: string;
   /** Call-to-action button text (Figma's `button` instance, `Label`). */
   buttonLabel: string;
-  /** Forwarded to the action button (e.g. `onPress`). Figma shows no link variant for this button, so only the plain-button props are accepted. */
-  buttonProps?: Omit<ButtonProps, "size" | "color" | "children">;
+  /** Forwarded to the CTA (e.g. `onPress`, or `href`/`target`/`rel` for a link CTA such as an external sign-in). The whole card performs the same action. */
+  buttonProps?:
+    | Omit<ButtonProps, "size" | "color" | "children">
+    | Omit<LinkButtonProps, "size" | "color" | "children">;
   /** Shows a hover-revealed dismiss (X) button. Only `Recommended` tasks are dismissible — see `product-specs/next-steps-card.md` §2.1. Defaults to `false`. */
   dismissible?: boolean;
   /** Called when the dismiss (X) button is activated. Only relevant when `dismissible` is `true`. */
@@ -132,6 +146,13 @@ interface NextStepCardProps
   className?: string;
 }
 
+/**
+ * `Button`'s overloads (one per button/link variant) can't accept a spread of
+ * `buttonProps`' button-or-link union; its implementation does (it branches
+ * on `href` at runtime), so the CTA renders through that union signature.
+ */
+const CtaButton = Button as (props: ButtonComponentProps) => React.ReactElement;
+
 /** An onboarding/checklist step card — badge, title, description, and a CTA button. Figma: `next-step-card`. */
 function NextStepCard({
   label,
@@ -144,9 +165,22 @@ function NextStepCard({
   onDismiss,
   enterFromRight = false,
   className,
+  onClick,
+  onKeyDown,
   ...props
 }: NextStepCardProps) {
   const { prefersReducedMotion } = useMotionPreference();
+  // The whole card is a click target that performs the CTA's own action (PRD: card = CTA), by clicking the CTA itself —
+  // React Aria treats a programmatic `.click()` as a press, so `buttonProps.onPress`/`href` stay the single source of the action.
+  // `clickableRowProps` ignores clicks from nested controls, so the dismiss (X) and the CTA itself never double-fire.
+  const cardPress = clickableRowProps({
+    onKeyDown,
+    onClick: (event) => {
+      onClick?.(event);
+      if (event.defaultPrevented) return;
+      event.currentTarget.querySelector<HTMLElement>("[data-next-step-cta]")?.click();
+    },
+  })!;
 
   return (
     <motion.div
@@ -163,9 +197,14 @@ function NextStepCard({
       className={cn(
         "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card border border-transparent bg-next-steps-card-background px-5 py-6 text-next-steps-card-border transition-colors duration-150 ease-out",
         "hover:border-solid hover:border-border hover:bg-background",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
       {...props}
+      role={cardPress.role}
+      tabIndex={cardPress.tabIndex}
+      onClick={cardPress.onClick}
+      onKeyDown={cardPress.onKeyDown}
     >
       <DashedBorder radius={12} className="group-hover:hidden" />
       <div className="flex w-full flex-col items-start gap-4">
@@ -191,8 +230,9 @@ function NextStepCard({
           </Typography>
         </div>
       </div>
-      <Button
+      <CtaButton
         size="xs"
+        data-next-step-cta
         {...buttonProps}
         className={cn(
           "bg-tone-brand text-white hover:bg-[color-mix(in_srgb,var(--tone-brand)_80%,black)]",
@@ -200,7 +240,7 @@ function NextStepCard({
         )}
       >
         {buttonLabel}
-      </Button>
+      </CtaButton>
     </motion.div>
   );
 }

@@ -1,8 +1,10 @@
 import * as React from "react";
+import { motion } from "motion/react";
 import { Link as AriaLink, type LinkProps as AriaLinkProps } from "react-aria-components";
 import { ArrowUpRight, CheckCircleBroken } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { liftPattern, useMotionPreference } from "@/lib/motion";
 import { Typography } from "@/components/typography";
 
 /**
@@ -13,10 +15,24 @@ import { Typography } from "@/components/typography";
  * navigation, matching `Button`'s own `LinkButtonProps` pattern — `href` is
  * required.
  *
- * Hover uses the shared `--hover` overlay token (Figma: `state/hover`,
- * `neutral-700` at ~2%, matching the existing ~4% `--hover` token within
- * flattened-export precision), the same mechanism as other no-solid-fill
- * hover treatments, rather than a card-specific darken.
+ * Hover (2026-09-22 Figma revision): the fill switches from
+ * `color/tone/brand/subtle` to `background/default` (white) and a 1px
+ * `border/neutral/border` outline appears. The border is reserved as
+ * `border-transparent` at rest so the card doesn't shift 1px when it shows
+ * (both Figma variants are the same 124px height). Figma's stroke is inside
+ * the frame, so padding is Figma's 32/40/32px minus the 1px border
+ * (`py-[31px] pr-[39px] pl-[31px]`), and the title uses Figma's bound
+ * `line-height/xl` (28px, 0 letter-spacing) rather than Typography xl's
+ * 30px/0.01em default — together keeping the card at exactly 124px.
+ *
+ * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
+ * cards translate up by `motionDistance.hover` on a `subtleSpring`) via a
+ * thin `motion.div` wrapper around the React Aria `Link` (same box), so the
+ * link keeps React Aria's hover/focus/press semantics untouched. Fill,
+ * border, and arrow color fade with a CSS `transition-colors` (not
+ * `transition`, which would also animate `transform` and fight Motion's
+ * lift). Under reduced motion the
+ * lift is dropped entirely and only the color change remains.
  *
  * The arrow icon has no bound color variable in Figma (a flattened vector,
  * same as the callout's own no-variable icon slot) — updated 2026-09-21 by
@@ -48,30 +64,43 @@ function CalloutCard({
   className,
   ...props
 }: CalloutCardProps) {
+  const { prefersReducedMotion } = useMotionPreference();
+
   return (
-    <AriaLink
-      data-slot="callout-card"
-      className={cn(
-        "group flex w-full items-center gap-18 rounded-card bg-tone-brand-subtle py-8 pr-10 pl-8 transition duration-100 ease-linear",
-        "data-[hovered]:bg-hover",
-        "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
-        className,
-      )}
-      {...props}
+    // Lift runs on a thin wrapper rather than a `motion.create(AriaLink)`: Motion's handler types (`onAnimationStart`, drag events)
+    // and React Aria's function-form `style` clash, and the wrapper is the same box as the link, so hovering either lifts both.
+    <motion.div
+      data-slot="callout-card-lift"
+      className="flex w-full"
+      {...(prefersReducedMotion ? {} : liftPattern)}
     >
-      <div className="flex min-w-px flex-1 flex-col items-start gap-2">
-        <div className="flex w-full items-center gap-3">
-          {showIcon && (icon ?? <CheckCircleBroken className="size-6 shrink-0 text-foreground" />)}
-          <Typography size="xl" weight="semibold" className="text-foreground">
-            {title}
+      <AriaLink
+        data-slot="callout-card"
+        className={cn(
+          "group flex w-full items-center gap-18 rounded-card border border-transparent bg-tone-brand-subtle py-[31px] pr-[39px] pl-[31px] transition-colors duration-150 ease-out",
+          "data-[hovered]:border-border data-[hovered]:bg-background",
+          "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
+          className,
+        )}
+        {...props}
+      >
+        <div className="flex min-w-px flex-1 flex-col items-start gap-2">
+          <div className="flex w-full items-center gap-3">
+            {showIcon &&
+              (icon ?? (
+                <CheckCircleBroken className="size-6 shrink-0 text-foreground" />
+              ))}
+            <Typography size="xl" weight="semibold" className="leading-7 tracking-normal text-foreground">
+              {title}
+            </Typography>
+          </div>
+          <Typography size="base" className="w-full text-foreground-muted">
+            {description}
           </Typography>
         </div>
-        <Typography size="base" className="w-full text-foreground-muted">
-          {description}
-        </Typography>
-      </div>
-      <ArrowUpRight className="size-6 shrink-0 text-neutral-300 transition duration-100 ease-linear group-data-[hovered]:text-tone-brand" />
-    </AriaLink>
+        <ArrowUpRight className="size-6 shrink-0 text-neutral-300 transition-colors duration-150 ease-out group-data-[hovered]:text-tone-brand" />
+      </AriaLink>
+    </motion.div>
   );
 }
 

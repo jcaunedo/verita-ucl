@@ -53,6 +53,9 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  *   `tertiary` at the time) with a different hover treatment; now that
  *   `Style=Flat` is retired (2026-09-06), Ghost/Neutral is the only one left
  *   and it *is* Untitled UI's `tertiary`, so the name was corrected to match.
+ *   Hover fill differs by type: text buttons hover to `neutral-100`;
+ *   icon-only buttons (`data-icon-only`) hover to `--icon-hover`, a 6%
+ *   `neutral-700` overlay (Figma 2026-09-23, every size xs–xl).
  * - Ghost/Destructive → tertiary-destructive (added 2026-09-06, Text only —
  *   no Icon-only variant exists in Figma for this tone, same as
  *   secondary-destructive). Same shape as `tertiary` (no bg/border idle,
@@ -118,7 +121,8 @@ const buttonVariants = cva(
         "secondary-destructive":
           "border border-destructive-200 bg-white text-destructive-400 shadow-xs hover:bg-destructive-subtle disabled:border-destructive-subtle disabled:bg-transparent disabled:text-destructive-200",
         tertiary:
-          "bg-transparent text-foreground hover:bg-neutral-100 disabled:text-foreground-subtle",
+          // Icon-only hover is its own overlay: Figma `Type=Icon` Ghost/Hover = neutral-700 @ 6% (`--icon-hover`); `Type=Text` = `neutral-100`.
+          "bg-transparent text-foreground hover:bg-neutral-100 data-icon-only:hover:bg-icon-hover disabled:text-foreground-subtle",
         "tertiary-destructive":
           "bg-transparent text-destructive-400 hover:bg-destructive-subtle disabled:text-destructive-200",
         "link-color":

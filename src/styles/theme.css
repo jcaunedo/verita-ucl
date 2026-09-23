@@ -51,7 +51,8 @@
 	select,
 	[data-slot][role="checkbox"]:not([data-disabled]),
 	[data-slot][role="radio"]:not([data-disabled]),
-	[data-slot][role="switch"]:not([data-disabled]) {
+	[data-slot][role="switch"]:not([data-disabled]),
+	[data-slot][role="option"]:not([aria-disabled="true"]) {
 		cursor: pointer;
 	}
 
@@ -103,6 +104,12 @@
 	--color-link: var(--link);
 	--color-hover: var(--hover);
 	--color-row-hover: var(--row-hover);
+	--color-icon-hover: var(--icon-hover);
+	--color-item-active: var(--item-active);
+
+	/* ---------- Shadows ---------- */
+	/* Figma: shadow/popover — floating surfaces (select/menu content, popovers). */
+	--shadow-popover: 0px 8px 16px -4px rgba(8, 13, 20, 0.12);
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);
@@ -607,6 +614,17 @@
 	   channel that some tooling drops when reconstructing a fallback
 	   literal — the intended value is ~2%, not opaque neutral-700. */
 	--row-hover: color-mix(in srgb, var(--neutral-700) 2%, transparent);
+
+	/* Figma: icon-only Ghost/Neutral button hover fill (2026-09-23) — a raw,
+	   unbound rgba(49,55,63,0.06), i.e. neutral-700 at 6%: a stronger
+	   overlay than --hover (4%) so a small icon-only target reads as
+	   hovered. Used by Button's `tertiary` color when icon-only. */
+	--icon-hover: color-mix(in srgb, var(--neutral-700) 6%, transparent);
+
+	/* Figma: state/active (#fcf8fa) — the selected-item fill in list-style
+	   pickers (Select Item's Selected state). A distinct variable from
+	   state/hover (--row-hover); no existing ramp step matches it. */
+	--item-active: #fcf8fa;
 
 	/* ---------- Semantic: icon ---------- */
 	--icon-foreground: var(--neutral-700);

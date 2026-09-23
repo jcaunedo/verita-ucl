@@ -1,11 +1,10 @@
 import * as React from "react";
-import { AnimatePresence } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
-import { NextStepCard } from "@/components/cards/next-step-card";
+import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { SectionEmptyState } from "@/components/cards/section-empty-state";
 import { CalloutCard } from "@/components/cards/callout-card";
 
@@ -40,6 +39,8 @@ const NEXT_STEPS = [
     title: "LinkedIn Profile",
     description: "Strengthen your profile and improve match quality.",
     buttonLabel: "Connect LinkedIn",
+    // Opens LinkedIn sign-in in a new tab — the CTA and the whole card (which clicks the CTA) both follow this link.
+    buttonProps: { href: "https://www.linkedin.com/uas/login", target: "_blank", rel: "noopener noreferrer" },
     dismissible: true,
   },
   {
@@ -53,7 +54,6 @@ const NEXT_STEPS = [
   },
 ] as const;
 
-type NextStepKey = (typeof NEXT_STEPS)[number]["key"];
 
 const CALLOUTS = [
   {
@@ -79,6 +79,14 @@ interface DashboardEmptyStateProps {
    * component to hardcode a demo-only link.
    */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
+  /**
+   * Turns the "Welcome back" heading into a link to this URL — a
+   * prototype hotspot (same purpose as `navHrefOverrides`), e.g. jumping
+   * from this empty state to the populated `Dashboard` story. The heading
+   * looks unchanged; it just becomes a real `<a href>` (pointer cursor via
+   * the global rule, keyboard-focusable). Omit for a plain heading.
+   */
+  welcomeHref?: string;
 }
 
 /**
@@ -88,7 +96,7 @@ interface DashboardEmptyStateProps {
  * work-in-progress cards, tables, etc. once those components exist) will be
  * its own `layouts/dashboard/` layout rather than a variant of this one.
  */
-function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}) {
+function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptyStateProps = {}) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   /**
    * Below `lg` (1024px) the sidebar auto-collapses — including on initial
@@ -120,58 +128,6 @@ function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}
       wasAutoCollapsedRef.current = false;
     }
   }, [isLgUp]);
-  /**
-   * Per `product-specs/next-steps-card.md` §2.1, dismissal is immediate with
-   * no confirmation step — clicking the X removes the card right away. This
-   * reference layout has no backend, so "dismissed" is just local UI state;
-   * a real consumer would also persist the dismissal so the task doesn't
-   * re-surface on reload (the PRD's only re-surface trigger is the task's
-   * requirement level changing, never a page refresh).
-   */
-  const [dismissedKeys, setDismissedKeys] = React.useState<Set<NextStepKey>>(new Set());
-  const eligibleNextSteps = NEXT_STEPS.filter((step) => !dismissedKeys.has(step.key));
-  /**
-   * The Next Steps grid caps its column count in two tiers — below `xl`
-   * (1280px) it's 2-up, from `xl` to below `2xl` (1536px) it's 3-up, and at
-   * `2xl`+ it's the full 4-up. Rather than wrapping the overflow to a second
-   * row, any card beyond the current tier's column count is queued and only
-   * mounted once a dismiss/completion frees a slot within the visible tier.
-   */
-  const isXlUp = useMediaQuery("(min-width: 1280px)");
-  const is2xlUp = useMediaQuery("(min-width: 1536px)");
-  const maxVisible = is2xlUp ? Infinity : isXlUp ? 3 : 2;
-  const visibleNextSteps = eligibleNextSteps.slice(0, maxVisible);
-  /**
-   * Tracks each card's `key` the first time it appears in `visibleNextSteps`
-   * — a key already seen mounts as a plain fade-in (or is on true first
-   * render, skipped below); a key seen for the first time on a *later*
-   * render (i.e. a queued card newly revealed by a slot opening up) mounts
-   * with `enterFromRight` instead, so only the actual newly-surfaced card
-   * gets the directional entrance, not the whole grid on initial load.
-   */
-  const seenKeysRef = React.useRef<Set<NextStepKey> | null>(null);
-  if (seenKeysRef.current === null) {
-    seenKeysRef.current = new Set(visibleNextSteps.map((step) => step.key));
-  }
-  const newlyRevealedKeys = new Set(
-    visibleNextSteps
-      .filter((step) => !seenKeysRef.current!.has(step.key))
-      .map((step) => step.key),
-  );
-  React.useEffect(() => {
-    for (const step of visibleNextSteps) {
-      seenKeysRef.current!.add(step.key);
-    }
-  });
-  /**
-   * Separate from `visibleNextSteps.length === 0` so the "Next steps"
-   * section (heading + grid) stays mounted long enough for the last card's
-   * exit animation to finish — `AnimatePresence`'s `onExitComplete` flips
-   * this only once every exiting card has actually left, rather than the
-   * section vanishing mid-animation the instant the last card is filtered
-   * out of `visibleNextSteps`.
-   */
-  const [nextStepsSectionVisible, setNextStepsSectionVisible] = React.useState(true);
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     // A manual toggle always promotes the current state to user-owned —
@@ -201,47 +157,23 @@ function DashboardEmptyState({ navHrefOverrides }: DashboardEmptyStateProps = {}
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
               <Typography size="3xl" weight="semibold">
-                Welcome back, Theresa
+                {welcomeHref ? (
+                  <a
+                    href={welcomeHref}
+                    className="rounded-sm text-inherit no-underline outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  >
+                    Welcome back, Theresa
+                  </a>
+                ) : (
+                  "Welcome back, Theresa"
+                )}
               </Typography>
               <Typography size="lg">Let’s make today count.</Typography>
             </div>
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
-            {nextStepsSectionVisible && (
-              <div className="flex w-full flex-col items-start gap-4">
-                <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="xl" weight="semibold">
-                    Next steps
-                  </Typography>
-                  <Typography size="sm" className="text-foreground-muted">
-                    Complete these to unlock more opportunities and improve your matches.
-                  </Typography>
-                </div>
-                <div className="grid h-[248px] w-full grid-cols-2 gap-5 xl:grid-cols-3 2xl:grid-cols-4">
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      if (eligibleNextSteps.length === 0) {
-                        setNextStepsSectionVisible(false);
-                      }
-                    }}
-                  >
-                    {visibleNextSteps.map(({ key, ...step }) => (
-                      <NextStepCard
-                        key={key}
-                        {...step}
-                        enterFromRight={newlyRevealedKeys.has(key)}
-                        onDismiss={
-                          step.dismissible
-                            ? () => setDismissedKeys((prev) => new Set(prev).add(key))
-                            : undefined
-                        }
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </div>
-            )}
+            <NextStepsSection steps={NEXT_STEPS} />
 
             <SectionEmptyState
               title="You don’t have any active work yet"

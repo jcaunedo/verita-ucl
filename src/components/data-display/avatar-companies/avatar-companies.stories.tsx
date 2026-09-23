@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { partnerLogos } from "@/assets/logos";
 import { AvatarCompanies } from "./avatar-companies";
 
 const meta: Meta<typeof AvatarCompanies> = {
@@ -15,12 +16,23 @@ export const Verita: Story = {
   },
 };
 
-export const Partner: Story = {
+export const Google: Story = {
+  args: { company: "google", logoSrc: partnerLogos.google, logoAlt: "Google" },
+};
+
+export const Amazon: Story = {
+  args: { company: "amazon", logoSrc: partnerLogos.amazon, logoAlt: "Amazon" },
+};
+
+export const Apple: Story = {
+  args: { company: "apple", logoSrc: partnerLogos.apple, logoAlt: "Apple" },
+};
+
+export const BankOfAmerica: Story = {
   args: {
-    company: "google",
-    logoSrc:
-      "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
-    logoAlt: "Google",
+    company: "bank-of-america",
+    logoSrc: partnerLogos.bankOfAmerica,
+    logoAlt: "Bank of America",
   },
 };
 
@@ -34,11 +46,14 @@ export const AllVariants: Story = {
   render: () => (
     <div className="flex items-center gap-4">
       <AvatarCompanies company="verita" />
+      <AvatarCompanies company="google" logoSrc={partnerLogos.google} logoAlt="Google" />
+      <AvatarCompanies company="amazon" logoSrc={partnerLogos.amazon} logoAlt="Amazon" />
       <AvatarCompanies
-        company="google"
-        logoSrc="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
-        logoAlt="Google"
+        company="bank-of-america"
+        logoSrc={partnerLogos.bankOfAmerica}
+        logoAlt="Bank of America"
       />
+      <AvatarCompanies company="apple" logoSrc={partnerLogos.apple} logoAlt="Apple" />
       <AvatarCompanies company="partner" />
     </div>
   ),

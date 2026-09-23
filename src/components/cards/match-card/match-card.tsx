@@ -2,8 +2,12 @@ import * as React from "react";
 import { Bookmark, BookmarkCheck, DotsHorizontal } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { clickableRowProps } from "@/lib/clickable-row";
 import { Button } from "@/components/buttons/button";
-import { AvatarCompanies } from "@/components/data-display/avatar-companies";
+import {
+  AvatarCompanies,
+  type AvatarCompaniesProps,
+} from "@/components/data-display/avatar-companies";
 import { Typography } from "@/components/typography";
 
 /**
@@ -40,7 +44,9 @@ import { Typography } from "@/components/typography";
  */
 interface MatchCardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  /** Partner/opportunity logo. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. */
+  /** Avatar tile treatment, forwarded to `AvatarCompanies` (Figma's `avatar-companies` `Property 1`). `"verita"` renders the bundled Verita mark and ignores `logoSrc`; any other value renders the partner tile. Defaults to `"partner"`. */
+  company?: AvatarCompaniesProps["company"];
+  /** Partner/opportunity logo. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. Ignored when `company="verita"`. */
   logoSrc?: string;
   /** Alt text for `logoSrc`. Required semantically whenever `logoSrc` is set. */
   logoAlt?: string;
@@ -80,13 +86,14 @@ interface MatchCardProps
   actionsMenuLabel?: string;
   /** Called when the actions-menu trigger is activated. Opens the consumer-owned menu — this component does not render the menu itself. Omit to hide the trigger entirely. */
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  /** Forwarded to the row's own click target (e.g. `onClick`), which routes to the match detail. */
+  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the match detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
 
 /** A Match card — identity, engagement terms, fit tier, and a recommended action for one match. Figma: `match-card`. */
 function MatchCard({
+  company = "partner",
   logoSrc,
   logoAlt,
   title,
@@ -123,13 +130,14 @@ function MatchCard({
       className={cn(
         "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
         "hover:bg-row-hover",
+        "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
-      {...rowProps}
+      {...clickableRowProps(rowProps)}
       {...props}
     >
       <div className="flex min-w-0 flex-1 items-center gap-5">
-        <AvatarCompanies company="partner" logoSrc={logoSrc} logoAlt={logoAlt} />
+        <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           <div className="flex w-full flex-col items-start gap-0.5">
             <Typography size="xs" className="w-full text-foreground-muted">

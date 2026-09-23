@@ -25,5 +25,7 @@ export const Default: Story = {
     navHrefOverrides: {
       home: "http://localhost:6009/iframe.html?id=layouts-dashboardemptystate--default&viewMode=story",
     },
+    // Clicking "Welcome back, Theresa" jumps to the populated `Dashboard` story (relative URL — works on any Storybook host).
+    welcomeHref: "iframe.html?id=layouts-dashboard--default&viewMode=story",
   },
 };

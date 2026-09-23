@@ -60,6 +60,25 @@ const cardEnterFromRightVariants: Variants = {
 };
 
 /**
+ * Menu/dropdown/select content entering near its trigger — CLAUDE.md
+ * "Menus and Dropdowns": short fade, a controlled scale from
+ * `motionScale.popIn` (0.98) to 1, and a small move away from the trigger.
+ * `custom` is the popover's resolved placement side so the movement follows
+ * it: `"bottom"` (the default) starts slightly above and settles down,
+ * `"top"` starts slightly below. Pair with `transformOrigin` on the
+ * trigger-facing edge so the scale grows out of the trigger.
+ */
+const popoverVariants: Variants = {
+  initial: (side: "top" | "bottom" = "bottom") => ({
+    opacity: 0,
+    scale: motionScale.popIn,
+    y: side === "top" ? motionDistance.hover : -motionDistance.hover,
+  }),
+  animate: { opacity: 1, scale: 1, y: 0, transition: standardTransition },
+  exit: { opacity: 0, scale: motionScale.popIn, transition: exitTransition },
+};
+
+/**
  * Overlay/scrim backdrop for dialogs and overlays (fade only — the dialog
  * surface itself should use `panelVariants` or a Motion `layout` animation).
  */
@@ -135,6 +154,7 @@ export {
   cardDismissVariants,
   cardEnterFromRightVariants,
   overlayVariants,
+  popoverVariants,
   panelVariants,
   slideVariants,
   staggerContainerVariants,

@@ -59,7 +59,8 @@ already covers any real interactive element for free.
 	select,
 	[data-slot][role="checkbox"]:not([data-disabled]),
 	[data-slot][role="radio"]:not([data-disabled]),
-	[data-slot][role="switch"]:not([data-disabled]) {
+	[data-slot][role="switch"]:not([data-disabled]),
+	[data-slot][role="option"]:not([aria-disabled="true"]) {
 		cursor: pointer;
 	}
 

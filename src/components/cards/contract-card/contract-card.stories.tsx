@@ -6,6 +6,8 @@ const meta: Meta<typeof ContractCard> = {
   component: ContractCard,
   tags: ["autodocs"],
   args: {
+    rowProps: { onClick: () => {} },
+    company: "verita",
     title: "Product Design Advisor",
     compensation: "$85/hour",
     partnerName: "Verita partner",
@@ -24,6 +26,23 @@ type Story = StoryObj<typeof ContractCard>;
 
 export const Default: Story = {
   args: {
+    primaryActionLabel: "Open work",
+  },
+};
+
+/** Partner tile with no `logoSrc` — the neutral fallback shown until a partner logo is supplied. */
+export const PartnerAvatar: Story = {
+  args: {
+    company: "partner",
+    partnerName: "Amazon Health",
+    primaryActionLabel: "Open work",
+  },
+};
+
+/** A title longer than two lines truncates with an ellipsis on line 2. */
+export const LongTitle: Story = {
+  args: {
+    title: "Clinical Expert, In-Home Health Evaluation Survey and Longitudinal Sleep Study Review",
     primaryActionLabel: "Open work",
   },
 };

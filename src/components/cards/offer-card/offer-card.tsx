@@ -2,8 +2,12 @@ import * as React from "react";
 import { XClose } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { clickableRowProps } from "@/lib/clickable-row";
 import { Button } from "@/components/buttons/button";
-import { AvatarCompanies } from "@/components/data-display/avatar-companies";
+import {
+  AvatarCompanies,
+  type AvatarCompaniesProps,
+} from "@/components/data-display/avatar-companies";
 import { Typography } from "@/components/typography";
 
 /**
@@ -27,7 +31,11 @@ import { Typography } from "@/components/typography";
  * use — this reads as "dismiss this offer from the list," so it's modeled
  * as `onDismiss`/`dismissLabel`, matching `NextStepCard`'s existing
  * dismiss-affordance naming (`onDismiss?: () => void`) rather than the
- * `onActionsPress` menu-trigger pattern.
+ * `onActionsPress` menu-trigger pattern. It reveals exactly like
+ * `ApplicationCard`'s trigger (2026-09-22 Figma revision): it takes no space
+ * at rest, and on hover/focus-within its slot grows to Figma's 16px gap +
+ * 32px button, pushing "View offer" and the expiration date left while the
+ * × (Figma: `icon/foreground`) dissolves in.
  *
  * `expirationDate` renders in `text-destructive` with the repo's standard
  * Inter font. Figma's `expiration-date` label binds to a raw, unbound hex
@@ -39,6 +47,8 @@ import { Typography } from "@/components/typography";
  */
 interface OfferCardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+  /** Avatar tile treatment, forwarded to `AvatarCompanies` (Figma's `avatar-companies` `Property 1`). `"verita"` renders the bundled Verita mark and ignores `logoSrc`; any other value renders the partner tile. Defaults to `"partner"`. */
+  company?: AvatarCompaniesProps["company"];
   /** Partner/opportunity logo. Optional, with a neutral fallback tile — Figma's `Logo`/`Logo icon`. */
   logoSrc?: string;
   /** Alt text for `logoSrc`. Required semantically whenever `logoSrc` is set. */
@@ -65,13 +75,14 @@ interface OfferCardProps
   dismissLabel?: string;
   /** Called when the dismiss (×) trigger is activated. Omit to hide the trigger entirely. */
   onDismiss?: () => void;
-  /** Forwarded to the row's own click target (e.g. `onClick`), which routes to the offer detail. */
+  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
 
 /** An Offer card — identity, engagement terms, expiration, and a "View offer" CTA for one offer. Figma: `offer-card`. */
 function OfferCard({
+  company = "partner",
   logoSrc,
   logoAlt,
   title,
@@ -99,13 +110,14 @@ function OfferCard({
       className={cn(
         "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
         "hover:bg-row-hover",
+        "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
-      {...rowProps}
+      {...clickableRowProps(rowProps)}
       {...props}
     >
       <div className="flex min-w-0 flex-1 items-center gap-5">
-        <AvatarCompanies company="partner" logoSrc={logoSrc} logoAlt={logoAlt} />
+        <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           <div className="flex w-full flex-col items-start gap-0.5">
             <Typography size="xs" className="w-full text-foreground-muted">
@@ -141,7 +153,8 @@ function OfferCard({
           </div>
         </div>
       </div>
-      <div className="flex flex-1 items-center justify-end gap-4">
+      {/* Right zone hugs its content so the identity block (title) fills the rest of the row — not Figma's 50/50 `flex-1` split, which wrapped titles at the midpoint. */}
+      <div className="flex shrink-0 items-center justify-end gap-4">
         {discipline && (
           <Typography
             size="base"
@@ -153,27 +166,36 @@ function OfferCard({
         {expirationDate && (
           <Typography
             size="sm"
-            className="min-w-0 flex-1 text-right text-destructive"
+            className="whitespace-nowrap text-destructive"
           >
             {expirationDate}
           </Typography>
         )}
-        <Button size="sm" onPress={onCtaPress}>
-          {ctaLabel}
-        </Button>
+        <div className="flex shrink-0 items-center">
+          <Button size="sm" onPress={onCtaPress}>
+            {ctaLabel}
+          </Button>
+          {onDismiss && (
+            // Same hover/focus-within reveal as `ApplicationCard`'s `···` slot: grows 0 → 48px (Figma's 16px gap + 32px button), pushing the CTA and expiration date left, while the × dissolves in.
+            // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out`); exit is shorter per CLAUDE.md "Dismiss". Kept mounted (clipped) so it stays keyboard-reachable.
+            <div
+              data-slot="offer-card-dismiss"
+              className="flex w-0 justify-end overflow-hidden transition-[width] duration-150 ease-in-out group-focus-within:w-12 group-focus-within:duration-300 group-hover:w-12 group-hover:duration-300 motion-reduce:transition-none"
+            >
+              <button
+                type="button"
+                aria-label={dismissLabel}
+                onClick={onDismiss}
+                className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-foreground opacity-0 transition-opacity duration-150 ease-in-out group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:opacity-100 group-hover:duration-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+              >
+                <span className="flex items-center px-[3px]">
+                  <XClose className="size-4" />
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-      {onDismiss && (
-        <button
-          type="button"
-          aria-label={dismissLabel}
-          onClick={onDismiss}
-          className="flex shrink-0 items-center justify-center rounded-full px-[5px] py-2 text-icon-muted opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 group-focus-within:opacity-100 hover:text-icon-foreground focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-ring"
-        >
-          <span className="flex items-center px-[3px]">
-            <XClose className="size-4" />
-          </span>
-        </button>
-      )}
     </div>
   );
 }

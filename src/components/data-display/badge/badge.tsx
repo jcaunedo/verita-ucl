@@ -47,7 +47,10 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * (400), not medium, per Figma's bound `font-weight/regular` text style.
  * Gap/padding re-measured directly from Figma per size (2026-09-17) — each
  * size's outer gap and horizontal padding are its own literal value, not a
- * shared token, so don't normalize them to match each other.
+ * shared token, so don't normalize them to match each other. The label also
+ * carries Figma's `Label Container` padding (2026-09-22: sm 2px, md/lg 4px),
+ * so text sits 8/10/12px from the badge edge — outer `px-*` alone
+ * (6/6/8px) under-pads it.
  *
  * `dot`, `icon`, `rightIcon`, and `onClose` are boolean-driven slots rather
  * than `cva` variants, matching `Button`'s icon-prop pattern — passing
@@ -73,9 +76,10 @@ const badgeVariants = cva(
         orange: "bg-tone-orange-subtle text-tone-orange",
       },
       size: {
-        sm: "h-[22px] gap-0.5 px-1.5 py-0.5 text-xs",
-        md: "h-[26px] gap-px px-1.5 py-0.5 text-sm",
-        lg: "h-[30px] gap-0.5 px-2 py-1 text-sm",
+        // `*:data-[slot=badge-label]:px-*` = Figma's `Label Container` padding, on top of the outer `px-*`.
+        sm: "h-[22px] gap-0.5 px-1.5 py-0.5 text-xs *:data-[slot=badge-label]:px-0.5",
+        md: "h-[26px] gap-px px-1.5 py-0.5 text-sm *:data-[slot=badge-label]:px-1",
+        lg: "h-[30px] gap-0.5 px-2 py-1 text-sm *:data-[slot=badge-label]:px-1",
       },
     },
     defaultVariants: { tone: "neutral", size: "sm" },

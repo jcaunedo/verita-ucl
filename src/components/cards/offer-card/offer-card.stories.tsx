@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { partnerLogos } from "@/assets/logos";
 import { OfferCard } from "./offer-card";
 
 const meta: Meta<typeof OfferCard> = {
@@ -6,17 +7,22 @@ const meta: Meta<typeof OfferCard> = {
   component: OfferCard,
   tags: ["autodocs"],
   args: {
+    rowProps: { onClick: () => {} },
     title: "Strategic Finance Expert",
     compensation: "$56/hour",
     engagementTerms: "Up to 30 hrs/week",
     duration: "3 months",
-    partnerName: "Bank of America",
+    company: "verita",
+    partnerName: "Verita partner",
     expirationDate: "Expires in 3 days",
     onCtaPress: () => {},
+    // On by default so every story shows Figma's Hover variant (× slides in, pushing the CTA left) — see `WithoutDismiss` for the no-trigger case.
+    dismissLabel: "Dismiss offer",
+    onDismiss: () => {},
   },
   decorators: [
     (Story) => (
-      <div className="w-[1174px] bg-white">
+      <div className="w-full bg-white">
         <Story />
       </div>
     ),
@@ -26,6 +32,16 @@ export default meta;
 type Story = StoryObj<typeof OfferCard>;
 
 export const Default: Story = {};
+
+/** Partner tile with a logo — `company` set to a partner and `logoSrc` supplied (Figma's `avatar-companies` google variant). */
+export const PartnerLogo: Story = {
+  args: {
+    company: "google",
+    logoSrc: partnerLogos.google,
+    logoAlt: "Google",
+    partnerName: "Google",
+  },
+};
 
 export const NoExpirationDate: Story = {
   args: {
@@ -51,31 +67,36 @@ export const CustomCtaLabel: Story = {
   },
 };
 
-export const WithDismiss: Story = {
+/** No dismiss (×) trigger — hover only tints the row; the CTA stays put. */
+export const WithoutDismiss: Story = {
   args: {
-    dismissLabel: "Dismiss offer",
-    onDismiss: () => {},
+    dismissLabel: undefined,
+    onDismiss: undefined,
   },
 };
 
 export const AllVariants: Story = {
   render: () => (
-    <div className="flex w-[1174px] flex-col divide-y divide-border">
+    <div className="flex w-full flex-col divide-y divide-border">
       <OfferCard
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         expirationDate="Expires in 3 days"
         onCtaPress={() => {}}
+        dismissLabel="Dismiss offer"
+        onDismiss={() => {}}
       />
       <OfferCard
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         discipline="Corporate Finance"
         expirationDate="Expires in 3 days"
         onCtaPress={() => {}}
@@ -86,8 +107,11 @@ export const AllVariants: Story = {
         title="Strategic Finance Expert"
         compensation="$56/hour"
         engagementTerms="Up to 30 hrs/week"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         onCtaPress={() => {}}
+        dismissLabel="Dismiss offer"
+        onDismiss={() => {}}
       />
     </div>
   ),

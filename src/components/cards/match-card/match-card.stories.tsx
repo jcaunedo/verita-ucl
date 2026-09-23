@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { partnerLogos } from "@/assets/logos";
 import { MatchCard } from "./match-card";
 
 const meta: Meta<typeof MatchCard> = {
@@ -6,11 +7,13 @@ const meta: Meta<typeof MatchCard> = {
   component: MatchCard,
   tags: ["autodocs"],
   args: {
+    rowProps: { onClick: () => {} },
     title: "Strategic Finance Expert",
     compensation: "$95-115k/yr",
     engagementTerms: "Up to 30 hrs/week",
     duration: "3 months",
-    partnerName: "Bank of America",
+    company: "verita",
+    partnerName: "Verita partner",
     matchTier: "Strong match",
   },
   decorators: [
@@ -25,6 +28,16 @@ export default meta;
 type Story = StoryObj<typeof MatchCard>;
 
 export const Default: Story = {};
+
+/** Partner tile with a logo — `company` set to a partner and `logoSrc` supplied (Figma's `avatar-companies` google variant). */
+export const PartnerLogo: Story = {
+  args: {
+    company: "google",
+    logoSrc: partnerLogos.google,
+    logoAlt: "Google",
+    partnerName: "Google",
+  },
+};
 
 export const NoDuration: Story = {
   args: {
@@ -107,7 +120,8 @@ export const AllVariants: Story = {
         compensation="$95-115k/yr"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         matchTier="Strong match"
       />
       <MatchCard
@@ -115,7 +129,8 @@ export const AllVariants: Story = {
         compensation="$95-115k/yr"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         discipline="Corporate Finance"
         matchTier="Good match"
       />
@@ -124,7 +139,8 @@ export const AllVariants: Story = {
         compensation="$95-115k/yr"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         matchTier="Strong match"
         fitExplanation="Matches your 5 years of FP&A experience and your stated hourly rate."
         readinessState="readyToApply"
@@ -138,7 +154,8 @@ export const AllVariants: Story = {
         compensation="$95-115k/yr"
         engagementTerms="Up to 30 hrs/week"
         duration="3 months"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         matchTier="Strong match"
         readinessState="matchedBlocked"
         missingRequirementSummary="Complete your certification upload to apply."
@@ -153,7 +170,8 @@ export const AllVariants: Story = {
       <MatchCard
         title="Strategic Finance Expert"
         engagementTerms="Up to 30 hrs/week"
-        partnerName="Bank of America"
+        company="verita"
+        partnerName="Verita partner"
         readinessState="potentialFit"
         fitExplanation="Complete your rate preferences to confirm this match."
       />

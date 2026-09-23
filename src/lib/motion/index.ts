@@ -7,6 +7,7 @@ export {
   subtleSpring,
   responsiveSpring,
   layoutSpring,
+  reflowTransition,
 } from "./transitions";
 
 export {
@@ -16,6 +17,7 @@ export {
   cardDismissVariants,
   cardEnterFromRightVariants,
   overlayVariants,
+  popoverVariants,
   panelVariants,
   slideVariants,
   staggerContainerVariants,

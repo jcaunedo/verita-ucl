@@ -71,6 +71,19 @@ export { AccountTrigger, type AccountTriggerProps } from "./components/buttons/a
 export { Hyperlink, hyperlinkVariants, type HyperlinkProps } from "./components/buttons/hyperlink";
 
 /* -------------------------------------------------------------------------- */
+/* Forms — primitives                                                         */
+/* -------------------------------------------------------------------------- */
+
+export {
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  selectItemVariants,
+  type SelectContentProps,
+  type SelectItemProps,
+} from "./components/forms/select";
+
+/* -------------------------------------------------------------------------- */
 /* Data display                                                               */
 /* -------------------------------------------------------------------------- */
 

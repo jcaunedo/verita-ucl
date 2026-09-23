@@ -2,6 +2,11 @@ import * as React from "react";
 import { AlertCircle, Building03, Calendar } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { clickableRowProps } from "@/lib/clickable-row";
+import {
+  AvatarCompanies,
+  type AvatarCompaniesProps,
+} from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import { Button, type ButtonProps } from "@/components/buttons/button";
 import { Typography } from "@/components/typography";
@@ -35,13 +40,13 @@ interface ContractCardProgress {
  * contract's status/action state is the consumer's responsibility, per the
  * PRD's scope boundary (§1).
  *
- * The logo renders as a bare 48px square image with no background tile
- * (Figma's `avatar-companies` instance) — a 2026-09-21 Figma revision from
- * the prior rounded-xl pink-tile treatment this component used to render;
- * there's no fallback glyph shown in Figma for a missing logo, so the slot
- * simply renders nothing when `logoSrc` is omitted (matching Figma's
- * `showStatus`-style optional-render pattern elsewhere in this set) rather
- * than inventing a placeholder Figma doesn't show.
+ * The avatar composes `AvatarCompanies` — Figma's `avatar-companies`
+ * instance — rather than reproducing its tile markup inline, matching
+ * `ApplicationCard`/`MatchCard`/`OfferCard`. `company` defaults to
+ * `"partner"` (letterboxed `logoSrc` on a white tile, neutral fallback when
+ * omitted); pass `company="verita"` for the bundled Verita mark, which is
+ * what Figma's `contract-card` instances show. It always renders, so the
+ * header keeps Figma's fixed 48px row.
  *
  * The Terms block's two rows are each a fixed leading icon + text (Figma:
  * `building-03` + `partner-name`, `calendar` + `engagement-terms`), per PRD
@@ -49,13 +54,20 @@ interface ContractCardProgress {
  * `workArrangement · partnerName` line, which paired the wrong two fields
  * onto one row (Figma pairs `partner-name` with the building icon on its
  * own row, and `engagementTerms`/`duration` together on the calendar row).
+ * `Property 1=Hover` in Figma is a `:hover` pseudostate preview (fill
+ * `card/card` → `state/hover`, i.e. `bg-row-hover`), so it's expressed as a
+ * `hover:` utility rather than a `cva` variant — same token and approach as
+ * `ApplicationCard`'s Default/Hover set.
+ *
  * `duration` is its own optional field (PRD §3.1.2, `applications-card.md`
  * §2.3.2's identical rule) that composes onto the `engagementTerms` row with
  * a leading `·` only when present — never a dangling separator.
  */
 interface ContractCardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  /** Partner/company logo (Figma's `avatar-companies` instance). Renders nothing when omitted — Figma shows no fallback glyph for this slot. */
+  /** Avatar tile treatment, forwarded to `AvatarCompanies` (Figma's `avatar-companies` `Property 1`). `"verita"` renders the bundled Verita mark and ignores `logoSrc`; any other value renders the partner tile. Defaults to `"partner"`. */
+  company?: AvatarCompaniesProps["company"];
+  /** Partner/company logo, forwarded to `AvatarCompanies`. Optional, with a neutral fallback tile. Ignored when `company="verita"`. */
   logoSrc?: string;
   /** Alt text for `logoSrc`. Required semantically whenever `logoSrc` is set. */
   logoAlt?: string;
@@ -69,7 +81,7 @@ interface ContractCardProps
   statusLabel?: string;
   /** Tone for the status badge. Defaults to `"neutral"`, matching Figma's sampled instance. */
   statusTone?: BadgeProps["tone"];
-  /** Engagement/role title (Figma's `Title`). Supports multiline per the PRD. */
+  /** Engagement/role title (Figma's `Title`). Wraps to at most 2 lines, then truncates with an ellipsis (the full text stays in the DOM for screen readers). */
   title: string;
   /** Agreed compensation display string, already formatted per its unit (PRD §3.3.1), e.g. "$85/hour". */
   compensation: string;
@@ -108,11 +120,14 @@ interface ContractCardProps
   primaryActionLabel?: string;
   /** Forwarded to the primary action button (e.g. `onPress`). */
   primaryActionProps?: Omit<ButtonProps, "size" | "color" | "children">;
+  /** Forwarded to the card's own click target (e.g. `onClick`, which opens the contract detail). Passing `onClick` makes the whole card a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps` — same model as `ApplicationCard`/`MatchCard`/`OfferCard`; clicks on the primary action button don't trigger it. */
+  rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
 
 /** A Contract card — identity, terms, progress, and a primary action for one active/upcoming work agreement. Figma: `contract-card`. */
 function ContractCard({
+  company = "partner",
   logoSrc,
   logoAlt,
   statusLabel,
@@ -127,6 +142,7 @@ function ContractCard({
   instructionsUrgent = false,
   primaryActionLabel,
   primaryActionProps,
+  rowProps,
   className,
   ...props
 }: ContractCardProps) {
@@ -134,26 +150,33 @@ function ContractCard({
     <div
       data-slot="contract-card"
       className={cn(
-        "flex w-[376px] flex-col items-start gap-4 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]",
+        "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-colors duration-150 ease-out",
+        // Figma `Property 1=Hover`: fill → `state/hover` (`bg-row-hover`, same token as `ApplicationCard`'s row hover); border and `card-2` shadow unchanged.
+        "hover:bg-row-hover",
+        "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
+      {...clickableRowProps(rowProps)}
       {...props}
     >
-      <div className="flex w-full items-start justify-between">
-        {logoSrc && <img src={logoSrc} alt={logoAlt ?? ""} className="size-12 shrink-0 object-contain" />}
+      {/* Figma `Container`: fixed 48px row (the avatar's height), badge pinned top-right. */}
+      <div className="flex h-12 w-full items-start justify-between">
+        <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
         {statusLabel && <Badge tone={statusTone} label={statusLabel} size="sm" />}
       </div>
-      <div className="flex w-full flex-col items-start gap-3">
+      {/* Figma `Content`: min 150px tall so single-line titles keep the card's rhythm; grows for multiline titles. */}
+      <div className="flex min-h-[150px] w-full flex-col items-start gap-3">
         <div className="flex w-full flex-col items-start gap-1.5">
+          {/* Figma binds `line-height/xl` (28px) with 0 letter-spacing here, not Typography xl's 30px/0.01em default. */}
           <Typography
             as="h3"
             size="xl"
             weight="semibold"
-            className="text-foreground"
+            className="line-clamp-2 leading-7 tracking-normal text-foreground"
           >
             {title}
           </Typography>
-          <Typography size="xl" className="text-foreground">
+          <Typography size="xl" className="leading-7 tracking-normal text-foreground">
             {compensation}
           </Typography>
         </div>
@@ -168,13 +191,24 @@ function ContractCard({
             <Calendar className="size-3.5 shrink-0 text-icon-muted" />
             <Typography size="sm" className="text-foreground">
               {engagementTerms}
-              {duration && <> · {duration}</>}
             </Typography>
+            {/* Figma lays `·` and `duration` out as sibling text nodes spaced by the row's 6px gap, not inline spaces. */}
+            {duration && (
+              <>
+                <Typography size="sm" aria-hidden className="text-foreground">
+                  ·
+                </Typography>
+                <Typography size="sm" className="text-foreground">
+                  {duration}
+                </Typography>
+              </>
+            )}
           </div>
         </div>
       </div>
-      {(instructions || progress) && (
-        <div className="flex w-full flex-col items-start gap-2.5">
+      {/* Figma `Bottom`: instructions, work-insights, and the action share one bottom-aligned 80px-min group with a 10px gap. */}
+      {(instructions || progress || primaryActionLabel) && (
+        <div className="flex min-h-20 w-full flex-col items-start justify-end gap-2.5">
           {instructions && (
             <div className="flex w-full items-center gap-1.5">
               <AlertCircle
@@ -194,7 +228,7 @@ function ContractCard({
           {progress && (
             <div
               data-slot="contract-card-work-insights"
-              className="flex w-full flex-col items-start gap-1.5"
+              className="flex w-full flex-1 flex-col items-start gap-1.5"
             >
               <div className="h-1.5 w-full overflow-hidden rounded-lg bg-[#eeeff2]">
                 <div
@@ -214,19 +248,19 @@ function ContractCard({
               </div>
             </div>
           )}
-        </div>
-      )}
-      {primaryActionLabel && (
-        <Button
-          size="sm"
-          {...primaryActionProps}
-          className={cn(
-            "bg-tone-brand text-white hover:bg-[color-mix(in_srgb,var(--tone-brand)_90%,black)]",
-            primaryActionProps?.className,
+          {primaryActionLabel && (
+            <Button
+              size="sm"
+              {...primaryActionProps}
+              className={cn(
+                "bg-tone-brand text-white hover:bg-[color-mix(in_srgb,var(--tone-brand)_90%,black)]",
+                primaryActionProps?.className,
+              )}
+            >
+              {primaryActionLabel}
+            </Button>
           )}
-        >
-          {primaryActionLabel}
-        </Button>
+        </div>
       )}
     </div>
   );

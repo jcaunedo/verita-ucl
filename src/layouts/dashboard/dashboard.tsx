@@ -1,12 +1,14 @@
 import * as React from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
+import { partnerLogos } from "@/assets/logos";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import { cardDismissVariants, reflowTransition, useMotionPreference } from "@/lib/motion";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
-import { NextStepCard } from "@/components/cards/next-step-card";
+import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard } from "@/components/cards/application-card";
@@ -53,16 +55,17 @@ const NEXT_STEPS = [
     title: "LinkedIn Profile",
     description: "Strengthen your profile and improve match quality.",
     buttonLabel: "Connect LinkedIn",
+    // Opens LinkedIn sign-in in a new tab — the CTA and the whole card (which clicks the CTA) both follow this link.
+    buttonProps: { href: "https://www.linkedin.com/uas/login", target: "_blank", rel: "noopener noreferrer" },
     dismissible: true,
   },
 ] as const;
-
-type NextStepKey = (typeof NEXT_STEPS)[number]["key"];
 
 /** Active/upcoming work agreements (Figma's "Active work" section, `contract-card` instances). */
 const ACTIVE_WORK = [
   {
     key: "backend-integration",
+    company: "verita",
     title: "Backend Integration Engineer",
     compensation: "$85/hour",
     partnerName: "Verita partner",
@@ -73,6 +76,7 @@ const ACTIVE_WORK = [
   },
   {
     key: "compensation-benchmarking",
+    company: "verita",
     title: "Compensation Benchmarking Report",
     compensation: "$4,500/project",
     partnerName: "Amazon Health",
@@ -81,6 +85,9 @@ const ACTIVE_WORK = [
   },
   {
     key: "clinical-expert-survey",
+    company: "amazon",
+    logoSrc: partnerLogos.amazon,
+    logoAlt: "Amazon",
     title: "Clinical Expert, In-Home Health Evaluation Survey",
     compensation: "$2,000/task",
     partnerName: "Amazon Health",
@@ -96,6 +103,7 @@ const ACTIVE_APPLICATIONS = [
   {
     key: "senior-financial-analyst",
     title: "Senior Financial Analyst",
+    company: "verita",
     partnerName: "Verita partner",
     compensation: "$95–115k/yr",
     engagementTerms: "32 hrs/week",
@@ -107,6 +115,7 @@ const ACTIVE_APPLICATIONS = [
   {
     key: "clinical-data-coordinator",
     title: "Clinical Data Coordinator",
+    company: "verita",
     partnerName: "Verita partner",
     compensation: "$48/hr",
     engagementTerms: "20 hrs/week",
@@ -118,6 +127,7 @@ const ACTIVE_APPLICATIONS = [
   {
     key: "movement-physical-activity-expert",
     title: "Movement & Physical Activity Expert Annotator",
+    company: "verita",
     partnerName: "Verita partner",
     compensation: "$50/hr",
     engagementTerms: "40 hours per week",
@@ -128,6 +138,9 @@ const ACTIVE_APPLICATIONS = [
   {
     key: "search-quality-analyst",
     title: "Search Quality Analyst",
+    company: "google",
+    logoSrc: partnerLogos.google,
+    logoAlt: "Google",
     partnerName: "Google",
     compensation: "$60/hr",
     engagementTerms: "Up to 25 hrs/week",
@@ -142,6 +155,7 @@ const RECENT_MATCHES = [
   {
     key: "clinical-expert-sleep",
     title: "Clinical Expert, In-Home Health Evaluation Survey",
+    company: "verita",
     partnerName: "Verita partner",
     compensation: "56/hr",
     engagementTerms: "35 hours per week",
@@ -151,6 +165,9 @@ const RECENT_MATCHES = [
   {
     key: "strategic-finance-expert",
     title: "Strategic Finance Expert",
+    company: "apple",
+    logoSrc: partnerLogos.apple,
+    logoAlt: "Apple",
     partnerName: "Apple",
     compensation: "$85/hr",
     engagementTerms: "15 hrs/week",
@@ -159,6 +176,7 @@ const RECENT_MATCHES = [
   {
     key: "retail-operations-contractor",
     title: "Retail Operations Contractor",
+    company: "verita",
     partnerName: "Verita partner",
     compensation: "$42/hr",
     engagementTerms: "Up to 30 hrs/week",
@@ -247,58 +265,18 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
       wasAutoCollapsedRef.current = false;
     }
   }, [isLgUp]);
+
   /**
-   * Per `product-specs/next-steps-card.md` §2.1, dismissal is immediate with
-   * no confirmation step — clicking the X removes the card right away. This
-   * reference layout has no backend, so "dismissed" is just local UI state;
-   * a real consumer would also persist the dismissal so the task doesn't
-   * re-surface on reload (the PRD's only re-surface trigger is the task's
-   * requirement level changing, never a page refresh).
+   * Dismissing the offer (its X) removes it with the same exit as a dismissed
+   * Next Steps card — `cardDismissVariants` (fade + soft scale-down) inside
+   * `AnimatePresence`, opacity-only under reduced motion. The section
+   * (heading + card) stays mounted until that exit finishes, then unmounts via
+   * `onExitComplete` — same pattern as `NextStepsSection`'s last card. Local UI
+   * state only; a real consumer would persist the dismissal.
    */
-  const [dismissedKeys, setDismissedKeys] = React.useState<Set<NextStepKey>>(new Set());
-  const eligibleNextSteps = NEXT_STEPS.filter((step) => !dismissedKeys.has(step.key));
-  /**
-   * The Next Steps grid caps its column count in two tiers — below `xl`
-   * (1280px) it's 2-up, from `xl` to below `2xl` (1536px) it's 3-up, and at
-   * `2xl`+ it's the full 4-up. Rather than wrapping the overflow to a second
-   * row, any card beyond the current tier's column count is queued and only
-   * mounted once a dismiss/completion frees a slot within the visible tier.
-   */
-  const isXlUp = useMediaQuery("(min-width: 1280px)");
-  const is2xlUp = useMediaQuery("(min-width: 1536px)");
-  const maxVisible = is2xlUp ? Infinity : isXlUp ? 3 : 2;
-  const visibleNextSteps = eligibleNextSteps.slice(0, maxVisible);
-  /**
-   * Tracks each card's `key` the first time it appears in `visibleNextSteps`
-   * — a key already seen mounts as a plain fade-in (or is on true first
-   * render, skipped below); a key seen for the first time on a *later*
-   * render (i.e. a queued card newly revealed by a slot opening up) mounts
-   * with `enterFromRight` instead, so only the actual newly-surfaced card
-   * gets the directional entrance, not the whole grid on initial load.
-   */
-  const seenKeysRef = React.useRef<Set<NextStepKey> | null>(null);
-  if (seenKeysRef.current === null) {
-    seenKeysRef.current = new Set(visibleNextSteps.map((step) => step.key));
-  }
-  const newlyRevealedKeys = new Set(
-    visibleNextSteps
-      .filter((step) => !seenKeysRef.current!.has(step.key))
-      .map((step) => step.key),
-  );
-  React.useEffect(() => {
-    for (const step of visibleNextSteps) {
-      seenKeysRef.current!.add(step.key);
-    }
-  });
-  /**
-   * Separate from `visibleNextSteps.length === 0` so the "Next steps"
-   * section (heading + grid) stays mounted long enough for the last card's
-   * exit animation to finish — `AnimatePresence`'s `onExitComplete` flips
-   * this only once every exiting card has actually left, rather than the
-   * section vanishing mid-animation the instant the last card is filtered
-   * out of `visibleNextSteps`.
-   */
-  const [nextStepsSectionVisible, setNextStepsSectionVisible] = React.useState(true);
+  const { prefersReducedMotion } = useMotionPreference();
+  const [offerDismissed, setOfferDismissed] = React.useState(false);
+  const [offerSectionVisible, setOfferSectionVisible] = React.useState(true);
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     // A manual toggle always promotes the current state to user-owned —
@@ -335,108 +313,121 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
-            <div className="flex w-full flex-col items-start gap-4">
-              <Typography size="xl" weight="semibold">
-                You have a new offer
-              </Typography>
-              <OfferCard
-                title="Sleep Specialist, Behavioral Sleep Medicine Professional"
-                partnerName="Verita partner"
-                compensation="$75 - $95 / hour"
-                engagementTerms="Up to 30 hr per week"
-                duration="Ongoing"
-                expirationDate="Expires on Sep 10"
-                onCtaPress={() => {}}
-                dismissLabel="Dismiss offer"
-                onDismiss={() => {}}
-                className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
-              />
-            </div>
-
-            {nextStepsSectionVisible && (
+            {offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-4">
-                <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="xl" weight="semibold">
-                    Next steps
-                  </Typography>
-                  <Typography size="sm" className="text-foreground-muted">
-                    Complete these to unlock more opportunities and improve your matches.
-                  </Typography>
-                </div>
-                <div className="grid h-[248px] w-full grid-cols-2 gap-5 xl:grid-cols-3 2xl:grid-cols-4">
-                  <AnimatePresence
-                    onExitComplete={() => {
-                      if (eligibleNextSteps.length === 0) {
-                        setNextStepsSectionVisible(false);
-                      }
-                    }}
-                  >
-                    {visibleNextSteps.map(({ key, ...step }) => (
-                      <NextStepCard
-                        key={key}
-                        {...step}
-                        enterFromRight={newlyRevealedKeys.has(key)}
-                        onDismiss={
-                          step.dismissible
-                            ? () => setDismissedKeys((prev) => new Set(prev).add(key))
-                            : undefined
-                        }
+                <Typography size="xl" weight="semibold">
+                  You have a new offer
+                </Typography>
+                <AnimatePresence onExitComplete={() => setOfferSectionVisible(false)}>
+                  {!offerDismissed && (
+                    <motion.div
+                      key="offer"
+                      className="w-full"
+                      variants={cardDismissVariants}
+                      initial={false}
+                      animate="animate"
+                      exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
+                    >
+                      <OfferCard
+                        company="verita"
+                        title="Sleep Specialist, Behavioral Sleep Medicine Professional"
+                        partnerName="Verita partner"
+                        compensation="$75 - $95 / hour"
+                        engagementTerms="Up to 30 hr per week"
+                        duration="Ongoing"
+                        expirationDate="Expires on Sep 10"
+                        onCtaPress={() => {}}
+                        rowProps={{ onClick: () => {} }}
+                        dismissLabel="Dismiss offer"
+                        onDismiss={() => setOfferDismissed(true)}
+                        className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
                       />
-                    ))}
-                  </AnimatePresence>
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 
-            <div className="flex w-full flex-col items-start gap-4">
-              <Typography size="xl" weight="semibold">
-                Active work
-              </Typography>
-              <div className="grid w-full grid-cols-3 items-start gap-x-5 gap-y-4">
-                {ACTIVE_WORK.map(({ key, ...contract }) => (
-                  <ContractCard key={key} {...contract} primaryActionProps={{ onPress: () => {} }} />
-                ))}
-              </div>
-            </div>
+            {/* Everything below the offer glides up into the space its section frees, instead of snapping —
+                `layout="position"` gated by `layoutDependency` so it only runs when the offer section unmounts
+                (not on sidebar toggles), on the slow `reflowTransition`. Reduced motion: no glide. */}
+            <motion.div
+              layout={prefersReducedMotion ? false : "position"}
+              layoutDependency={offerSectionVisible}
+              transition={reflowTransition}
+              className="flex w-full flex-col items-start gap-12"
+            >
+              <NextStepsSection steps={NEXT_STEPS} />
 
-            <div className="flex w-full flex-col items-start gap-4">
-              <Typography size="xl" weight="semibold">
-                Active Applications
-              </Typography>
-              <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                {ACTIVE_APPLICATIONS.map(({ key, ...application }) => (
-                  <ApplicationCard key={key} {...application} className="border-b border-border last:border-b-0" />
-                ))}
+              <div className="flex w-full flex-col items-start gap-4">
+                <Typography size="xl" weight="semibold">
+                  Active work
+                </Typography>
+                {/* 2-up below `xl`, 3-up from `xl` — unlike Next steps, every contract stays visible, so extras wrap to a new row (Figma's 16px row gap) rather than queueing. */}
+                <div className="grid w-full grid-cols-2 items-start gap-x-5 gap-y-4 xl:grid-cols-3">
+                  {ACTIVE_WORK.map(({ key, ...contract }) => (
+                    <ContractCard
+                      key={key}
+                      {...contract}
+                      className="w-full"
+                      rowProps={{ onClick: () => {} }}
+                      primaryActionProps={{ onPress: () => {} }}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="flex items-start gap-5">
+
+              <div className="flex w-full flex-col items-start gap-4">
+                <Typography size="xl" weight="semibold">
+                  Active Applications
+                </Typography>
+                <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+                  {ACTIVE_APPLICATIONS.map(({ key, ...application }) => (
+                    <ApplicationCard
+                      key={key}
+                      {...application}
+                      actionsMenuLabel={`More actions for ${application.title}`}
+                      onActionsPress={() => {}}
+                      rowProps={{ onClick: () => {} }}
+                      className="border-b border-border last:border-b-0"
+                    />
+                  ))}
+                </div>
+                <div className="flex items-start gap-5">
+                  <Hyperlink href="#" showArrow>
+                    View All
+                  </Hyperlink>
+                  <Hyperlink href="#" showArrow>
+                    Discover more opportunities
+                  </Hyperlink>
+                </div>
+              </div>
+
+              <div className="flex w-full flex-col items-start gap-4">
+                <Typography size="xl" weight="semibold">
+                  Most recent matches
+                </Typography>
+                <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+                  {RECENT_MATCHES.map(({ key, ...match }) => (
+                    <MatchCard
+                      key={key}
+                      {...match}
+                      rowProps={{ onClick: () => {} }}
+                      className="border-b border-border last:border-b-0"
+                    />
+                  ))}
+                </div>
                 <Hyperlink href="#" showArrow>
-                  View All
-                </Hyperlink>
-                <Hyperlink href="#" showArrow>
-                  Discover more opportunities
+                  View more matches
                 </Hyperlink>
               </div>
-            </div>
 
-            <div className="flex w-full flex-col items-start gap-4">
-              <Typography size="xl" weight="semibold">
-                Most recent matches
-              </Typography>
-              <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                {RECENT_MATCHES.map(({ key, ...match }) => (
-                  <MatchCard key={key} {...match} className="border-b border-border last:border-b-0" />
+              <div className="flex w-full items-start gap-5">
+                {CALLOUTS.map(({ key, ...callout }) => (
+                  <CalloutCard key={key} {...callout} />
                 ))}
               </div>
-              <Hyperlink href="#" showArrow>
-                View more matches
-              </Hyperlink>
-            </div>
-
-            <div className="flex w-full items-start gap-5">
-              {CALLOUTS.map(({ key, ...callout }) => (
-                <CalloutCard key={key} {...callout} />
-              ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
