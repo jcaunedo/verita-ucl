@@ -10,6 +10,7 @@ import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
+import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard } from "@/components/cards/application-card";
@@ -298,12 +299,7 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
           navHrefOverrides={navHrefOverrides}
         />
       </div>
-      <div
-        className={cn(
-          "flex min-w-px flex-1 flex-col items-center px-12 xl:pr-30",
-          sidebarCollapsed ? "xl:pl-30" : "xl:pl-12",
-        )}
-      >
+      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName)}>
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">

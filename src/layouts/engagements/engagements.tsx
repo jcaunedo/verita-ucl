@@ -2,6 +2,7 @@ import * as React from "react";
 import { AlignLeft, SearchMd, Share06, XCircle } from "@untitledui/icons";
 
 import { partnerLogos } from "@/assets/logos";
+import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import {
@@ -24,6 +25,7 @@ import {
 } from "@/components/cards/application-card";
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
+import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 
 type ApplicationFilter = "open" | "moving-forward" | "not-moving-forward";
 
@@ -321,7 +323,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
         />
       </div>
       {/* Figma `Canvas`: 64px left / 160px right padding at desktop. */}
-      <div className="flex min-w-px flex-1 flex-col items-center px-12 xl:pr-40 xl:pl-16">
+      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName)}>
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-14 pb-[104px]">
           <div className="flex w-full flex-col items-start gap-1.5">
             <Typography as="h1" size="3xl" weight="semibold">
