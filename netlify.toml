@@ -1,0 +1,9 @@
+# Netlify deploy for the static Storybook site (not the library build).
+[build]
+  command = "npm run build-storybook"
+  publish = "storybook-static"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Skip Storybook's anonymous telemetry in CI
+  STORYBOOK_DISABLE_TELEMETRY = "1"
