@@ -17,7 +17,8 @@ import { Typography } from "@/components/typography";
  *
  * Hover (2026-09-22 Figma revision): the fill switches from
  * `color/tone/brand/subtle` to `background/default` (white) and a 1px
- * `border/neutral/border` outline appears. The border is reserved as
+ * `border/neutral/border` outline and the `shadow/hover-card` shadow
+ * appear (the shared hovered-card look, DESIGN.md "Row hover"). The border is reserved as
  * `border-transparent` at rest so the card doesn't shift 1px when it shows
  * (both Figma variants are the same 104px height). Figma's stroke is inside
  * the frame, so padding is Figma's 24px vertical / 32px left / 40px right
@@ -29,9 +30,9 @@ import { Typography } from "@/components/typography";
  * cards translate up by `motionDistance.hover` on a `subtleSpring`) via a
  * thin `motion.div` wrapper around the React Aria `Link` (same box), so the
  * link keeps React Aria's hover/focus/press semantics untouched. Fill,
- * border, and arrow color fade with a CSS `transition-colors` (not
- * `transition`, which would also animate `transform` and fight Motion's
- * lift). Under reduced motion the
+ * border, shadow, and arrow color fade with a CSS transition limited to those
+ * properties (not `transition`, which would also animate `transform` and
+ * fight Motion's lift). Under reduced motion the
  * lift is dropped entirely and only the color change remains.
  *
  * The arrow icon has no bound color variable in Figma (a flattened vector,
@@ -77,8 +78,8 @@ function CalloutCard({
       <AriaLink
         data-slot="callout-card"
         className={cn(
-          "group flex w-full items-center gap-18 rounded-card border border-transparent bg-tone-brand-subtle py-[23px] pr-[39px] pl-[31px] transition-colors duration-150 ease-out",
-          "data-[hovered]:border-border data-[hovered]:bg-background",
+          "group flex w-full items-center gap-18 rounded-card border border-transparent bg-tone-brand-subtle py-[23px] pr-[39px] pl-[31px] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
+          "data-[hovered]:border-border data-[hovered]:bg-background data-[hovered]:shadow-hover-card",
           "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
           className,
         )}

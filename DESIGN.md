@@ -118,16 +118,24 @@ react-aria tabs (`MetricTab`, `TabButton`) showed the default cursor. Added
 
 ---
 
-## Row hover — every card and table row uses `hover-row` (`src/styles/theme.css`)
+## Row hover — list rows use `hover-row`, standalone cards use `hover-card` (`src/styles/theme.css`)
 
-**Rule:** The hover fill for a card or a table row is always
-`--hover-row` (`bg-hover-row`), Figma's `state/hover-row` — `neutral-700`
-at 2%. It is the one row-hover token: don't give a card or row its own
-tint, and don't reach for `--hover`.
+**Rule:** The hover fill for a row in a list or table (`ApplicationCard`,
+`MatchCard`, `OfferCard`, table rows) is always `--hover-row`
+(`bg-hover-row`), Figma's `state/hover-row` — `neutral-700` at 2%. It is the
+one row-hover token: don't give a row its own tint, and don't reach for
+`--hover`.
+
+A standalone card (`CalloutCard`, `NextStepCard`, `ContractCard`) doesn't
+tint on hover. It lifts: a white fill, a `border/neutral/border` border, the
+`--shadow-hover-card` shadow (`shadow-hover-card`, Figma's
+`shadow/hover-card`: 0 4px 12px, ink at 6%), and the Lift motion (up 3px,
+CLAUDE.md "Lift"). Added in Figma on 2026-09-24.
 
 | Token          | Figma              | Value            | Use for                                                      |
 | -------------- | ------------------ | ---------------- | ------------------------------------------------------------ |
-| `--hover-row`  | `state/hover-row`  | neutral-700 @ 2% | Card hover states, table rows (when tables land)             |
+| `--hover-row`  | `state/hover-row`  | neutral-700 @ 2% | List and table rows (Application/Match/Offer rows)           |
+| `--shadow-hover-card` | `shadow/hover-card` | 0 4px 12px, ink @ 6% | Standalone card hover (Callout, Next Step, Contract)   |
 | `--hover`      | `state/hover`      | neutral-700 @ 4% | Controls and list items: Button, AccountTrigger, Select/Menu items |
 | `--icon-hover` | raw fill on `button` Type=Icon | neutral-700 @ 8% | Ghost/Neutral icon-only Button                    |
 
@@ -140,13 +148,14 @@ into the other.
 
 **How to apply:**
 
-- **New card or table row:** `hover:bg-hover-row` (or `group-hover:` /
+- **New list or table row:** `hover:bg-hover-row` (or `group-hover:` /
   `has-[…]:` when the row stays highlighted, e.g. while its menu is open —
   see `ApplicationCard`). Don't use `bg-hover`, `bg-neutral-*`, or an
   arbitrary `color-mix`.
-- **Exception — Next Step card:** its hover is a different treatment (the
-  dashed tile turns into a solid white card with a border), not a tint, so
-  it doesn't use `hover-row`.
+- **New standalone card:** white fill + `border-border` +
+  `shadow-hover-card` on hover, plus the Lift motion. Include `box-shadow`
+  in the card's CSS transition (not `transition-all`, which would fight
+  Motion's transform).
 - **Adding a hover-ish token:** add it as its own variable mapped to its
   own Figma variable (`:root` + `@theme inline`), even when its value
   currently matches an existing one.

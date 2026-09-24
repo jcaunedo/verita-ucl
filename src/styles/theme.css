@@ -113,6 +113,8 @@
 	/* ---------- Shadows ---------- */
 	/* Figma: shadow/popover — floating surfaces (select/menu content, popovers). */
 	--shadow-popover: 0px 12px 20px 0px rgba(8, 13, 20, 0.12);
+	/* Figma: shadow/hover-card — the lifted look of a hovered standalone card (callout, next step, contract). */
+	--shadow-hover-card: 0px 4px 12px 0px rgba(8, 13, 20, 0.06);
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);

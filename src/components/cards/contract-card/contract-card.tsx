@@ -1,7 +1,9 @@
 import * as React from "react";
+import { motion } from "motion/react";
 import { AlertCircle, Building03, Calendar } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { liftPattern, useMotionPreference } from "@/lib/motion";
 import { clickableRowProps } from "@/lib/clickable-row";
 import {
   AvatarCompanies,
@@ -146,120 +148,127 @@ function ContractCard({
   className,
   ...props
 }: ContractCardProps) {
+  const { prefersReducedMotion } = useMotionPreference();
+
   return (
-    <div
-      data-slot="contract-card"
-      className={cn(
-        "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-colors duration-150 ease-out",
-        // Figma `Property 1=Hover`: fill → `state/hover-row` (`bg-hover-row`, the shared card/table row hover — DESIGN.md "Row hover"); border and `card-2` shadow unchanged.
-        "hover:bg-hover-row",
-        "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
-        className,
-      )}
-      {...clickableRowProps(rowProps)}
-      {...props}
-    >
-      {/* Figma `Container`: fixed 48px row (the avatar's height), badge pinned top-right. */}
-      <div className="flex h-12 w-full items-start justify-between">
-        <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
-        {statusLabel && <Badge tone={statusTone} label={statusLabel} size="sm" />}
-      </div>
-      {/* Figma `Content`: min 150px tall so single-line titles keep the card's rhythm; grows for multiline titles. */}
-      <div className="flex min-h-[150px] w-full flex-col items-start gap-3">
-        <div className="flex w-full flex-col items-start gap-1.5">
-          {/* Figma binds `line-height/xl` (28px) here, not Typography xl's 30px default. */}
-          <Typography
-            as="h3"
-            size="xl"
-            weight="bold"
-            className="line-clamp-2 leading-7 text-foreground"
-          >
-            {title}
-          </Typography>
-          {/* Figma: `xl -medium`. */}
-          <Typography size="xl" weight="medium" className="leading-7 text-foreground">
-            {compensation}
-          </Typography>
+    // Lift on hover (CLAUDE.md "Lift", same as `CalloutCard`): a thin `motion.div` around the card rather than making the
+    // card itself a `motion.div`, whose drag/animation handler types clash with the card's `HTMLAttributes` props. The
+    // wrapper is the card's box, so hovering either lifts both. Dropped under reduced motion; the hover fill stays.
+    <motion.div data-slot="contract-card-lift" className="flex" {...(prefersReducedMotion ? {} : liftPattern)}>
+      <div
+        data-slot="contract-card"
+        className={cn(
+          "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
+          // Figma `Property 1=Hover`: fill and border unchanged, `card-2` shadow → `shadow/hover-card` (DESIGN.md "Row hover").
+          "hover:shadow-hover-card",
+          "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+          className,
+        )}
+        {...clickableRowProps(rowProps)}
+        {...props}
+      >
+        {/* Figma `Container`: fixed 48px row (the avatar's height), badge pinned top-right. */}
+        <div className="flex h-12 w-full items-start justify-between">
+          <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
+          {statusLabel && <Badge tone={statusTone} label={statusLabel} size="sm" />}
         </div>
-        <div className="flex w-full flex-col items-start gap-0.5">
-          <div className="flex w-full items-center gap-1.5">
-            <Building03 className="size-3.5 shrink-0 text-icon-muted" />
-            <Typography size="sm" className="text-foreground">
-              {partnerName}
+        {/* Figma `Content`: min 150px tall so single-line titles keep the card's rhythm; grows for multiline titles. */}
+        <div className="flex min-h-[150px] w-full flex-col items-start gap-3">
+          <div className="flex w-full flex-col items-start gap-1.5">
+            {/* Figma binds `line-height/xl` (28px) here, not Typography xl's 30px default. */}
+            <Typography
+              as="h3"
+              size="xl"
+              weight="bold"
+              className="line-clamp-2 leading-7 text-foreground"
+            >
+              {title}
+            </Typography>
+            {/* Figma: `xl -medium`. */}
+            <Typography size="xl" weight="medium" className="leading-7 text-foreground">
+              {compensation}
             </Typography>
           </div>
-          <div className="flex w-full items-center gap-1.5">
-            <Calendar className="size-3.5 shrink-0 text-icon-muted" />
-            <Typography size="sm" className="text-foreground">
-              {engagementTerms}
-            </Typography>
-            {/* Figma lays `·` and `duration` out as sibling text nodes spaced by the row's 6px gap, not inline spaces. */}
-            {duration && (
-              <>
-                <Typography size="sm" aria-hidden className="text-foreground">
-                  ·
-                </Typography>
-                <Typography size="sm" className="text-foreground">
-                  {duration}
-                </Typography>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-      {/* Figma `Bottom`: instructions, work-insights, and the action share one bottom-aligned 80px-min group with a 10px gap. */}
-      {(instructions || progress || primaryActionLabel) && (
-        <div className="flex min-h-20 w-full flex-col items-start justify-end gap-2.5">
-          {instructions && (
+          <div className="flex w-full flex-col items-start gap-0.5">
             <div className="flex w-full items-center gap-1.5">
-              <AlertCircle
-                className={cn(
-                  "size-3.5 shrink-0",
-                  instructionsUrgent ? "text-tone-destructive" : "text-icon-muted",
-                )}
-              />
-              <Typography
-                size="xs"
-                className={instructionsUrgent ? "text-tone-destructive" : "text-foreground"}
-              >
-                {instructions}
+              <Building03 className="size-3.5 shrink-0 text-icon-muted" />
+              <Typography size="sm" className="text-foreground">
+                {partnerName}
               </Typography>
             </div>
-          )}
-          {progress && (
-            <div
-              data-slot="contract-card-work-insights"
-              className="flex w-full flex-1 flex-col items-start gap-1.5"
-            >
-              <div className="h-1.5 w-full overflow-hidden rounded-lg bg-[#eeeff2]">
-                <div
-                  className="h-full rounded-2xl bg-tone-brand"
-                  style={{ width: `${Math.min(progress.percentage, 100)}%` }}
-                />
-              </div>
-              <div className="flex w-full items-center justify-between">
-                <Typography size="xs" className="text-foreground">
-                  {progress.metricLabel}
-                </Typography>
-                {progress.percentageLabel && (
-                  <Typography size="xs" className="text-foreground-muted">
-                    {progress.percentageLabel}
+            <div className="flex w-full items-center gap-1.5">
+              <Calendar className="size-3.5 shrink-0 text-icon-muted" />
+              <Typography size="sm" className="text-foreground">
+                {engagementTerms}
+              </Typography>
+              {/* Figma lays `·` and `duration` out as sibling text nodes spaced by the row's 6px gap, not inline spaces. */}
+              {duration && (
+                <>
+                  <Typography size="sm" aria-hidden className="text-foreground">
+                    ·
                   </Typography>
-                )}
-              </div>
+                  <Typography size="sm" className="text-foreground">
+                    {duration}
+                  </Typography>
+                </>
+              )}
             </div>
-          )}
-          {primaryActionLabel && (
-            <Button
-              size="sm"
-              {...primaryActionProps}
-            >
-              {primaryActionLabel}
-            </Button>
-          )}
+          </div>
         </div>
-      )}
-    </div>
+        {/* Figma `Bottom`: instructions, work-insights, and the action share one bottom-aligned 80px-min group with a 10px gap. */}
+        {(instructions || progress || primaryActionLabel) && (
+          <div className="flex min-h-20 w-full flex-col items-start justify-end gap-2.5">
+            {instructions && (
+              <div className="flex w-full items-center gap-1.5">
+                <AlertCircle
+                  className={cn(
+                    "size-3.5 shrink-0",
+                    instructionsUrgent ? "text-tone-destructive" : "text-icon-muted",
+                  )}
+                />
+                <Typography
+                  size="xs"
+                  className={instructionsUrgent ? "text-tone-destructive" : "text-foreground"}
+                >
+                  {instructions}
+                </Typography>
+              </div>
+            )}
+            {progress && (
+              <div
+                data-slot="contract-card-work-insights"
+                className="flex w-full flex-1 flex-col items-start gap-1.5"
+              >
+                <div className="h-1.5 w-full overflow-hidden rounded-lg bg-[#eeeff2]">
+                  <div
+                    className="h-full rounded-2xl bg-tone-brand"
+                    style={{ width: `${Math.min(progress.percentage, 100)}%` }}
+                  />
+                </div>
+                <div className="flex w-full items-center justify-between">
+                  <Typography size="xs" className="text-foreground">
+                    {progress.metricLabel}
+                  </Typography>
+                  {progress.percentageLabel && (
+                    <Typography size="xs" className="text-foreground-muted">
+                      {progress.percentageLabel}
+                    </Typography>
+                  )}
+                </div>
+              </div>
+            )}
+            {primaryActionLabel && (
+              <Button
+                size="sm"
+                {...primaryActionProps}
+              >
+                {primaryActionLabel}
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </motion.div>
   );
 }
 

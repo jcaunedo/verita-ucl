@@ -4,7 +4,13 @@ import { XClose } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { clickableRowProps } from "@/lib/clickable-row";
-import { cardDismissVariants, cardEnterFromRightVariants, useMotionPreference } from "@/lib/motion";
+import {
+  cardDismissVariants,
+  cardEnterFromRightVariants,
+  motionDistance,
+  subtleSpring,
+  useMotionPreference,
+} from "@/lib/motion";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import {
   Button,
@@ -176,11 +182,26 @@ function NextStepCard({
     },
   })!;
 
+  /**
+   * Lift on hover (CLAUDE.md "Lift", same as `CalloutCard`): up `motionDistance.hover` on `subtleSpring`. The spring is
+   * scoped to `y` — in `whileHover` for the rise, and on the `animate` variant for the return — so the card's `layout`
+   * reflow and entrance keep their own transitions. Dropped under reduced motion; the hover fill/border stay.
+   */
+  const baseVariants = enterFromRight ? cardEnterFromRightVariants : cardDismissVariants;
+  const variants = React.useMemo(() => {
+    const animate = baseVariants.animate as { transition?: object };
+    return {
+      ...baseVariants,
+      animate: { ...animate, transition: { ...animate.transition, y: subtleSpring } },
+    };
+  }, [baseVariants]);
+
   return (
     <motion.div
       data-slot="next-step-card"
       layout={!prefersReducedMotion && !enterFromRight}
-      variants={enterFromRight ? cardEnterFromRightVariants : cardDismissVariants}
+      variants={variants}
+      whileHover={prefersReducedMotion ? undefined : { y: -motionDistance.hover, transition: subtleSpring }}
       initial="initial"
       animate="animate"
       exit={
@@ -189,8 +210,9 @@ function NextStepCard({
           : "exit"
       }
       className={cn(
-        "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card border border-transparent bg-next-steps-card-background px-5 py-6 text-next-steps-card-border transition-colors duration-150 ease-out",
-        "hover:border-solid hover:border-border hover:bg-background",
+        "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card border border-transparent bg-next-steps-card-background px-5 py-6 text-next-steps-card-border transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
+        // Figma `Property 1=Hover`: solid white card, `border/neutral/border`, and `shadow/hover-card` (DESIGN.md "Row hover").
+        "hover:border-solid hover:border-border hover:bg-background hover:shadow-hover-card",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
