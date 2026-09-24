@@ -34,7 +34,9 @@ import { Typography } from "@/components/typography";
  * Both strokes are inside-aligned like Figma's: the 1px base border is an
  * inset `ring` (box-shadow, takes no space — a CSS `border` would add 2px
  * and make the tab 83px instead of Figma's 81px), and the 2px indicator
- * sits at `inset-0` over it — no layout shift between states.
+ * sits at `inset-0` over it — no layout shift between states. The
+ * indicator is raised (`z-10`) so it glides over the other tabs in either
+ * direction, never under them.
  * `MetricTabList` scopes the `layoutId` per list.
  *
  * The value uses Figma's `xl/xl -semibold` (20/28, 0 tracking). The theme's
@@ -87,7 +89,10 @@ function MetricTab({ label, value, className, ...props }: MetricTabProps) {
               data-slot="metric-tab-indicator"
               layoutId="metric-tab-indicator"
               transition={resolve(layoutSpring)}
-              className="pointer-events-none absolute inset-0 rounded-card border-2 border-tone-brand"
+              // `z-10`: the indicator belongs to the newly selected tab, and the tabs paint in DOM order, so gliding left
+              // it passed *under* the tabs after it. Raised above every tab in the row (the tabs set no z-index of
+              // their own); `pointer-events-none` keeps it from blocking clicks on the tabs it crosses.
+              className="pointer-events-none absolute inset-0 z-10 rounded-card border-2 border-tone-brand"
             />
           )}
           <Typography as="span" size="sm" weight="medium">
