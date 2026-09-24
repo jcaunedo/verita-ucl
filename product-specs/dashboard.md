@@ -1,7 +1,7 @@
 <!--
 Created: Aug 28, 2026
 Created by: Julio Caunedo
-Last updated: Sep 23, 2026
+Last updated: Sep 24, 2026
 Scope: Verita AI professional Home/Dashboard after sign-in — onboarding, matching, task orchestration, and the Home-page previews of Applications/Offers/Contracts. Full Engagements-page detail (Applications, Offers, Contracts, Assessments, Talent Network, Training, Payments) lives in product-specs/engagements.md.
 Purpose: Define the product, UX, information architecture, state, and data requirements needed to design the Dashboard.
 -->
@@ -111,7 +111,7 @@ The Dashboard may draw from these modules. Visibility and order are state-depend
 2. **Next steps** — a row of individual blocking, required-later, and recommended tasks, shown only while at least one is applicable. Filtered top-of-list surface over `product-specs/next-steps-card.md` — full card content, badge model, and visibility rule live there (§7.2).
 3. **Contracts** — the professional's active and upcoming contracts, when any exist. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Contracts` view/object — full field list, status model, and resolved notes live there.
 4. **Matching opportunities** — AI-selected opportunities with fit explanations and readiness state (§6.3).
-5. **Your applications** — active applications, current stage, and next action. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Applications` view — full row content lives in [`engagements.md` §3](engagements.md#3-applications).
+5. **Your applications** — active applications, current stage, and next action. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Applications` view — full row content lives in [`engagements.md` §3](engagements.md#3-applications). Shows the first 3 applications of Engagements → Applications → `Open`, in that filter's default sort, with `View All` routing there ([`applications-card.md` §5](applications-card.md#5-visibility-rule)).
 6. **Offers** — offers awaiting the professional's response, when any exist. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Offers` view — full definition, fields, and resolved notes live in [`engagements.md` §4](engagements.md#4-offers-and-contracting).
 7. **Discover more opportunities** — entry to broader marketplace browsing.
 8. **Referrals** — secondary unless a referral event requires attention.

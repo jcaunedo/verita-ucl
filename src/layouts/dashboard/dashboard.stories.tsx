@@ -16,7 +16,9 @@ type Story = StoryObj<typeof Dashboard>;
  * "Home" links to the `DashboardEmptyState` story — for sharing the two
  * layouts as one clickable prototype (open this story's direct
  * `?viewMode=story` URL; clicking Home lands on the empty-state dashboard,
- * Engagements on the `Engagements` layout).
+ * Engagements on the `Engagements` layout). "Active Applications" → "View
+ * All" also opens `Engagements`, whose default story lands on Applications
+ * with the `Open` filter selected.
  * Relative `iframe.html` URL so it works on any Storybook host (local dev
  * server or a static build), not just `localhost:6009`.
  */
@@ -26,5 +28,6 @@ export const Default: Story = {
       home: "iframe.html?id=layouts-dashboardemptystate--default&viewMode=story",
       engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
     },
+    viewAllApplicationsHref: "iframe.html?id=layouts-engagements--default&viewMode=story",
   },
 };

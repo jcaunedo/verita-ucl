@@ -1,7 +1,6 @@
 import * as React from "react";
 import { AlignLeft, SearchMd, Share06, XCircle } from "@untitledui/icons";
 
-import { partnerLogos } from "@/assets/logos";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
@@ -19,187 +18,30 @@ import {
 } from "@/components/navigation/tab-button";
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/buttons/button";
-import {
-  ApplicationCard,
-  type ApplicationCardProps,
-} from "@/components/cards/application-card";
+import { ApplicationCard } from "@/components/cards/application-card";
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
+import { OfferCard } from "@/components/cards/offer-card";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
-
-type ApplicationFilter = "open" | "not-moving-forward";
-
-type ApplicationRow = Pick<
-  ApplicationCardProps,
-  | "title"
-  | "company"
-  | "logoSrc"
-  | "logoAlt"
-  | "partnerName"
-  | "compensation"
-  | "engagementTerms"
-  | "duration"
-  | "statusLabel"
-  | "statusTone"
-  | "supportingText"
-> & { key: string; filter: ApplicationFilter };
+import {
+  DEMO_APPLICATIONS,
+  DEMO_CONTRACTS,
+  DEMO_OFFERS,
+  type ApplicationFilter,
+  type ContractFilter,
+  type OfferFilter,
+} from "@/layouts/shared/demo-engagements";
 
 /**
- * Applications grouped by filter, per `product-specs/engagements.md` §3.1
- * (Open: Applied, Action required, Interview · Action required, Interview
- * scheduled, In review, On hold; Not moving forward: Not selected, Withdrawn,
- * Closed). An application with an offer leaves this view for Offers (§2), so
- * there are no `Offer received` rows. Five rows are Figma's; the three
- * interview rows come from verita.ds's `table-application-listing` examples
- * and the `ApplicationCard` stories. Rows are listed in `Open`'s default
- * sort (§3.1 "Default sort"): action required (nearest deadline first),
- * interview scheduled, in review, applied, on hold. Statuses and supporting
- * text follow the specs where the Figma frame drifts from them —
- * `applications-card.md` §2.4.1's status matrix and approved `Action
- * required` examples.
+ * Rows come from `DEMO_APPLICATIONS` / `DEMO_OFFERS` / `DEMO_CONTRACTS`
+ * (`src/layouts/shared/demo-engagements.ts`), the same data `Dashboard`
+ * previews, so the two layouts tell one story. Offers and Contracts have no
+ * Figma design yet: they reuse `Dashboard`'s `OfferCard` and `ContractCard`
+ * treatments.
  */
-const APPLICATIONS: ApplicationRow[] = [
-  {
-    key: "retail-operations-contractor",
-    filter: "open",
-    title: "Retail Operations Contractor",
-    company: "apple",
-    logoSrc: partnerLogos.apple,
-    logoAlt: "Apple",
-    partnerName: "Apple",
-    compensation: "$42/hr",
-    engagementTerms: "Up to 30 hrs/week",
-    duration: "5 months",
-    statusLabel: "Interview · Action required",
-    statusTone: "warning",
-    supportingText: "Schedule your interview by Sep 30",
-  },
-  {
-    key: "senior-financial-analyst",
-    filter: "open",
-    title: "Senior Financial Analyst",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$95–115k/yr",
-    engagementTerms: "32 hrs/week",
-    duration: "1 year",
-    statusLabel: "Action required",
-    statusTone: "warning",
-    supportingText: "Complete your assessment (2 of 4 steps completed)",
-  },
-  {
-    key: "clinical-data-coordinator",
-    filter: "open",
-    title: "Clinical Data Coordinator",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$48/hr",
-    engagementTerms: "20 hrs/week",
-    duration: "1 month",
-    statusLabel: "Action required",
-    statusTone: "warning",
-    supportingText: "Verify your work authorization",
-  },
-  {
-    key: "amazon-clinical-data-coordinator",
-    filter: "open",
-    title: "Clinical Data Coordinator",
-    company: "amazon",
-    logoSrc: partnerLogos.amazon,
-    logoAlt: "Amazon Health",
-    partnerName: "Amazon Health",
-    compensation: "$85/hr",
-    engagementTerms: "15 hrs/week",
-    duration: "2 weeks",
-    statusLabel: "Interview scheduled",
-    statusTone: "success",
-    supportingText: "Sep 30 at 2 PM EDT",
-  },
-  {
-    key: "strategic-finance-expert",
-    filter: "open",
-    title: "Strategic Finance Expert",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$56/hour",
-    engagementTerms: "Up to 30 hrs/week",
-    duration: "3 months",
-    statusLabel: "In review",
-    statusTone: "success",
-    supportingText: "Awaiting partner review after your Sep 18 interview",
-  },
-  {
-    key: "movement-physical-activity-expert",
-    filter: "open",
-    title: "Movement & Physical Activity Expert Annotator",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$50/hr",
-    engagementTerms: "40 hrs/week",
-    duration: "8 weeks",
-    statusLabel: "Applied",
-    statusTone: "info",
-  },
-  {
-    key: "search-quality-analyst",
-    filter: "open",
-    title: "Search Quality Analyst",
-    company: "google",
-    logoSrc: partnerLogos.google,
-    logoAlt: "Google",
-    partnerName: "Google",
-    compensation: "$60/hr",
-    engagementTerms: "Up to 25 hrs/week",
-    duration: "3 months",
-    statusLabel: "Applied",
-    statusTone: "info",
-  },
-  {
-    key: "developer-relations-contractor",
-    filter: "open",
-    title: "Developer Relations Contractor",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$85/hr",
-    engagementTerms: "Up to 40 hrs/week",
-    duration: "Ongoing",
-    statusLabel: "On hold",
-    statusTone: "purple",
-  },
-];
-
-/**
- * Contracts view (`engagements.md` §2 "Contracts"), filtered by `Open` /
- * `Completed` (§5.2). No Figma design yet for this view — reuses
- * `Dashboard`'s first two "Active work" contracts (one with a progress bar,
- * one without) in the same grid.
- */
-type ContractFilter = "open" | "completed";
-
-const CONTRACTS = [
-  {
-    key: "backend-integration",
-    filter: "open",
-    company: "verita",
-    title: "Backend Integration Engineer",
-    compensation: "$85/hour",
-    partnerName: "Verita partner",
-    engagementTerms: "Up to 40 hrs/week",
-    duration: "3 months",
-    progress: { metricLabel: "10 of 40 hours used this week", percentageLabel: "25%", percentage: 25 },
-    primaryActionLabel: "Open work",
-  },
-  {
-    key: "compensation-benchmarking",
-    filter: "open",
-    company: "verita",
-    title: "Compensation Benchmarking Report",
-    compensation: "$4,500/project",
-    partnerName: "Amazon Health",
-    engagementTerms: "6 weeks",
-    primaryActionLabel: "Resume work",
-  },
-] as const;
+const APPLICATIONS = DEMO_APPLICATIONS;
+const CONTRACTS = DEMO_CONTRACTS;
+const OFFERS = DEMO_OFFERS;
 
 const CONTRACT_FILTERS: { id: ContractFilter; label: string }[] = [
   { id: "open", label: "Open" },
@@ -208,17 +50,12 @@ const CONTRACT_FILTERS: { id: ContractFilter; label: string }[] = [
 
 /**
  * Offers view filters (`engagements.md` §4.1): `Open` (awaiting a response or
- * still in contracting) / `Declined` (the Offers history). No offer rows yet —
- * the Offers view has no Figma design.
+ * still in contracting) / `Declined` (the Offers history).
  */
-type OfferFilter = "open" | "declined";
-
 const OFFER_FILTERS: { id: OfferFilter; label: string }[] = [
   { id: "open", label: "Open" },
   { id: "declined", label: "Declined" },
 ];
-
-const OFFERS: { key: string; filter: OfferFilter }[] = [];
 
 const offerCountFor = (filter: OfferFilter) =>
   OFFERS.filter((offer) => offer.filter === filter).length;
@@ -282,9 +119,8 @@ interface EngagementsProps {
  * (filters, counts, search) and `product-specs/applications-card.md`.
  *
  * - View tabs: `MetricTabs` in the §2 tab order. Only the Applications
- *   panel is designed. Contracts reuses `Dashboard`'s contract cards; Offers
- *   has its filter row (§4.1) but no rows; the other panels are empty
- *   placeholders.
+ *   panel is designed. Offers and Contracts reuse `Dashboard`'s offer and
+ *   contract cards; the other panels are empty placeholders.
  * - Applications total = the `Open` count (§3.1 "Counts"), so the `Open`
  *   filter shows no counter of its own. Any other filter with zero
  *   applications keeps its tab but hides its counter.
@@ -405,10 +241,28 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                   filtersLabel="Offer filters"
                   filters={OFFER_FILTERS.map(({ id, label }) => ({ id, label, count: offerCountFor(id) }))}
                 />
-                {/* Offer rows aren't designed yet — each filter panel renders nothing. */}
-                {OFFER_FILTERS.map(({ id }) => (
-                  <TabButtonPanel key={id} id={id} className="w-full outline-none" />
-                ))}
+                {OFFER_FILTERS.map(({ id }) => {
+                  const offers = OFFERS.filter((offer) => offer.filter === id);
+                  return (
+                    <TabButtonPanel key={id} id={id} className="w-full outline-none">
+                      {/* Zero-state for an empty filter isn't designed yet — the panel renders nothing. */}
+                      {offers.length > 0 && (
+                        // Same bordered row stack as the Applications list; `OfferCard` as on `Dashboard`, minus its dismiss.
+                        <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+                          {offers.map(({ key, filter: _filter, ...offer }) => (
+                            <OfferCard
+                              key={key}
+                              {...offer}
+                              onCtaPress={() => {}}
+                              rowProps={{ onClick: () => {} }}
+                              className="w-full border-b border-border last:border-b-0"
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </TabButtonPanel>
+                  );
+                })}
               </TabButtons>
             </MetricTabPanel>
             {/* Assessments / Talent Network views aren't designed yet. */}

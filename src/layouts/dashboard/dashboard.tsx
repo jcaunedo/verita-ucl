@@ -17,6 +17,7 @@ import { ApplicationCard } from "@/components/cards/application-card";
 import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
+import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
 
 /**
  * `dismissible: true` only for `Recommended` tasks — per
@@ -29,7 +30,7 @@ const NEXT_STEPS = [
     badgeTone: "destructive",
     label: "Required now",
     title: "Upload document",
-    description: "Restorative Sleep Institute requested an updated document for your contract.",
+    description: "Amazon Health requested an updated document for your contract.",
     buttonLabel: "Upload document",
     dismissible: false,
   },
@@ -64,124 +65,58 @@ const NEXT_STEPS = [
   },
 ] as const;
 
-/** Active/upcoming work agreements (Figma's "Active work" section, `contract-card` instances). */
-const ACTIVE_WORK = [
-  {
-    key: "backend-integration",
-    company: "verita",
-    title: "Backend Integration Engineer",
-    compensation: "$85/hour",
-    partnerName: "Verita partner",
-    engagementTerms: "Up to 40 hrs/week",
-    duration: "3 months",
-    progress: { metricLabel: "10 of 40 hours used this week", percentageLabel: "25%", percentage: 25 },
-    primaryActionLabel: "Open work",
-  },
-  {
-    key: "compensation-benchmarking",
-    company: "verita",
-    title: "Compensation Benchmarking Report",
-    compensation: "$4,500/project",
-    partnerName: "Amazon Health",
-    engagementTerms: "6 weeks",
-    primaryActionLabel: "Resume work",
-  },
-  {
-    key: "clinical-expert-survey",
-    company: "amazon",
-    logoSrc: partnerLogos.amazon,
-    logoAlt: "Amazon",
-    title: "Clinical Expert, In-Home Health Evaluation Survey",
-    compensation: "$2,000/task",
-    partnerName: "Amazon Health",
-    engagementTerms: "Up to 40 hrs/week",
-    duration: "3 months",
-    progress: { metricLabel: "4 of 5 deliverables submitted", percentageLabel: "80%", percentage: 80 },
-    primaryActionLabel: "Resume work",
-  },
-] as const;
+/**
+ * Active work, Active Applications, and the offer alert come from the shared
+ * demo data (`src/layouts/shared/demo-engagements.ts`), so they match what
+ * the `Engagements` layout lists: "Active work" is the `Open` contracts, and
+ * "Active Applications" is the top of Engagements → Applications → `Open`,
+ * in that filter's default sort (`engagements.md` §3.1).
+ */
+const ACTIVE_WORK = DEMO_CONTRACTS.filter((contract) => contract.filter === "open");
 
-/** Active applications (Figma's "Active Applications" section, stacked `application-card` rows). */
-const ACTIVE_APPLICATIONS = [
-  {
-    key: "senior-financial-analyst",
-    title: "Senior Financial Analyst",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$95–115k/yr",
-    engagementTerms: "32 hrs/week",
-    duration: "1 year",
-    statusLabel: "Action required",
-    statusTone: "warning",
-    supportingText: "Complete your assessment (2 of 4 steps completed)",
-  },
-  {
-    key: "clinical-data-coordinator",
-    title: "Clinical Data Coordinator",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$48/hr",
-    engagementTerms: "20 hrs/week",
-    duration: "1 month",
-    statusLabel: "Action required",
-    statusTone: "warning",
-    supportingText: "Verify your work authorization",
-  },
-  {
-    key: "movement-physical-activity-expert",
-    title: "Movement & Physical Activity Expert Annotator",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$50/hr",
-    engagementTerms: "40 hours per week",
-    duration: "8 weeks",
-    statusLabel: "Applied",
-    statusTone: "info",
-  },
-  {
-    key: "search-quality-analyst",
-    title: "Search Quality Analyst",
-    company: "google",
-    logoSrc: partnerLogos.google,
-    logoAlt: "Google",
-    partnerName: "Google",
-    compensation: "$60/hr",
-    engagementTerms: "Up to 25 hrs/week",
-    duration: "3 months",
-    statusLabel: "Applied",
-    statusTone: "info",
-  },
-] as const;
+/** Max rows in "Active Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
+const ACTIVE_APPLICATIONS_LIMIT = 3;
 
-/** Most recent matches (Figma's "Matches" section, stacked `match-card` rows). */
+const ACTIVE_APPLICATIONS = DEMO_APPLICATIONS.filter((application) => application.filter === "open").slice(
+  0,
+  ACTIVE_APPLICATIONS_LIMIT,
+);
+
+const NEW_OFFER = DEMO_OFFERS.find((offer) => offer.filter === "open");
+
+/**
+ * Most recent matches (Figma's "Matches" section, stacked `match-card` rows).
+ * None of them is already an application, offer, or contract in the shared
+ * demo data: a match the professional acted on would have left this list.
+ */
 const RECENT_MATCHES = [
   {
-    key: "clinical-expert-sleep",
-    title: "Clinical Expert, In-Home Health Evaluation Survey",
+    key: "clinical-documentation-reviewer",
+    title: "Clinical Documentation Reviewer",
     company: "verita",
     partnerName: "Verita partner",
-    compensation: "56/hr",
-    engagementTerms: "35 hours per week",
-    duration: "5 months",
+    compensation: "$58/hr",
+    engagementTerms: "Up to 20 hrs/week",
+    duration: "4 months",
     matchTier: "Strong match",
   },
   {
-    key: "strategic-finance-expert",
-    title: "Strategic Finance Expert",
-    company: "apple",
-    logoSrc: partnerLogos.apple,
-    logoAlt: "Apple",
-    partnerName: "Apple",
-    compensation: "$85/hr",
+    key: "healthcare-data-annotator",
+    title: "Healthcare Data Annotator",
+    company: "amazon",
+    logoSrc: partnerLogos.amazon,
+    logoAlt: "Amazon Health",
+    partnerName: "Amazon Health",
+    compensation: "$52/hr",
     engagementTerms: "15 hrs/week",
     matchTier: "Good match",
   },
   {
-    key: "retail-operations-contractor",
-    title: "Retail Operations Contractor",
+    key: "behavioral-health-survey-expert",
+    title: "Behavioral Health Survey Expert",
     company: "verita",
     partnerName: "Verita partner",
-    compensation: "$42/hr",
+    compensation: "$45/hr",
     engagementTerms: "Up to 30 hrs/week",
     duration: "5 months",
     matchTier: "Relevant match",
@@ -211,6 +146,11 @@ interface DashboardProps {
    * forking the component to hardcode a demo-only link.
    */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
+  /**
+   * Target for "Active Applications" → "View All": Engagements → Applications,
+   * `Open` filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
+   */
+  viewAllApplicationsHref?: string;
 }
 
 /**
@@ -236,7 +176,7 @@ interface DashboardProps {
  * this same stacking pattern already used by `ApplicationCard`'s own
  * `AllVariants` story.
  */
-function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
+function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: DashboardProps = {}) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   /**
    * Below `lg` (1024px) the sidebar auto-collapses — including on initial
@@ -311,7 +251,7 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
-            {offerSectionVisible && (
+            {NEW_OFFER && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-4">
                 <Typography size="xl" weight="semibold">
                   You have a new offer
@@ -327,13 +267,13 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
                       exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
                     >
                       <OfferCard
-                        company="verita"
-                        title="Sleep Specialist, Behavioral Sleep Medicine Professional"
-                        partnerName="Verita partner"
-                        compensation="$75 - $95 / hour"
-                        engagementTerms="Up to 30 hr per week"
-                        duration="Ongoing"
-                        expirationDate="Expires on Sep 10"
+                        company={NEW_OFFER.company}
+                        title={NEW_OFFER.title}
+                        partnerName={NEW_OFFER.partnerName}
+                        compensation={NEW_OFFER.compensation}
+                        engagementTerms={NEW_OFFER.engagementTerms}
+                        duration={NEW_OFFER.duration}
+                        expirationDate={NEW_OFFER.expirationDate}
                         onCtaPress={() => {}}
                         rowProps={{ onClick: () => {} }}
                         dismissLabel="Dismiss offer"
@@ -363,7 +303,7 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
                 </Typography>
                 {/* 2-up below `xl`, 3-up from `xl` — unlike Next steps, every contract stays visible, so extras wrap to a new row (Figma's 16px row gap) rather than queueing. */}
                 <div className="grid w-full grid-cols-2 items-start gap-x-5 gap-y-4 xl:grid-cols-3">
-                  {ACTIVE_WORK.map(({ key, ...contract }) => (
+                  {ACTIVE_WORK.map(({ key, filter: _filter, ...contract }) => (
                     <ContractCard
                       key={key}
                       {...contract}
@@ -380,7 +320,7 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
                   Active Applications
                 </Typography>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                  {ACTIVE_APPLICATIONS.map(({ key, ...application }) => (
+                  {ACTIVE_APPLICATIONS.map(({ key, filter: _filter, ...application }) => (
                     <ApplicationCard
                       key={key}
                       {...application}
@@ -399,7 +339,7 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
                   ))}
                 </div>
                 <div className="flex items-start gap-5">
-                  <Hyperlink href="#" showArrow>
+                  <Hyperlink href={viewAllApplicationsHref} showArrow>
                     View All
                   </Hyperlink>
                   <Hyperlink href="#" showArrow>
