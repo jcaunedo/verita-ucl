@@ -20,8 +20,7 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * call-to-action button, on a dashed-border card. Figma: `next-step-card`
  * (`Property 1`: Default, Hover). Composes the existing `Badge` (default
  * `tone="neutral"`, default `size="sm"`), `Button` (`size="xs"`), and
- * `Typography` (`size="lg"`/`"sm"`, which already carries the correct
- * letter-spacing for `lg`) rather than reproducing their look inline.
+ * `Typography` (`size="lg"`/`"sm"`) rather than reproducing their look inline.
  * `badgeTone` defaults to `"neutral"` (the original Figma component's only
  * observed tone) but is exposed since consuming layouts (e.g. the
  * Dashboard's four next-step cards) bind different per-card tones

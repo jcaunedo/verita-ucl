@@ -38,9 +38,8 @@ import { Typography } from "@/components/typography";
  * `MetricTabList` scopes the `layoutId` per list.
  *
  * The value uses Figma's `xl/xl -semibold` (20/28, 0 tracking). The theme's
- * `text-xl` is 20/30 with Typography's 0.01em xl tracking, so this instance
- * overrides to `leading-7 tracking-normal` locally rather than changing the
- * shared xl step (confirmed 2026-09-23).
+ * `text-xl` is 20/30, so this instance overrides to `leading-7` locally
+ * rather than changing the shared xl step (confirmed 2026-09-23).
  *
  * A zero value (`0`/`"0"`) renders in `foreground/subtle` (`text-foreground-subtle`)
  * on an unselected tab, per Figma's empty Assessments/Talent Network tabs, so an
@@ -99,7 +98,7 @@ function MetricTab({ label, value, className, ...props }: MetricTabProps) {
             size="xl"
             weight="semibold"
             className={cn(
-              "leading-7 tracking-normal",
+              "leading-7",
               !isSelected && (value === 0 || value === "0") && "text-foreground-subtle",
             )}
           >
