@@ -6,6 +6,7 @@ import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { readSidebarCollapsed, saveSidebarCollapsed } from "@/layouts/shared/demo-state";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { SectionEmptyState } from "@/components/cards/section-empty-state";
 import { CalloutCard } from "@/components/cards/callout-card";
@@ -99,7 +100,8 @@ interface DashboardEmptyStateProps {
  * its own `layouts/dashboard/` layout rather than a variant of this one.
  */
 function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptyStateProps = {}) {
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
   /**
    * Below `lg` (1024px) the sidebar auto-collapses — including on initial
    * load at a narrow width, not only when resizing into that range. Crossing
@@ -138,6 +140,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
     // own comment above.
     wasAutoCollapsedRef.current = false;
     setSidebarCollapsed(collapsed);
+    saveSidebarCollapsed(collapsed);
   };
 
   return (

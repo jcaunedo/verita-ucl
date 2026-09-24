@@ -91,9 +91,9 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
   if (!sectionVisible) return null;
 
   return (
-    <div className="flex w-full flex-col items-start gap-4">
+    <div className="flex w-full flex-col items-start gap-3">
       <div className="flex w-full flex-col items-start gap-0.5">
-        <Typography size="xl" weight="semibold">
+        <Typography size="lg" weight="bold" className="leading-6.5">
           Next steps
         </Typography>
         <Typography size="sm" className="text-foreground-muted">

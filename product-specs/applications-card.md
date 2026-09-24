@@ -130,9 +130,11 @@ This is the canonical scenario table for the two elements together — it supers
 | On hold                                                 | On hold                     | *(omitted — no confirmable reason/owner exists yet, per the note below; a bare date is a timestamp, not guidance)* |
 | Offer received                                          | Offer received              | *(not a list row: the application leaves Applications once an offer is issued, §3.1. The label appears only on surfaces that still show the application record, such as detail)* |
 | Not selected                                            | Not selected                | *(omitted — terminal, nothing actionable; see the detail page for the closed date)* |
-| Withdrawn                                               | Withdrawn                   | *(omitted — terminal, nothing actionable; see the detail page for the withdrawal date)* |
+| Withdrawn                                               | Withdrawn                   | "Withdrawn by you on Sep 24"                        |
 | Opportunity closed before the application advanced      | Closed                      | *(omitted — terminal, nothing actionable; see the detail page for the closed date)* |
 
+> ✅ **Resolved (2026-09-24) — withdrawn rows name who and when:** a withdrawn application shows the neutral `Withdrawn` badge with "Withdrawn by you on {date}" (month and day). This supersedes the earlier rule that omitted supporting text for `Withdrawn`. `Not selected` and `Closed` keep omitting it. Withdrawing moves the application from `Open` to `Not moving forward` at once, both in Engagements and on the Home preview, where the next open application takes its place ([`engagements.md` §3.1](engagements.md#31-application-filters)).
+>
 > ✅ **Resolved (2026-09-23) — `In review` after the interview:** once an interview is completed, `application-status` reads **`In review`** until there's an outcome (`Offer received`, `Not selected`, and so on). This is the one place `In review` is used: the professional has done their part and is waiting for an answer. Before any interview, the status stays `Applied` (§3). `supporting-text` carries who is reviewing and when the interview happened, when it clears the value bar in §2.4's rule above:
 >
 > - **Review owner confirmed as the partner:** "Awaiting partner review after your {date} interview."
@@ -287,6 +289,8 @@ Alongside the row click target, the card exposes a secondary `actions-menu` (`·
 - **Withdraw** only appears while the application is still in an active, withdrawable state (e.g. `Applied`, `Action required`, `Interview scheduled`, `In review`, `On hold`, and `Interview · Action required`). It's hidden once the application has already reached a terminal state — `Withdrawn` (already withdrawn), `Not selected`, `Closed`, or `Offer received` (withdrawing no longer applies once an offer exists; that decision belongs to the Offer flow instead, not this card). This mirrors §2's "required data does not mean every field must be displayed in every state" principle, applied here to actions instead of content fields.
 - **View Details** and **Share** are available regardless of status — both remain meaningful for a terminal application (reviewing history, sharing a past outcome).
 - The exact status→action mapping above is a first pass; confirm the full mapping with design/product before implementation (§8).
+
+⚠️ **Gap:** the prototype withdraws immediately, because UCL has no dialog component yet. The confirmation rule below still applies to the product.
 
 **Withdraw confirmation:** selecting `Withdraw` from the menu must not withdraw immediately — it opens a confirmation step (dialog or equivalent) that states the consequence and requires an explicit second action before the withdrawal executes. This follows this repo's [Motion System](../CLAUDE.md#motion-system) guidance for dialogs (§ Dialogs and Overlays: overlay fade, small scale/vertical movement for the surface, shorter exit than entrance) and must not block the rest of the row/list while open only for the affected row.
 

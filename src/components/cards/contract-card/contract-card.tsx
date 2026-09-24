@@ -171,12 +171,13 @@ function ContractCard({
           <Typography
             as="h3"
             size="xl"
-            weight="semibold"
+            weight="bold"
             className="line-clamp-2 leading-7 text-foreground"
           >
             {title}
           </Typography>
-          <Typography size="xl" className="leading-7 text-foreground">
+          {/* Figma: `xl -medium`. */}
+          <Typography size="xl" weight="medium" className="leading-7 text-foreground">
             {compensation}
           </Typography>
         </div>

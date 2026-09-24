@@ -182,6 +182,9 @@ function Sidebar({
     <motion.div
       data-slot="sidebar"
       data-collapsed={collapsed}
+      // `initial={false}`: mount at the target width. Without it, Motion animates the width on every mount from the
+      // element's natural size, so the rail (and the canvas beside it) slid in on each page load.
+      initial={false}
       animate={{ width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
       transition={resolve(enterTransition)}
       className={cn(

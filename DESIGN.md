@@ -179,7 +179,7 @@ rest. Don't give one page its own gutters, breakpoints, or sidebar logic.
   classes because CSS can't read `src/lib/motion`, so if `enterTransition`
   changes, update `layout-canvas.ts` too.
 - **Content column:** `w-full max-w-[1400px]`, centered by the canvas, with
-  `pb-[104px]`.
+  `pt-10 pb-[104px]` (40px top, 104px bottom).
 - **Sidebar auto-collapse:** below `lg` the sidebar collapses on its own,
   including on first load at a narrow width. Crossing back above `lg`
   restores the earlier state, but only if the collapse was automatic. Once
@@ -212,9 +212,9 @@ direction), replacing the fixed 64px left gutter in that state.
 rather than shared. Extract it into a hook (e.g. `useAutoCollapseSidebar`)
 before the next layout lands, so the copies can't drift.
 
-⚠️ **Decision needed:** top padding still differs — both Dashboards use
-`pt-10` (40px) and Engagements uses `pt-14` (56px). Pick one and add it to
-the shared shell.
+✅ **Resolved (2026-09-24) — top padding:** every layout's content column
+starts 40px from the top (`pt-10`). Engagements used `pt-14` (56px) until
+its Figma frame was aligned with the Dashboard's.
 
 ---
 
@@ -233,3 +233,40 @@ radius depended on which rule the stylesheet happened to emit last. Found
 **How to apply:** when adding a `--radius-*` role to `theme.css`, add its name
 to the list in `utils.ts` in the same change. `font-*` family overrides
 (`font-display` → `font-sans`) already merge correctly.
+
+---
+
+## Global font rendering on `html` (`src/styles/theme.css`)
+
+**Rule:** text rendering is set once, on `html` in `theme.css`'s `@layer base`,
+and every element inherits it — including portaled overlays (menus, popovers)
+and consuming apps that import `dist/styles.css`:
+
+```css
+html {
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+```
+
+Alongside them, the same block sets `font-family: var(--font-sans)`,
+`color: var(--foreground)` and `font-synthesis: none` (no faux bold/italic
+when a weight isn't loaded).
+
+**Why:** without antialiased smoothing, macOS renders Inter visibly heavier
+than in Figma, so weights read one step bolder than designed. Optical sizing
+lets Inter adjust its letterforms per size, and `optimizeLegibility` turns on
+kerning and ligatures.
+
+**How to apply:**
+
+- Don't repeat these properties on components or in layouts; they already
+  inherit from `html`.
+- Don't add Tailwind's `antialiased`/`subpixel-antialiased` classes to a
+  component. If one surface genuinely needs different smoothing (e.g. light
+  text on a dark fill), document it here as an exception first.
+- When comparing a component against Figma, check it in a browser with this
+  stylesheet loaded. Text rendered without it looks heavier and isn't a fair
+  comparison.

@@ -111,7 +111,11 @@ export {
 /* Cards                                                                      */
 /* -------------------------------------------------------------------------- */
 
-export { ApplicationCard, type ApplicationCardProps } from "./components/cards/application-card";
+export {
+  ApplicationCard,
+  ApplicationCardGroup,
+  type ApplicationCardProps,
+} from "./components/cards/application-card";
 
 export { CalloutCard, type CalloutCardProps } from "./components/cards/callout-card";
 

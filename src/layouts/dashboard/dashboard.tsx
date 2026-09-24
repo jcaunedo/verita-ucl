@@ -14,12 +14,18 @@ import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
-import { ApplicationCard } from "@/components/cards/application-card";
+import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
 import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
-import { useDeclinedOffers } from "@/layouts/shared/demo-state";
+import {
+  applyWithdrawnApplications,
+  readSidebarCollapsed,
+  saveSidebarCollapsed,
+  useDeclinedOffers,
+  useWithdrawnApplications,
+} from "@/layouts/shared/demo-state";
 
 /**
  * `dismissible: true` only for `Recommended` tasks — per
@@ -79,9 +85,6 @@ const ACTIVE_WORK = DEMO_CONTRACTS.filter((contract) => contract.filter === "ope
 /** Max rows in "Active Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
 const ACTIVE_APPLICATIONS_LIMIT = 3;
 
-const OPEN_APPLICATIONS = DEMO_APPLICATIONS.filter((application) => application.filter === "open");
-
-const ACTIVE_APPLICATIONS = OPEN_APPLICATIONS.slice(0, ACTIVE_APPLICATIONS_LIMIT);
 
 /**
  * Most recent matches (Figma's "Matches" section, stacked `match-card` rows).
@@ -185,7 +188,8 @@ function Dashboard({
   viewAllApplicationsHref = "#",
   viewAllContractsHref = "#",
 }: DashboardProps = {}) {
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
   /**
    * Below `lg` (1024px) the sidebar auto-collapses — including on initial
    * load at a narrow width, not only when resizing into that range. Crossing
@@ -239,6 +243,13 @@ function Dashboard({
    */
   const { prefersReducedMotion } = useMotionPreference();
   const { declined, decline } = useDeclinedOffers();
+  // Withdraw (row `···` menu) moves the application to Engagements → `Not moving forward`, so it drops off
+  // "Active Applications" and the next open one takes its place — see `useWithdrawnApplications`.
+  const { withdrawn, withdraw } = useWithdrawnApplications();
+  const openApplications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn).filter(
+    (application) => application.filter === "open",
+  );
+  const activeApplications = openApplications.slice(0, ACTIVE_APPLICATIONS_LIMIT);
   const [newOffer] = React.useState(() =>
     DEMO_OFFERS.find((offer) => offer.filter === "open" && !declined.has(offer.key)),
   );
@@ -257,6 +268,7 @@ function Dashboard({
     // own comment above.
     wasAutoCollapsedRef.current = false;
     setSidebarCollapsed(collapsed);
+    saveSidebarCollapsed(collapsed);
   };
 
   return (
@@ -273,17 +285,18 @@ function Dashboard({
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
-              <Typography size="3xl" weight="semibold">
+              {/* Figma `3xl -bold`, 1% letter-spacing (0.3px). */}
+              <Typography size="3xl" weight="bold" className="tracking-[0.01em]">
                 Welcome back, Theresa
               </Typography>
-              <Typography size="lg">Let’s make today count.</Typography>
+              <Typography size="lg" className="leading-6.5">Let’s make today count.</Typography>
             </div>
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
             {newOffer && offerSectionVisible && (
-              <div className="flex w-full flex-col items-start gap-4">
-                <Typography size="xl" weight="semibold">
+              <div className="flex w-full flex-col items-start gap-3">
+                <Typography size="lg" weight="bold" className="leading-6.5">
                   You have a new offer
                 </Typography>
                 <AnimatePresence onExitComplete={() => setOfferSectionVisible(false)}>
@@ -327,9 +340,9 @@ function Dashboard({
             >
               <NextStepsSection steps={NEXT_STEPS} />
 
-              <div className="flex w-full flex-col items-start gap-4">
+              <div className="flex w-full flex-col items-start gap-3">
                 <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="xl" weight="semibold">
+                  <Typography size="lg" weight="bold" className="leading-6.5">
                     Active work
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
@@ -353,34 +366,39 @@ function Dashboard({
                 </Hyperlink>
               </div>
 
-              <div className="flex w-full flex-col items-start gap-4">
+              <div className="flex w-full flex-col items-start gap-3">
                 {/* Figma: title + `sm` muted subtitle, 2px apart — same header as `NextStepsSection`. */}
                 <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="xl" weight="semibold">
+                  <Typography size="lg" weight="bold" className="leading-6.5">
                     Active Applications
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
-                    Showing {ACTIVE_APPLICATIONS.length} of {OPEN_APPLICATIONS.length}
+                    Showing {activeApplications.length} of {openApplications.length}
                   </Typography>
                 </div>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                  {ACTIVE_APPLICATIONS.map(({ key, filter: _filter, ...application }) => (
-                    <ApplicationCard
-                      key={key}
-                      {...application}
-                      actionsMenuLabel={`More actions for ${application.title}`}
-                      actionsMenu={
-                      <>
-                        <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
-                        <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
-                        <MenuSeparator />
-                        <MenuItem icon={XCircle} tone="destructive" onAction={() => {}}>Withdraw</MenuItem>
-                      </>
-                    }
-                      rowProps={{ onClick: () => {} }}
-                      className="border-b border-border last:border-b-0"
-                    />
-                  ))}
+                  {/* One supporting-text position for the whole list (`ApplicationCardGroup`). */}
+                  <ApplicationCardGroup>
+                    {activeApplications.map(({ key, filter: _filter, ...application }) => (
+                      <ApplicationCard
+                        key={key}
+                        {...application}
+                        actionsMenuLabel={`More actions for ${application.title}`}
+                        actionsMenu={
+                        <>
+                          <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
+                          <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
+                          <MenuSeparator />
+                          <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
+                            Withdraw
+                          </MenuItem>
+                        </>
+                      }
+                        rowProps={{ onClick: () => {} }}
+                        className="border-b border-border last:border-b-0"
+                      />
+                    ))}
+                  </ApplicationCardGroup>
                 </div>
                 <div className="flex items-start gap-5">
                   <Hyperlink href={viewAllApplicationsHref} showArrow>
@@ -392,8 +410,8 @@ function Dashboard({
                 </div>
               </div>
 
-              <div className="flex w-full flex-col items-start gap-4">
-                <Typography size="xl" weight="semibold">
+              <div className="flex w-full flex-col items-start gap-3">
+                <Typography size="lg" weight="bold" className="leading-6.5">
                   Most recent matches
                 </Typography>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">

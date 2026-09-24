@@ -118,9 +118,12 @@ function MatchCard({
   className,
   ...props
 }: MatchCardProps) {
-  const termsParts = [compensation, engagementTerms, duration].filter(
-    Boolean,
-  );
+  // Same terms treatment as `ApplicationCard`: compensation semibold, engagement terms and duration regular.
+  const termsParts = [
+    { value: compensation, className: "font-semibold" },
+    { value: engagementTerms },
+    { value: duration },
+  ].filter((part) => Boolean(part.value));
   const showMissingRequirement =
     readinessState === "matchedBlocked" && missingRequirementSummary;
 
@@ -147,7 +150,7 @@ function MatchCard({
               </Typography>
               <Typography
                 as="h3"
-                weight="semibold"
+                weight="bold"
                 className="w-full text-foreground"
               >
                 {title}
@@ -168,7 +171,7 @@ function MatchCard({
                         ·
                       </span>
                     )}
-                    <span className="text-foreground">{part}</span>
+                    <span className={cn("text-foreground", part.className)}>{part.value}</span>
                   </React.Fragment>
                 ))}
               </Typography>

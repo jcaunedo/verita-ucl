@@ -20,7 +20,7 @@ import {
 } from "@/components/navigation/tab-button";
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/buttons/button";
-import { ApplicationCard } from "@/components/cards/application-card";
+import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
 import { OfferCard } from "@/components/cards/offer-card";
@@ -34,7 +34,14 @@ import {
   type ContractFilter,
   type OfferFilter,
 } from "@/layouts/shared/demo-engagements";
-import { applyDeclinedOffers, useDeclinedOffers } from "@/layouts/shared/demo-state";
+import {
+  applyDeclinedOffers,
+  applyWithdrawnApplications,
+  readSidebarCollapsed,
+  saveSidebarCollapsed,
+  useDeclinedOffers,
+  useWithdrawnApplications,
+} from "@/layouts/shared/demo-state";
 
 /**
  * Rows come from `DEMO_APPLICATIONS` / `DEMO_OFFERS` / `DEMO_CONTRACTS`
@@ -43,7 +50,6 @@ import { applyDeclinedOffers, useDeclinedOffers } from "@/layouts/shared/demo-st
  * Figma design yet: they reuse `Dashboard`'s `OfferCard` and `ContractCard`
  * treatments.
  */
-const APPLICATIONS = DEMO_APPLICATIONS;
 const CONTRACTS = DEMO_CONTRACTS;
 
 const CONTRACT_FILTERS: { id: ContractFilter; label: string }[] = [
@@ -65,8 +71,6 @@ const FILTERS: { id: ApplicationFilter; label: string }[] = [
   { id: "not-moving-forward", label: "Not moving forward" },
 ];
 
-const countFor = (filter: ApplicationFilter) =>
-  APPLICATIONS.filter((application) => application.filter === filter).length;
 
 type EngagementView = "applications" | "offers" | "contracts" | "assessments" | "talent-network";
 
@@ -133,12 +137,18 @@ interface EngagementsProps {
  * Reuses `Dashboard`'s sidebar auto-collapse below `lg`.
  */
 function Engagements({ navHrefOverrides, defaultView = "applications" }: EngagementsProps = {}) {
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
+  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
   // An offer declined with its X, here or on `Dashboard`, shows under `Declined` — see `useDeclinedOffers`.
   const { declined, decline } = useDeclinedOffers();
   const { prefersReducedMotion } = useMotionPreference();
   const offers = applyDeclinedOffers(DEMO_OFFERS, declined);
   const offerCountFor = (filter: OfferFilter) => offers.filter((offer) => offer.filter === filter).length;
+  // Withdraw (row `···` menu), here or on `Dashboard`, moves an application to `Not moving forward` — see `useWithdrawnApplications`.
+  const { withdrawn, withdraw } = useWithdrawnApplications();
+  const applications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn);
+  const countFor = (filter: ApplicationFilter) =>
+    applications.filter((application) => application.filter === filter).length;
   // Same auto-collapse-below-`lg` behavior as `Dashboard` — see its comment for the full rationale.
   const isLgUp = useMediaQuery("(min-width: 1024px)");
   const wasAutoCollapsedRef = React.useRef(false);
@@ -161,6 +171,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     wasAutoCollapsedRef.current = false;
     setSidebarCollapsed(collapsed);
+    saveSidebarCollapsed(collapsed);
   };
 
   const applicationsTotal = countFor("open");
@@ -178,7 +189,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
       </div>
       {/* Figma `Canvas`: 64px left / 160px right padding at desktop. */}
       <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>
-        <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-14 pb-[104px]">
+        <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full flex-col items-start gap-1.5">
             <Typography as="h1" size="3xl" weight="semibold">
               Engagements
@@ -208,31 +219,39 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                 />
 
                 {FILTERS.map(({ id }) => {
-                  const rows = APPLICATIONS.filter((application) => application.filter === id);
+                  const rows = applications.filter((application) => application.filter === id);
                   return (
                     <TabButtonPanel key={id} id={id} className="w-full outline-none">
                       {/* Zero-state for an empty filter isn't designed yet — the panel renders nothing. */}
                       {rows.length > 0 && (
                         <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                          {rows.map(({ key, filter: _filter, ...application }) => (
-                            <ApplicationCard
-                              key={key}
-                              {...application}
-                              actionsMenuLabel={`More actions for ${application.title}`}
-                              actionsMenu={
-                                <>
-                                  <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
-                                  <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
-                                  <MenuSeparator />
-                                  <MenuItem icon={XCircle} tone="destructive" onAction={() => {}}>
-                                    Withdraw
-                                  </MenuItem>
-                                </>
-                              }
-                              rowProps={{ onClick: () => {} }}
-                              className="border-b border-border last:border-b-0"
-                            />
-                          ))}
+                          {/* One supporting-text position for the whole list (`ApplicationCardGroup`). */}
+                          <ApplicationCardGroup>
+                            {rows.map(({ key, filter, ...application }) => (
+                              <ApplicationCard
+                                key={key}
+                                {...application}
+                                actionsMenuLabel={`More actions for ${application.title}`}
+                                actionsMenu={
+                                  <>
+                                    <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
+                                    <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
+                                    {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
+                                    {filter === "open" && (
+                                      <>
+                                        <MenuSeparator />
+                                        <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
+                                          Withdraw
+                                        </MenuItem>
+                                      </>
+                                    )}
+                                  </>
+                                }
+                                rowProps={{ onClick: () => {} }}
+                                className="border-b border-border last:border-b-0"
+                              />
+                            ))}
+                          </ApplicationCardGroup>
                         </div>
                       )}
                     </TabButtonPanel>

@@ -3,7 +3,7 @@ import { partnerLogos } from "@/assets/logos";
 import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
-import { ApplicationCard } from "./application-card";
+import { ApplicationCard, ApplicationCardGroup } from "./application-card";
 
 const meta: Meta<typeof ApplicationCard> = {
   title: "Cards/ApplicationCard",
@@ -151,6 +151,79 @@ export const WithActionsMenu: Story = {
       </>
     ),
   },
+};
+
+/**
+ * Supporting text's two positions: beside the badge on the right, wrapping to at most 2 lines (wide, medium),
+ * and as the left container's 4th row once it would need a 3rd line there (narrow). Resize the canvas to watch it switch.
+ */
+export const SupportingTextPlacement: Story = {
+  args: {
+    statusLabel: "Action required",
+    statusTone: "warning",
+    supportingText: "Complete your assessment (2 of 4 steps completed)",
+    actionsMenuLabel: "More actions",
+    onActionsPress: () => {},
+  },
+  decorators: [
+    (Story) => (
+      <div className="flex flex-col gap-6 bg-white">
+        <div className="w-[1174px] border border-border">
+          <Story />
+        </div>
+        <div className="w-[900px] border border-border">
+          <Story />
+        </div>
+        <div className="w-[640px] border border-border">
+          <Story />
+        </div>
+      </div>
+    ),
+  ],
+};
+
+/**
+ * `ApplicationCardGroup`: the long row's text would need a 3rd line on the right, so every row in the list
+ * shows its supporting text as the 4th row — including the short one that would fit on its own.
+ */
+export const GroupedList: Story = {
+  render: () => (
+    <ApplicationCardGroup>
+      <div className="flex w-[760px] flex-col divide-y divide-border border border-border bg-white">
+        <ApplicationCard
+          title="Senior Financial Analyst"
+          compensation="$95–115k/yr"
+          engagementTerms="32 hrs/week"
+          duration="1 year"
+          company="verita"
+          partnerName="Verita partner"
+          statusLabel="Action required"
+          statusTone="warning"
+          supportingText="Complete your assessment (2 of 4 steps completed)"
+        />
+        <ApplicationCard
+          title="Clinical Data Coordinator"
+          compensation="$85/hr"
+          engagementTerms="15 hrs/week"
+          duration="2 weeks"
+          company="verita"
+          partnerName="Verita partner"
+          statusLabel="Interview scheduled"
+          statusTone="success"
+          supportingText="Sep 30 at 2 PM EDT"
+        />
+        <ApplicationCard
+          title="Search Quality Analyst"
+          compensation="$60/hr"
+          engagementTerms="Up to 25 hrs/week"
+          company="verita"
+          partnerName="Verita partner"
+          statusLabel="Applied"
+          statusTone="info"
+        />
+      </div>
+    </ApplicationCardGroup>
+  ),
 };
 
 export const AllVariants: Story = {

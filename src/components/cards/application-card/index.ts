@@ -1,1 +1,1 @@
-export { ApplicationCard, type ApplicationCardProps } from "./application-card";
+export { ApplicationCard, ApplicationCardGroup, type ApplicationCardProps } from "./application-card";
