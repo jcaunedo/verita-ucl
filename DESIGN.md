@@ -159,17 +159,25 @@ into the other.
 behavior. A sticky `Sidebar` sits on the left, and a canvas column fills the
 rest. Don't give one page its own gutters, breakpoints, or sidebar logic.
 
-| Width              | Sidebar                  | Canvas padding (x)       | Card grids |
-| ------------------ | ------------------------ | ------------------------ | ---------- |
-| below `lg` (1024)  | auto-collapsed           | `px-12` (48 / 48)        | 2-up       |
-| `lg` to below `xl` | user's choice            | `px-12` (48 / 48)        | 2-up       |
-| `xl` (1280) and up | user's choice            | `xl:pl-16 xl:pr-40` (64 / 160) | 3-up |
-| `2xl` (1536) and up | user's choice           | same as `xl`             | 3-up (Next Steps: 4-up) |
+| Width               | Sidebar        | Canvas padding (x), left / right                                    | Card grids              |
+| ------------------- | -------------- | ------------------------------------------------------------------- | ----------------------- |
+| below `lg` (1024)   | auto-collapsed | `px-12` (48 / 48)                                                   | 2-up                    |
+| `lg` to below `xl`  | user's choice  | `px-12` (48 / 48)                                                   | 2-up                    |
+| `xl` (1280) and up  | user's choice  | expanded: `xl:pl-16 xl:pr-40` (64 / 160); collapsed: `xl:pl-40 xl:pr-40` (160 / 160) | 3-up |
+| `2xl` (1536) and up | user's choice  | same as `xl`                                                        | 3-up (Next Steps: 4-up) |
 
-- **Canvas padding** comes from `layoutCanvasPaddingClassName` in
-  `src/layouts/shared/layout-canvas.ts`. It does not change when the sidebar
-  collapses. Use it on the canvas column:
-  `cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName)`.
+- **Canvas padding** comes from `layoutCanvasPaddingClassName(sidebarCollapsed)`
+  in `src/layouts/shared/layout-canvas.ts`. From `xl` up, collapsing the
+  sidebar widens the left gutter to match the right one, so the content sits
+  evenly between the rail and the window edge. Below `xl` both gutters are
+  already equal. Use it on the canvas column:
+  `cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))`.
+- **Padding motion:** the left padding transitions with the same duration and
+  curve as the sidebar's width (`enterTransition`: 500ms,
+  `[0.16, 1, 0.3, 1]`), so the content glides instead of jumping, and the
+  transition is off under reduced motion. These values are written as CSS
+  classes because CSS can't read `src/lib/motion`, so if `enterTransition`
+  changes, update `layout-canvas.ts` too.
 - **Content column:** `w-full max-w-[1400px]`, centered by the canvas, with
   `pb-[104px]`.
 - **Sidebar auto-collapse:** below `lg` the sidebar collapses on its own,
@@ -186,7 +194,9 @@ Dashboard started at a fixed `pr-[216px]`, later became `xl:pr-30` with a
 left gutter that grew when the sidebar collapsed, while Engagements used
 `xl:pr-40 xl:pl-16`. The pages didn't line up when you switched between
 them. The Engagements gutters were chosen as the standard (2026-09-23) and
-moved into one shared constant, so a change there reaches every page.
+moved into one shared helper, so a change there reaches every page. On
+2026-09-24 the collapsed state got equal left and right gutters (design
+direction), replacing the fixed 64px left gutter in that state.
 
 **How to apply:**
 

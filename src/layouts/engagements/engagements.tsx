@@ -335,7 +335,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
         />
       </div>
       {/* Figma `Canvas`: 64px left / 160px right padding at desktop. */}
-      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName)}>
+      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-14 pb-[104px]">
           <div className="flex w-full flex-col items-start gap-1.5">
             <Typography as="h1" size="3xl" weight="semibold">

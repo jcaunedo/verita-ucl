@@ -299,7 +299,7 @@ function Dashboard({ navHrefOverrides }: DashboardProps = {}) {
           navHrefOverrides={navHrefOverrides}
         />
       </div>
-      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName)}>
+      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
