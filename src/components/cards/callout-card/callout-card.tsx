@@ -19,11 +19,11 @@ import { Typography } from "@/components/typography";
  * `color/tone/brand/subtle` to `background/default` (white) and a 1px
  * `border/neutral/border` outline appears. The border is reserved as
  * `border-transparent` at rest so the card doesn't shift 1px when it shows
- * (both Figma variants are the same 124px height). Figma's stroke is inside
- * the frame, so padding is Figma's 32/40/32px minus the 1px border
- * (`py-[31px] pr-[39px] pl-[31px]`), and the title uses Figma's bound
- * `line-height/xl` (28px) rather than Typography xl's 30px default —
- * together keeping the card at exactly 124px.
+ * (both Figma variants are the same 104px height). Figma's stroke is inside
+ * the frame, so padding is Figma's 24px vertical / 32px left / 40px right
+ * minus the 1px border (`py-[23px] pr-[39px] pl-[31px]`), and the title
+ * (`lg -bold`) uses Figma's bound `line-height/lg` (26px) rather than
+ * Typography lg's 24px default — together keeping the card at exactly 104px.
  *
  * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
  * cards translate up by `motionDistance.hover` on a `subtleSpring`) via a
@@ -77,24 +77,24 @@ function CalloutCard({
       <AriaLink
         data-slot="callout-card"
         className={cn(
-          "group flex w-full items-center gap-18 rounded-card border border-transparent bg-tone-brand-subtle py-[31px] pr-[39px] pl-[31px] transition-colors duration-150 ease-out",
+          "group flex w-full items-center gap-18 rounded-card border border-transparent bg-tone-brand-subtle py-[23px] pr-[39px] pl-[31px] transition-colors duration-150 ease-out",
           "data-[hovered]:border-border data-[hovered]:bg-background",
           "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
           className,
         )}
         {...props}
       >
-        <div className="flex min-w-px flex-1 flex-col items-start gap-2">
+        <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
           <div className="flex w-full items-center gap-3">
             {showIcon &&
               (icon ?? (
                 <CheckCircleBroken className="size-6 shrink-0 text-foreground" />
               ))}
-            <Typography size="xl" weight="semibold" className="leading-7 text-foreground">
+            <Typography size="lg" weight="bold" className="leading-6.5 text-foreground">
               {title}
             </Typography>
           </div>
-          <Typography size="base" className="w-full text-foreground-muted">
+          <Typography size="base" className="w-full text-foreground">
             {description}
           </Typography>
         </div>

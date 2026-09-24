@@ -30,7 +30,8 @@ import { Typography } from "@/components/typography";
  * The Active fill is a separate `motion.span` with a shared `layoutId`, so it
  * glides from the previously selected tab to the new one (CLAUDE.md "Tabs").
  * Motion animates the pill's transform; CSS animates only text color, so the
- * two never animate the same property. `TabButtonList` scopes the
+ * two never animate the same property. The pill's radius is set in `style`
+ * so Motion keeps its ends round while it resizes between labels. `TabButtonList` scopes the
  * `layoutId` per list.
  *
  * Counter (Figma `counter`, `showCounter`): pass `count` to render it.
@@ -92,7 +93,11 @@ function TabButton({ label, count, size, className, ...props }: TabButtonProps) 
               data-slot="tab-button-indicator"
               layoutId="tab-button-indicator"
               transition={resolve(layoutSpring)}
-              className="pointer-events-none absolute inset-0 rounded-full bg-foreground"
+              // Radius in `style`, not a `rounded-full` class: Motion's layout animation resizes the pill with a scale
+              // transform, and only corrects border-radius it can see in `style`. As a class, the pill's ends stretched
+              // into ovals while it moved between labels of different widths.
+              style={{ borderRadius: 9999 }}
+              className="pointer-events-none absolute inset-0 bg-foreground"
             />
           )}
           {/* Figma `container`: `spacing/1_5` (6px) horizontal padding around the label. */}
