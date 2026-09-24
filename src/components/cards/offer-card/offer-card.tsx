@@ -1,5 +1,5 @@
 import * as React from "react";
-import { XClose } from "@untitledui/icons";
+import { DotsHorizontal } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { clickableRowProps } from "@/lib/clickable-row";
@@ -9,6 +9,7 @@ import {
   type AvatarCompaniesProps,
 } from "@/components/data-display/avatar-companies";
 import { Typography } from "@/components/typography";
+import { MenuContent, MenuTrigger } from "@/components/overlays/menu";
 
 /**
  * A single offer row — identity, engagement terms, expiration, and a
@@ -17,25 +18,22 @@ import { Typography } from "@/components/typography";
  * `ApplicationCard`/`MatchCard` — same identity block (avatar,
  * `partner-name` eyebrow, title, `compensation · engagementTerms ·
  * duration` terms row) — but the right zone differs: an optional
- * expiration-date warning, a solid "View offer" `Button`, and a
- * hover-revealed dismiss (×) trigger instead of an actions-menu (`···`)
- * trigger.
+ * expiration-date warning, a solid "View offer" `Button`, and the same
+ * hover-revealed actions-menu (`···`) trigger as `ApplicationCard`.
  *
  * The entire row is the primary click target (no separate row-level CTA
  * distinct from the "View offer" button's own action), mirroring
  * `ApplicationCard`'s row-interaction model — `onPress`/`href` land on the
  * outer element via `rowProps`.
  *
- * Figma's hover-revealed icon button renders an × glyph (confirmed from its
- * SVG path), not the `···` overflow-menu icon `ApplicationCard`/`MatchCard`
- * use — this reads as "dismiss this offer from the list," so it's modeled
- * as `onDismiss`/`dismissLabel`, matching `NextStepCard`'s existing
- * dismiss-affordance naming (`onDismiss?: () => void`) rather than the
- * `onActionsPress` menu-trigger pattern. It reveals exactly like
- * `ApplicationCard`'s trigger (2026-09-22 Figma revision): it takes no space
- * at rest, and on hover/focus-within its slot grows to Figma's 16px gap +
- * 32px button, pushing "View offer" and the expiration date left while the
- * × (Figma: `icon/foreground`) dissolves in.
+ * The hover-revealed `···` opens the consumer's `actionsMenu` (e.g. View
+ * details, Decline). It replaced Figma's × dismiss (2026-09-24), which read
+ * as "hide" while it actually declined the offer. It reveals exactly like
+ * `ApplicationCard`'s trigger: it takes no space at rest, and on
+ * hover/focus-within its slot grows to Figma's 16px gap + 32px button,
+ * pushing "View offer" and the expiration date left while the `···`
+ * dissolves in. While the menu is open, the trigger stays revealed and the
+ * row keeps its hover tint.
  *
  * `expirationDate` renders in `text-destructive` with the repo's standard
  * Inter font. Figma's `expiration-date` label binds to a raw, unbound hex
@@ -71,10 +69,10 @@ interface OfferCardProps
   ctaLabel?: string;
   /** Called when the "View offer" CTA is activated. */
   onCtaPress?: () => void;
-  /** Accessible label for the hover-revealed dismiss (×) trigger. Required whenever `onDismiss` is set. */
-  dismissLabel?: string;
-  /** Called when the dismiss (×) trigger is activated. Omit to hide the trigger entirely. */
-  onDismiss?: () => void;
+  /** Accessible label for the hover-revealed actions-menu (`···`) trigger. Required whenever `actionsMenu` is set. */
+  actionsMenuLabel?: string;
+  /** The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View details, Decline). Omit to hide the `···` trigger entirely. Same contract as `ApplicationCard`'s `actionsMenu`. */
+  actionsMenu?: React.ReactNode;
   /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
@@ -94,8 +92,8 @@ function OfferCard({
   expirationDate,
   ctaLabel = "View offer",
   onCtaPress,
-  dismissLabel,
-  onDismiss,
+  actionsMenuLabel,
+  actionsMenu,
   rowProps,
   className,
   ...props
@@ -112,7 +110,7 @@ function OfferCard({
       data-slot="offer-card"
       className={cn(
         "group flex w-full items-center gap-10 py-4 pr-6 pl-5 transition-colors duration-150 ease-out",
-        "hover:bg-hover-row",
+        "hover:bg-hover-row has-[[aria-expanded=true]]:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -181,21 +179,18 @@ function OfferCard({
           <Button size="sm" onPress={onCtaPress}>
             {ctaLabel}
           </Button>
-          {onDismiss && (
-            // Same hover/focus-within reveal as `ApplicationCard`'s `···` slot: grows 0 → 48px (Figma's 16px gap + 32px button), pushing the CTA and expiration date left, while the × dissolves in.
+          {actionsMenu && (
+            // Same hover/focus-within reveal as `ApplicationCard`'s `···` slot: grows 0 → 48px (Figma's 16px gap + 32px button), pushing the CTA and expiration date left, while the trigger dissolves in.
             // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out`); exit is shorter per CLAUDE.md "Dismiss". Kept mounted (clipped) so it stays keyboard-reachable.
             // The reveal lives on the slot so the Button keeps its own look + hover transition; `py-1 pr-1` (cancelled by `-my-1 -mr-1`, hence 52px) keeps its focus ring inside the clip.
             <div
-              data-slot="offer-card-dismiss"
-              className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-within:w-[52px] group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 motion-reduce:transition-none"
+              data-slot="offer-card-actions"
+              className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-within:w-[52px] group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
             >
-              <Button
-                color="tertiary"
-                size="xs"
-                iconLeading={XClose}
-                aria-label={dismissLabel}
-                onPress={onDismiss}
-              />
+              <MenuTrigger>
+                <Button color="tertiary" size="xs" iconLeading={DotsHorizontal} aria-label={actionsMenuLabel} />
+                <MenuContent placement="bottom end">{actionsMenu}</MenuContent>
+              </MenuTrigger>
             </div>
           )}
         </div>

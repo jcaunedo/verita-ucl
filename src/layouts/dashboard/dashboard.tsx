@@ -11,13 +11,14 @@ import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
 import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
-import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
+import { MenuItem } from "@/components/overlays/menu";
 import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
 import {
   applyWithdrawnApplications,
@@ -230,7 +231,7 @@ function Dashboard({
   }, [isLgUp]);
 
   /**
-   * The offer's X declines it: the offer moves to Engagements → Offers →
+   * The offer's `···` → Decline declines it: the offer moves to Engagements → Offers →
    * `Declined` (`engagements.md` §4.1), via the prototype's shared
    * `useDeclinedOffers` state, so it's there after clicking through to
    * Engagements and stays gone from Home. The card leaves with the same exit
@@ -285,10 +286,7 @@ function Dashboard({
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
-              {/* Figma `3xl -bold`, 1% letter-spacing (0.3px). */}
-              <Typography size="3xl" weight="bold" className="tracking-[0.01em]">
-                Welcome back, Theresa
-              </Typography>
+              <PageTitle>Welcome back, Theresa</PageTitle>
               <Typography size="lg" className="leading-6.5">Let’s make today count.</Typography>
             </div>
           </div>
@@ -319,8 +317,18 @@ function Dashboard({
                         expirationDate={newOffer.expirationDate}
                         onCtaPress={() => {}}
                         rowProps={{ onClick: () => {} }}
-                        dismissLabel="Decline offer"
-                        onDismiss={handleDeclineOffer}
+                        actionsMenuLabel={`More actions for ${newOffer.title}`}
+                        actionsMenu={
+                          <>
+                            <MenuItem icon={AlignLeft} onAction={() => {}}>
+                              View details
+                            </MenuItem>
+                            {/* Declines the offer: it leaves Home and moves to Engagements → Offers → Declined. */}
+                            <MenuItem icon={XCircle} tone="destructive" onAction={handleDeclineOffer}>
+                              Decline
+                            </MenuItem>
+                          </>
+                        }
                         className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
                       />
                     </motion.div>
@@ -388,7 +396,6 @@ function Dashboard({
                         <>
                           <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
                           <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
-                          <MenuSeparator />
                           <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
                             Withdraw
                           </MenuItem>

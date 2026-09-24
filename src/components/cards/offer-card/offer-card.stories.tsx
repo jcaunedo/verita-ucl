@@ -1,6 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { AlignLeft, XCircle } from "@untitledui/icons";
+
 import { partnerLogos } from "@/assets/logos";
+import { MenuItem } from "@/components/overlays/menu";
 import { OfferCard } from "./offer-card";
+
+/** The offer row's actions: View details and a destructive Decline, no separator. */
+const OFFER_ACTIONS = (
+  <>
+    <MenuItem icon={AlignLeft}>View details</MenuItem>
+    <MenuItem icon={XCircle} tone="destructive">
+      Decline
+    </MenuItem>
+  </>
+);
 
 const meta: Meta<typeof OfferCard> = {
   title: "Cards/OfferCard",
@@ -16,9 +29,9 @@ const meta: Meta<typeof OfferCard> = {
     partnerName: "Verita partner",
     expirationDate: "Expires in 3 days",
     onCtaPress: () => {},
-    // On by default so every story shows Figma's Hover variant (× slides in, pushing the CTA left) — see `WithoutDismiss` for the no-trigger case.
-    dismissLabel: "Dismiss offer",
-    onDismiss: () => {},
+    // On by default so every story shows the hover reveal (`···` slides in, pushing the CTA left) — see `WithoutActions` for the no-trigger case.
+    actionsMenuLabel: "More actions",
+    actionsMenu: OFFER_ACTIONS,
   },
   decorators: [
     (Story) => (
@@ -67,11 +80,11 @@ export const CustomCtaLabel: Story = {
   },
 };
 
-/** No dismiss (×) trigger — hover only tints the row; the CTA stays put. */
-export const WithoutDismiss: Story = {
+/** No actions menu — hover only tints the row; the CTA stays put. */
+export const WithoutActions: Story = {
   args: {
-    dismissLabel: undefined,
-    onDismiss: undefined,
+    actionsMenuLabel: undefined,
+    actionsMenu: undefined,
   },
 };
 
@@ -87,8 +100,8 @@ export const AllVariants: Story = {
         partnerName="Verita partner"
         expirationDate="Expires in 3 days"
         onCtaPress={() => {}}
-        dismissLabel="Dismiss offer"
-        onDismiss={() => {}}
+        actionsMenuLabel="More actions"
+        actionsMenu={OFFER_ACTIONS}
       />
       <OfferCard
         title="Strategic Finance Expert"
@@ -100,8 +113,8 @@ export const AllVariants: Story = {
         discipline="Corporate Finance"
         expirationDate="Expires in 3 days"
         onCtaPress={() => {}}
-        dismissLabel="Dismiss offer"
-        onDismiss={() => {}}
+        actionsMenuLabel="More actions"
+        actionsMenu={OFFER_ACTIONS}
       />
       <OfferCard
         title="Strategic Finance Expert"
@@ -110,8 +123,8 @@ export const AllVariants: Story = {
         company="verita"
         partnerName="Verita partner"
         onCtaPress={() => {}}
-        dismissLabel="Dismiss offer"
-        onDismiss={() => {}}
+        actionsMenuLabel="More actions"
+        actionsMenu={OFFER_ACTIONS}
       />
     </div>
   ),

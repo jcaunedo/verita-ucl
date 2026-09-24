@@ -279,3 +279,24 @@ kerning and ligatures.
 - When comparing a component against Figma, check it in a browser with this
   stylesheet loaded. Text rendered without it looks heavier and isn't a fair
   comparison.
+
+---
+
+## Actions menus — no dividers unless asked (`src/components/overlays/menu/`)
+
+**Rule:** a row's `···` actions menu (`MenuContent` + `MenuItem`s, e.g. an
+application's View Details / Share / Withdraw, an offer's View details /
+Decline) lists its items with no `MenuSeparator` — including before a
+destructive item. The destructive tone (red label and icon) already sets it
+apart.
+
+**Why:** design direction (2026-09-24): dividers were removed from the offer
+and application menus and are to be left out everywhere by default.
+
+**How to apply:**
+
+- **New actions menu:** no `MenuSeparator`. Add one only when a design or
+  request explicitly calls for it for that menu.
+- `MenuSeparator` stays available for those cases (see the `WithSeparator`
+  story in Overlays/Menu). The account menu's divider before the prototype
+  items was explicitly requested, so it stays.

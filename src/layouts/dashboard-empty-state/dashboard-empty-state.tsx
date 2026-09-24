@@ -6,6 +6,7 @@ import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { PageTitle } from "@/layouts/shared/page-title";
 import { readSidebarCollapsed, saveSidebarCollapsed } from "@/layouts/shared/demo-state";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { SectionEmptyState } from "@/components/cards/section-empty-state";
@@ -157,7 +158,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
-              <Typography size="3xl" weight="semibold">
+              <PageTitle>
                 {welcomeHref ? (
                   <a
                     href={welcomeHref}
@@ -168,7 +169,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
                 ) : (
                   "Welcome back, Theresa"
                 )}
-              </Typography>
+              </PageTitle>
               <Typography size="lg">Let’s make today count.</Typography>
             </div>
           </div>

@@ -250,9 +250,9 @@ The `Offers` view uses the same search button and filter row as `Applications` (
 
 Search and counter behavior follow §3.1: the search button sits before the filters, `Open` shows no counter, and a filter with zero offers keeps its tab but hides its counter. The `Offers` view-tab count is `Open` only, so it reflects the offers that still need attention.
 
-✅ **Resolved (2026-09-24) — the offer X declines the offer:** an open offer's X declines it, both on the Home "You have a new offer" module and in `Offers` → `Open`. The card fades out and the offer moves to `Declined`; on Home the module then closes. A declined offer has no X and no longer shows its expiration date, since it doesn't expire. The X's accessible label is "Decline offer".
+✅ **Resolved (2026-09-24) — offers are declined from the row's `···` menu:** an open offer's row, on the Home "You have a new offer" module and in `Offers` → `Open`, reveals a `···` actions menu on hover, the same pattern as application rows ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Its items are **View details** and a destructive **Decline**, with no separator between them. Decline moves the offer to `Declined`; on Home the card fades out and the module closes. A declined offer's menu has only View details, and its row no longer shows the expiration date, since a declined offer doesn't expire. This replaces the earlier hover X, which declined the offer while reading as "hide".
 
-⚠️ **Risk:** an X usually reads as "hide this for now", not "turn this down". A professional could decline a real offer while only meaning to clear it from Home, and nothing lets them undo it. Options: confirm before declining, offer an undo right after, or keep the X as a plain dismiss and put Decline on the offer itself (§4).
+⚠️ **Gap:** Decline runs immediately, with no confirmation or undo, like Withdraw on applications ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Declining an offer is irreversible, so the product likely needs the same confirmation step once UCL has a dialog component.
 
 ✅ **Resolved (2026-09-23) — `Declined` is the Offers history:** it works the same way as `Not moving forward` in `Applications` (§3.1) and `Completed` in `Contracts` (§5.2). Declined offers stay visible under this filter and aren't counted in the view-tab total.
 

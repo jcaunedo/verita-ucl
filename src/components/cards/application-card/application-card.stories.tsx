@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { partnerLogos } from "@/assets/logos";
 import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 
-import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
+import { MenuItem } from "@/components/overlays/menu";
 import { ApplicationCard, ApplicationCardGroup } from "./application-card";
 
 const meta: Meta<typeof ApplicationCard> = {
@@ -146,7 +146,6 @@ export const WithActionsMenu: Story = {
       <>
         <MenuItem icon={AlignLeft}>View Details</MenuItem>
         <MenuItem icon={Share06}>Share</MenuItem>
-        <MenuSeparator />
         <MenuItem icon={XCircle} tone="destructive">Withdraw</MenuItem>
       </>
     ),

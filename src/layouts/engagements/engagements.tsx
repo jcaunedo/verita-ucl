@@ -21,10 +21,11 @@ import {
 import { Typography } from "@/components/typography";
 import { Button } from "@/components/buttons/button";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
-import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
+import { MenuItem } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
 import { OfferCard } from "@/components/cards/offer-card";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import {
   DEMO_APPLICATIONS,
@@ -191,9 +192,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
       <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full flex-col items-start gap-1.5">
-            <Typography as="h1" size="3xl" weight="semibold">
-              Engagements
-            </Typography>
+            <PageTitle>Engagements</PageTitle>
             <Typography className="text-foreground-muted">
               Track your applications, offers, contracts, assessments, and talent network as you move from
               opportunity to work.
@@ -238,12 +237,9 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                                     <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
                                     {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
                                     {filter === "open" && (
-                                      <>
-                                        <MenuSeparator />
-                                        <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
-                                          Withdraw
-                                        </MenuItem>
-                                      </>
+                                      <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
+                                        Withdraw
+                                      </MenuItem>
                                     )}
                                   </>
                                 }
@@ -292,11 +288,20 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                                 expirationDate={filter === "open" ? expirationDate : undefined}
                                 onCtaPress={() => {}}
                                 rowProps={{ onClick: () => {} }}
-                                // Same X as `Dashboard`'s offer: declines it, moving it to `Declined`. Declined offers have no X.
-                                {...(filter === "open" && {
-                                  dismissLabel: "Decline offer",
-                                  onDismiss: () => decline(key),
-                                })}
+                                actionsMenuLabel={`More actions for ${offer.title}`}
+                                actionsMenu={
+                                  <>
+                                    <MenuItem icon={AlignLeft} onAction={() => {}}>
+                                      View details
+                                    </MenuItem>
+                                    {/* Same Decline as `Dashboard`'s offer: moves it to `Declined`. A declined offer can't be declined again. */}
+                                    {filter === "open" && (
+                                      <MenuItem icon={XCircle} tone="destructive" onAction={() => decline(key)}>
+                                        Decline
+                                      </MenuItem>
+                                    )}
+                                  </>
+                                }
                                 className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
                               />
                             </motion.div>

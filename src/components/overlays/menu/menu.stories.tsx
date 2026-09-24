@@ -19,8 +19,24 @@ const meta: Meta<typeof MenuItem> = {
 export default meta;
 type Story = StoryObj<typeof MenuItem>;
 
-/** An application row's actions (PRD §4.1): View Details, Share, and a destructive Withdraw after a separator. */
+/** An application row's actions (PRD §4.1): View Details, Share, and a destructive Withdraw. No separator by default (DESIGN.md "Actions menus"). */
 export const Default: Story = {
+  render: () => (
+    <MenuTrigger defaultOpen>
+      <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
+      <MenuContent placement="bottom end">
+        <MenuItem icon={AlignLeft}>View Details</MenuItem>
+        <MenuItem icon={Share06}>Share</MenuItem>
+        <MenuItem icon={XCircle} tone="destructive">
+          Withdraw
+        </MenuItem>
+      </MenuContent>
+    </MenuTrigger>
+  ),
+};
+
+/** `MenuSeparator` is available for when a design explicitly calls for a divider — not used by default (DESIGN.md "Actions menus"). */
+export const WithSeparator: Story = {
   render: () => (
     <MenuTrigger defaultOpen>
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
@@ -44,7 +60,6 @@ export const TextOnly: Story = {
       <MenuContent placement="bottom end">
         <MenuItem>View Details</MenuItem>
         <MenuItem>Share</MenuItem>
-        <MenuSeparator />
         <MenuItem tone="destructive">Withdraw</MenuItem>
       </MenuContent>
     </MenuTrigger>
@@ -63,7 +78,6 @@ export const AllVariants: Story = {
           <MenuContent placement="bottom start">
             <MenuItem size={size} icon={AlignLeft}>View Details</MenuItem>
             <MenuItem size={size} icon={Share06}>Share</MenuItem>
-            <MenuSeparator />
             <MenuItem size={size} icon={XCircle} tone="destructive">
               Withdraw
             </MenuItem>

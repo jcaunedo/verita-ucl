@@ -13,10 +13,10 @@ export default meta;
 type Story = StoryObj<typeof Dashboard>;
 
 /**
- * "Home" links to the `DashboardEmptyState` story — for sharing the two
- * layouts as one clickable prototype (open this story's direct
- * `?viewMode=story` URL; clicking Home lands on the empty-state dashboard,
- * Engagements on the `Engagements` layout). "Active Applications" → "View
+ * The prototype's links (open this story's direct `?viewMode=story` URL):
+ * Home reloads this populated Dashboard, Engagements opens the `Engagements`
+ * layout. The empty-state dashboard is reached from the account menu's page
+ * links instead (`prototype-account-menu.tsx`). "Active Applications" → "View
  * All" also opens `Engagements`, whose default story lands on Applications
  * with the `Open` filter selected; "Active work" → "View All" opens its
  * `Contracts` story (Contracts view, `Open` filter).
@@ -26,7 +26,7 @@ type Story = StoryObj<typeof Dashboard>;
 export const Default: Story = {
   args: {
     navHrefOverrides: {
-      home: "iframe.html?id=layouts-dashboardemptystate--default&viewMode=story",
+      home: "iframe.html?id=layouts-dashboard--default&viewMode=story",
       engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
     },
     viewAllApplicationsHref: "iframe.html?id=layouts-engagements--default&viewMode=story",
