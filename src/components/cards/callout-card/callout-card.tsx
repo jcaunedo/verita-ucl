@@ -23,7 +23,7 @@ import { Typography } from "@/components/typography";
  * (both Figma variants are the same 104px height). Figma's stroke is inside
  * the frame, so padding is Figma's 24px vertical / 32px left / 40px right
  * minus the 1px border (`py-[23px] pr-[39px] pl-[31px]`), and the title
- * (`lg -bold`) uses Figma's bound `line-height/lg` (26px) rather than
+ * (`lg -semibold`) uses Figma's bound `line-height/lg` (26px) rather than
  * Typography lg's 24px default — together keeping the card at exactly 104px.
  *
  * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
@@ -91,7 +91,7 @@ function CalloutCard({
               (icon ?? (
                 <CheckCircleBroken className="size-6 shrink-0 text-foreground" />
               ))}
-            <Typography size="lg" weight="bold" className="leading-6.5 text-foreground">
+            <Typography size="lg" weight="semibold" className="leading-6.5 text-foreground">
               {title}
             </Typography>
           </div>

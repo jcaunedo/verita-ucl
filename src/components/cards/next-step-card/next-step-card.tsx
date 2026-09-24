@@ -240,7 +240,8 @@ function NextStepCard({
           )}
         </div>
         <div className="flex w-full flex-col items-start gap-1.5">
-          <Typography size="lg" weight="semibold" className="text-foreground">
+          {/* Figma `base -bold` (16/24). */}
+          <Typography size="base" weight="bold" className="text-foreground">
             {title}
           </Typography>
           <Typography size="sm" className="text-foreground-muted">

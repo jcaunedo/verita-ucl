@@ -294,7 +294,7 @@ function Dashboard({
           <div className="flex w-full flex-col items-start gap-12">
             {newOffer && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-3">
-                <Typography size="lg" weight="bold" className="leading-6.5">
+                <Typography size="lg" weight="semibold" className="leading-6.5">
                   You have a new offer
                 </Typography>
                 <AnimatePresence onExitComplete={() => setOfferSectionVisible(false)}>
@@ -350,7 +350,7 @@ function Dashboard({
 
               <div className="flex w-full flex-col items-start gap-3">
                 <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="lg" weight="bold" className="leading-6.5">
+                  <Typography size="lg" weight="semibold" className="leading-6.5">
                     Active work
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
@@ -377,7 +377,7 @@ function Dashboard({
               <div className="flex w-full flex-col items-start gap-3">
                 {/* Figma: title + `sm` muted subtitle, 2px apart — same header as `NextStepsSection`. */}
                 <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="lg" weight="bold" className="leading-6.5">
+                  <Typography size="lg" weight="semibold" className="leading-6.5">
                     Active Applications
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
@@ -418,7 +418,7 @@ function Dashboard({
               </div>
 
               <div className="flex w-full flex-col items-start gap-3">
-                <Typography size="lg" weight="bold" className="leading-6.5">
+                <Typography size="lg" weight="semibold" className="leading-6.5">
                   Most recent matches
                 </Typography>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
