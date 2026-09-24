@@ -112,7 +112,7 @@
 
 	/* ---------- Shadows ---------- */
 	/* Figma: shadow/popover — floating surfaces (select/menu content, popovers). */
-	--shadow-popover: 0px 8px 16px -4px rgba(8, 13, 20, 0.12);
+	--shadow-popover: 0px 12px 20px 0px rgba(8, 13, 20, 0.12);
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);
@@ -530,7 +530,7 @@
 	--radius-base-role: var(--radius-lg-val);
 	--radius-card-role: var(--radius-xl-val);
 	--radius-input-role: var(--radius-lg-val);
-	--radius-popover-role: var(--radius-xl-val);
+	--radius-popover-role: var(--radius-2xl-val); /* Figma: radius/popover (16px) */
 	--radius-modal-role: var(--radius-4xl-val);
 	--radius-chip-role: var(--radius-lg-val);
 	--radius-badge-role: var(--radius-md-val);

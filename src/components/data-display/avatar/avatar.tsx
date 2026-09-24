@@ -26,10 +26,15 @@ const avatarVariants = cva(
       // Figma's `avatar-users` only shows one size (36px, → `md`). `sm`/`lg`
       // are an extrapolated 3-step scale (32/36/40px) with no Figma source —
       // confirmed with the user as a reasonable default, not a literal sync.
+      // `xl` (56px) is Untitled UI's `xl` avatar size, first used by the
+      // account menu header (Figma: `Select Content Account Menu (Popper)`);
+      // its initials render at `text-lg` (18px), the nearest token to Figma's
+      // 18.67px (a third of the avatar).
       size: {
         sm: "size-8 text-xs",
         md: "size-9 text-xs",
         lg: "size-10 text-sm",
+        xl: "size-14 text-lg",
       },
     },
     defaultVariants: {

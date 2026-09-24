@@ -171,6 +171,13 @@ export {
 } from "./components/overlays/menu";
 
 export {
+  AccountMenu,
+  AccountMenuItem,
+  type AccountMenuProps,
+  type AccountMenuItemProps,
+} from "./components/overlays/account-menu";
+
+export {
   SidebarTooltip,
   SidebarTooltipTrigger,
   type SidebarTooltipProps,

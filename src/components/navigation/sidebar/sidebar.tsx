@@ -8,6 +8,10 @@ import {
   FlexAlignRight,
   HomeLine,
   LifeBuoy02,
+  LogOut01,
+  Settings02,
+  Translate01,
+  UserCircle,
   UsersPlus,
 } from "@untitledui/icons";
 
@@ -17,6 +21,7 @@ import { Logo } from "@/components/branding/logo";
 import { Button } from "@/components/buttons/button";
 import { SidebarMenuItem } from "@/components/buttons/sidebar-menu-item";
 import { AccountTrigger } from "@/components/buttons/account-trigger";
+import { AccountMenu, AccountMenuItem, type AccountMenuProps } from "@/components/overlays/account-menu";
 
 /**
  * Figma: `briefcase-business` (flat case + top handle + notch, and a
@@ -120,13 +125,46 @@ interface SidebarProps {
   navHrefOverrides?: Partial<Record<NavKey, string>>;
   /** Main nav item that starts as current, e.g. `"engagements"` on the Engagements page. Defaults to `"home"`. */
   defaultActiveNavKey?: NavKey;
+  /**
+   * The account menu opened from the footer's `AccountTrigger`: its items
+   * (`AccountMenuItem`s), `onAction`, and footer link targets. Omit to get
+   * Figma's default items (My Profile, Language, Settings, Sign out) with no
+   * actions wired, and `#` footer links.
+   */
+  accountMenu?: Pick<AccountMenuProps, "children" | "onAction" | "termsHref" | "privacyHref">;
 }
+
+/** The signed-in user shown on the trigger and in the menu header — Figma sample data. */
+const ACCOUNT_USER = {
+  name: "Theresa Smith",
+  email: "theresa@email.com",
+  avatar: { initials: "TS", className: "bg-success" },
+};
+
+/** Figma `Select Content Account Menu (Popper)`'s items, for when a consumer doesn't pass its own. */
+const DEFAULT_ACCOUNT_MENU_ITEMS = (
+  <>
+    <AccountMenuItem id="profile" icon={UserCircle}>
+      My Profile
+    </AccountMenuItem>
+    <AccountMenuItem id="language" icon={Translate01} suffix="English">
+      Language
+    </AccountMenuItem>
+    <AccountMenuItem id="settings" icon={Settings02}>
+      Settings
+    </AccountMenuItem>
+    <AccountMenuItem id="sign-out" icon={LogOut01}>
+      Sign out
+    </AccountMenuItem>
+  </>
+);
 
 function Sidebar({
   collapsed: collapsedProp,
   onCollapsedChange,
   navHrefOverrides,
   defaultActiveNavKey = "home",
+  accountMenu,
 }: SidebarProps = {}) {
   const [uncontrolledCollapsed, setUncontrolledCollapsed] = React.useState(false);
   const collapsed = collapsedProp ?? uncontrolledCollapsed;
@@ -237,12 +275,16 @@ function Sidebar({
           <div className="h-px w-full bg-border" />
         </div>
 
-        <AccountTrigger
-          name="Theresa Smith"
-          email="theresa@email.com"
-          avatar={{ initials: "TS", className: "bg-success" }}
-          collapsed={collapsed}
-        />
+        {/* The menu renders in a portal, but its clicks still bubble through React to this footer block's `stopPropagation`, so they never toggle the rail. */}
+        <AccountMenu
+          trigger={<AccountTrigger {...ACCOUNT_USER} collapsed={collapsed} />}
+          {...ACCOUNT_USER}
+          onAction={accountMenu?.onAction}
+          termsHref={accountMenu?.termsHref ?? "#"}
+          privacyHref={accountMenu?.privacyHref ?? "#"}
+        >
+          {accountMenu?.children ?? DEFAULT_ACCOUNT_MENU_ITEMS}
+        </AccountMenu>
       </div>
     </motion.div>
   );

@@ -18,6 +18,7 @@ export {
   cardEnterFromRightVariants,
   overlayVariants,
   popoverVariants,
+  accountMenuVariants,
   panelVariants,
   slideVariants,
   staggerContainerVariants,

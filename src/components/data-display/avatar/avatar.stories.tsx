@@ -37,6 +37,7 @@ export const Sizes: Story = {
       <Avatar size="sm" initials="SM" className="bg-primary" />
       <Avatar size="md" initials="MD" className="bg-primary" />
       <Avatar size="lg" initials="LG" className="bg-primary" />
+      <Avatar size="xl" initials="XL" className="bg-primary" />
     </div>
   ),
 };
@@ -53,6 +54,7 @@ export const AllVariants: Story = {
         <Avatar size="sm" initials="SM" className="bg-primary" />
         <Avatar size="md" initials="MD" className="bg-primary" />
         <Avatar size="lg" initials="LG" className="bg-primary" />
+        <Avatar size="xl" initials="XL" className="bg-primary" />
       </div>
     </div>
   ),

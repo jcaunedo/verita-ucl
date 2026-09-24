@@ -11,6 +11,7 @@ import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard } from "@/components/cards/application-card";
@@ -265,6 +266,7 @@ function Dashboard({
           collapsed={sidebarCollapsed}
           onCollapsedChange={handleSidebarCollapsedChange}
           navHrefOverrides={navHrefOverrides}
+          accountMenu={prototypeAccountMenu}
         />
       </div>
       <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>

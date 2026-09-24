@@ -1,5 +1,5 @@
 import * as React from "react";
-import { motion } from "motion/react";
+import { motion, type Variants } from "motion/react";
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
@@ -93,10 +93,13 @@ function SelectContent<T extends object>({
  */
 function PopoverSurface({
   placement,
+  variants = popoverVariants,
   className,
   children,
 }: {
   placement: string | null;
+  /** Entrance variants (`initial`/`animate`, receiving the side as `custom`). Defaults to `popoverVariants`. */
+  variants?: Variants;
   className?: string;
   children: React.ReactNode;
 }) {
@@ -106,7 +109,7 @@ function PopoverSurface({
   return (
     <motion.div
       custom={side}
-      variants={popoverVariants}
+      variants={variants}
       initial={prefersReducedMotion ? { opacity: 0 } : "initial"}
       animate="animate"
       style={{ transformOrigin: side === "top" ? "bottom" : "top" }}

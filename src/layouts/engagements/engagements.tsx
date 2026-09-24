@@ -25,6 +25,7 @@ import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
 import { OfferCard } from "@/components/cards/offer-card";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import {
   DEMO_APPLICATIONS,
   DEMO_CONTRACTS,
@@ -171,6 +172,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
           collapsed={sidebarCollapsed}
           onCollapsedChange={handleSidebarCollapsedChange}
           navHrefOverrides={navHrefOverrides}
+          accountMenu={prototypeAccountMenu}
           defaultActiveNavKey="engagements"
         />
       </div>

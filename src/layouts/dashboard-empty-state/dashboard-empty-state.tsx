@@ -6,6 +6,7 @@ import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
+import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { SectionEmptyState } from "@/components/cards/section-empty-state";
 import { CalloutCard } from "@/components/cards/callout-card";
 
@@ -146,6 +147,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
           collapsed={sidebarCollapsed}
           onCollapsedChange={handleSidebarCollapsedChange}
           navHrefOverrides={navHrefOverrides}
+          accountMenu={prototypeAccountMenu}
         />
       </div>
       <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>

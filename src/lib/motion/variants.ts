@@ -79,6 +79,19 @@ const popoverVariants: Variants = {
 };
 
 /**
+ * The sidebar account menu's entrance: a fade plus a `motionDistance.small`
+ * (12px) slide up from below, on `standardTransition` — more pronounced than
+ * `popoverVariants`' 3px nudge because the menu opens over its trigger at the
+ * bottom of the screen and should read as rising out of it. No scale: the
+ * slide already carries the arrival. Exit is a plain fade.
+ */
+const accountMenuVariants: Variants = {
+  initial: { opacity: 0, y: motionDistance.small },
+  animate: { opacity: 1, y: 0, transition: standardTransition },
+  exit: { opacity: 0, transition: exitTransition },
+};
+
+/**
  * Overlay/scrim backdrop for dialogs and overlays (fade only — the dialog
  * surface itself should use `panelVariants` or a Motion `layout` animation).
  */
@@ -155,6 +168,7 @@ export {
   cardEnterFromRightVariants,
   overlayVariants,
   popoverVariants,
+  accountMenuVariants,
   panelVariants,
   slideVariants,
   staggerContainerVariants,

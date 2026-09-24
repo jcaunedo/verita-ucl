@@ -215,3 +215,21 @@ before the next layout lands, so the copies can't drift.
 ⚠️ **Decision needed:** top padding still differs — both Dashboards use
 `pt-10` (40px) and Engagements uses `pt-14` (56px). Pick one and add it to
 the shared shell.
+
+---
+
+## Custom radius roles must be registered with `cn()` (`src/lib/utils.ts`)
+
+**Rule:** every component radius role in `theme.css` (`rounded-card`,
+`rounded-select-content`, `rounded-button-md`, …) must also be listed in the
+`extendTailwindMerge` radius config in `src/lib/utils.ts`.
+
+**Why:** `tailwind-merge` only knows Tailwind's built-in radius names. For an
+unknown one like `rounded-select-content`, a `className` override such as
+`rounded-3xl` was kept next to it instead of replacing it, so the corner
+radius depended on which rule the stylesheet happened to emit last. Found
+2026-09-24 while building `AccountMenu` on `PopoverSurface`.
+
+**How to apply:** when adding a `--radius-*` role to `theme.css`, add its name
+to the list in `utils.ts` in the same change. `font-*` family overrides
+(`font-display` → `font-sans`) already merge correctly.

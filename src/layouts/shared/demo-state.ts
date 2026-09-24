@@ -12,7 +12,8 @@ import type { DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
  * falls back to the untouched demo data.
  */
 
-const DECLINED_OFFERS_KEY = "verita-prototype:declined-offers";
+const STORAGE_PREFIX = "verita-prototype:";
+const DECLINED_OFFERS_KEY = `${STORAGE_PREFIX}declined-offers`;
 
 function readDeclinedOffers(): Set<string> {
   try {
@@ -53,4 +54,29 @@ function applyDeclinedOffers<T extends DemoOffer>(offers: readonly T[], declined
   return offers.map((offer) => (declined.has(offer.key) ? { ...offer, filter: "declined" } : offer));
 }
 
-export { useDeclinedOffers, applyDeclinedOffers };
+/**
+ * The prototype's starting page: the populated `Dashboard` story, opened
+ * full-screen. Relative so it works on any Storybook host (local or Netlify).
+ */
+const PROTOTYPE_START_HREF = "iframe.html?id=layouts-dashboard--default&viewMode=story";
+
+/**
+ * Restarts the prototype from scratch — the account menu's "Restart
+ * prototype" item. Clears everything the professional did that outlives a
+ * page (e.g. declined offers), then opens the starting page, which also
+ * resets in-page state (dismissed next steps, sidebar collapse, selected
+ * tabs).
+ */
+function restartPrototype() {
+  try {
+    const storage = window.sessionStorage;
+    for (const key of Object.keys(storage)) {
+      if (key.startsWith(STORAGE_PREFIX)) storage.removeItem(key);
+    }
+  } catch {
+    // Storage unavailable: nothing was persisted, so opening the start page is already a fresh start.
+  }
+  window.location.assign(PROTOTYPE_START_HREF);
+}
+
+export { useDeclinedOffers, applyDeclinedOffers, restartPrototype };
