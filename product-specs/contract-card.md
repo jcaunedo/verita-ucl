@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 20, 2026
+Last updated: Sep 24, 2026
 Scope: Verita AI Dashboard — the Contracts module's card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Active engagement definition in product-specs/engagements.md [§5](engagements.md#5-active-engagement).
 Purpose: Define the Contract card's engagement-terms/contract-status/action-state component architecture, its content (tiered by Essential/Contextual/Actionable, compensation-model-aware), and its priority behavior as a Home-module surface over the underlying Contract object.
 -->
@@ -366,7 +366,9 @@ Required behaviors:
 - Completing one contract must not remove or modify another.
 - Card order should be deterministic, with contracts requiring attention prioritized once the ordering policy is approved.
 
-The number of cards displayed on Home remains an open design decision.
+✅ **Resolved (2026-09-24) — Home shows one row of contracts:** the Home "Active work" module shows as many contracts as fit in one row of its grid: 2 below the `xl` breakpoint (1280px), 3 from `xl` up. It never wraps to a second row. Under the section title, a subtitle reads `Showing {shown} of {total}` (e.g. "Showing 3 of 4"), where `total` is every contract Home is allowed to show (`Awaiting start`, `Active`, or `Paused`, §4). Below the grid, `View All` routes to Engagements → Contracts with the `Open` filter selected ([`engagements.md` §5.2](engagements.md#52-contract-filters)). This matches the Home Applications module's subtitle and link ([`applications-card.md` §5](applications-card.md#5-visibility-rule)).
+
+⚠️ **Decision needed:** which contracts fill the visible row when there are more than fit. The card-order rule above is still unapproved. Until it is, a `Paused` contract or one needing attention can end up hidden behind `View All`.
 
 ## 8. Open questions
 

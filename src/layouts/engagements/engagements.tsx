@@ -1,7 +1,9 @@
 import * as React from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { AlignLeft, SearchMd, Share06, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
+import { cardDismissVariants, reflowTransition, useMotionPreference } from "@/lib/motion";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import {
@@ -31,6 +33,7 @@ import {
   type ContractFilter,
   type OfferFilter,
 } from "@/layouts/shared/demo-engagements";
+import { applyDeclinedOffers, useDeclinedOffers } from "@/layouts/shared/demo-state";
 
 /**
  * Rows come from `DEMO_APPLICATIONS` / `DEMO_OFFERS` / `DEMO_CONTRACTS`
@@ -41,7 +44,6 @@ import {
  */
 const APPLICATIONS = DEMO_APPLICATIONS;
 const CONTRACTS = DEMO_CONTRACTS;
-const OFFERS = DEMO_OFFERS;
 
 const CONTRACT_FILTERS: { id: ContractFilter; label: string }[] = [
   { id: "open", label: "Open" },
@@ -56,9 +58,6 @@ const OFFER_FILTERS: { id: OfferFilter; label: string }[] = [
   { id: "open", label: "Open" },
   { id: "declined", label: "Declined" },
 ];
-
-const offerCountFor = (filter: OfferFilter) =>
-  OFFERS.filter((offer) => offer.filter === filter).length;
 
 const FILTERS: { id: ApplicationFilter; label: string }[] = [
   { id: "open", label: "Open" },
@@ -134,6 +133,11 @@ interface EngagementsProps {
  */
 function Engagements({ navHrefOverrides, defaultView = "applications" }: EngagementsProps = {}) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  // An offer declined with its X, here or on `Dashboard`, shows under `Declined` — see `useDeclinedOffers`.
+  const { declined, decline } = useDeclinedOffers();
+  const { prefersReducedMotion } = useMotionPreference();
+  const offers = applyDeclinedOffers(DEMO_OFFERS, declined);
+  const offerCountFor = (filter: OfferFilter) => offers.filter((offer) => offer.filter === filter).length;
   // Same auto-collapse-below-`lg` behavior as `Dashboard` — see its comment for the full rationale.
   const isLgUp = useMediaQuery("(min-width: 1024px)");
   const wasAutoCollapsedRef = React.useRef(false);
@@ -242,24 +246,42 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                   filters={OFFER_FILTERS.map(({ id, label }) => ({ id, label, count: offerCountFor(id) }))}
                 />
                 {OFFER_FILTERS.map(({ id }) => {
-                  const offers = OFFERS.filter((offer) => offer.filter === id);
+                  const filterOffers = offers.filter((offer) => offer.filter === id);
                   return (
                     <TabButtonPanel key={id} id={id} className="w-full outline-none">
-                      {/* Zero-state for an empty filter isn't designed yet — the panel renders nothing. */}
-                      {offers.length > 0 && (
-                        // Same bordered row stack as the Applications list; `OfferCard` as on `Dashboard`, minus its dismiss.
-                        <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                          {offers.map(({ key, filter: _filter, ...offer }) => (
-                            <OfferCard
+                      {/* Zero-state for an empty filter isn't designed yet — an empty filter renders nothing. */}
+                      <div className="flex w-full flex-col items-start gap-4">
+                        <AnimatePresence initial={false}>
+                          {filterOffers.map(({ key, filter, expirationDate, ...offer }) => (
+                            <motion.div
                               key={key}
-                              {...offer}
-                              onCtaPress={() => {}}
-                              rowProps={{ onClick: () => {} }}
-                              className="w-full border-b border-border last:border-b-0"
-                            />
+                              className="w-full"
+                              variants={cardDismissVariants}
+                              initial={false}
+                              animate="animate"
+                              exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
+                              // Remaining offers glide into a declined one's slot — only when the list changes, not on sidebar toggles.
+                              layout={prefersReducedMotion ? false : "position"}
+                              layoutDependency={filterOffers.length}
+                              transition={reflowTransition}
+                            >
+                              <OfferCard
+                                {...offer}
+                                // A declined offer no longer expires; only open offers show the countdown.
+                                expirationDate={filter === "open" ? expirationDate : undefined}
+                                onCtaPress={() => {}}
+                                rowProps={{ onClick: () => {} }}
+                                // Same X as `Dashboard`'s offer: declines it, moving it to `Declined`. Declined offers have no X.
+                                {...(filter === "open" && {
+                                  dismissLabel: "Decline offer",
+                                  onDismiss: () => decline(key),
+                                })}
+                                className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
+                              />
+                            </motion.div>
                           ))}
-                        </div>
-                      )}
+                        </AnimatePresence>
+                      </div>
                     </TabButtonPanel>
                   );
                 })}

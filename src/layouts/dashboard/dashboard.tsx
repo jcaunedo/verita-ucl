@@ -18,6 +18,7 @@ import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
 import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
+import { useDeclinedOffers } from "@/layouts/shared/demo-state";
 
 /**
  * `dismissible: true` only for `Recommended` tasks — per
@@ -77,12 +78,9 @@ const ACTIVE_WORK = DEMO_CONTRACTS.filter((contract) => contract.filter === "ope
 /** Max rows in "Active Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
 const ACTIVE_APPLICATIONS_LIMIT = 3;
 
-const ACTIVE_APPLICATIONS = DEMO_APPLICATIONS.filter((application) => application.filter === "open").slice(
-  0,
-  ACTIVE_APPLICATIONS_LIMIT,
-);
+const OPEN_APPLICATIONS = DEMO_APPLICATIONS.filter((application) => application.filter === "open");
 
-const NEW_OFFER = DEMO_OFFERS.find((offer) => offer.filter === "open");
+const ACTIVE_APPLICATIONS = OPEN_APPLICATIONS.slice(0, ACTIVE_APPLICATIONS_LIMIT);
 
 /**
  * Most recent matches (Figma's "Matches" section, stacked `match-card` rows).
@@ -151,6 +149,11 @@ interface DashboardProps {
    * `Open` filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllApplicationsHref?: string;
+  /**
+   * Target for "Active work" → "View All": Engagements → Contracts, `Open`
+   * filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
+   */
+  viewAllContractsHref?: string;
 }
 
 /**
@@ -176,7 +179,11 @@ interface DashboardProps {
  * this same stacking pattern already used by `ApplicationCard`'s own
  * `AllVariants` story.
  */
-function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: DashboardProps = {}) {
+function Dashboard({
+  navHrefOverrides,
+  viewAllApplicationsHref = "#",
+  viewAllContractsHref = "#",
+}: DashboardProps = {}) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   /**
    * Below `lg` (1024px) the sidebar auto-collapses — including on initial
@@ -192,6 +199,14 @@ function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: Dashboar
    * immediately "promotes" the current state to user-owned.
    */
   const isLgUp = useMediaQuery("(min-width: 1024px)");
+  /**
+   * "Active work" stays one row: as many contracts as the grid has columns
+   * (2 below `xl`, 3 from `xl`), with the rest behind "View All". Same
+   * breakpoint-driven cap as `NextStepsSection`, so "Showing # of {total}"
+   * always matches what's on screen.
+   */
+  const isXlUp = useMediaQuery("(min-width: 1280px)");
+  const visibleActiveWork = ACTIVE_WORK.slice(0, isXlUp ? 3 : 2);
   const wasAutoCollapsedRef = React.useRef(false);
   const preCollapseStateRef = React.useRef(false);
   React.useEffect(() => {
@@ -210,16 +225,29 @@ function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: Dashboar
   }, [isLgUp]);
 
   /**
-   * Dismissing the offer (its X) removes it with the same exit as a dismissed
-   * Next Steps card — `cardDismissVariants` (fade + soft scale-down) inside
-   * `AnimatePresence`, opacity-only under reduced motion. The section
-   * (heading + card) stays mounted until that exit finishes, then unmounts via
-   * `onExitComplete` — same pattern as `NextStepsSection`'s last card. Local UI
-   * state only; a real consumer would persist the dismissal.
+   * The offer's X declines it: the offer moves to Engagements → Offers →
+   * `Declined` (`engagements.md` §4.1), via the prototype's shared
+   * `useDeclinedOffers` state, so it's there after clicking through to
+   * Engagements and stays gone from Home. The card leaves with the same exit
+   * as a dismissed Next Steps card — `cardDismissVariants` (fade + soft
+   * scale-down) inside `AnimatePresence`, opacity-only under reduced motion.
+   * The section (heading + card) stays mounted until that exit finishes, then
+   * unmounts via `onExitComplete` — same pattern as `NextStepsSection`'s last
+   * card. `newOffer` is read once on mount so declining doesn't unmount the
+   * section before its exit animation runs.
    */
   const { prefersReducedMotion } = useMotionPreference();
+  const { declined, decline } = useDeclinedOffers();
+  const [newOffer] = React.useState(() =>
+    DEMO_OFFERS.find((offer) => offer.filter === "open" && !declined.has(offer.key)),
+  );
   const [offerDismissed, setOfferDismissed] = React.useState(false);
   const [offerSectionVisible, setOfferSectionVisible] = React.useState(true);
+
+  const handleDeclineOffer = () => {
+    if (newOffer) decline(newOffer.key);
+    setOfferDismissed(true);
+  };
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     // A manual toggle always promotes the current state to user-owned —
@@ -251,7 +279,7 @@ function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: Dashboar
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
-            {NEW_OFFER && offerSectionVisible && (
+            {newOffer && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-4">
                 <Typography size="xl" weight="semibold">
                   You have a new offer
@@ -267,17 +295,17 @@ function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: Dashboar
                       exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
                     >
                       <OfferCard
-                        company={NEW_OFFER.company}
-                        title={NEW_OFFER.title}
-                        partnerName={NEW_OFFER.partnerName}
-                        compensation={NEW_OFFER.compensation}
-                        engagementTerms={NEW_OFFER.engagementTerms}
-                        duration={NEW_OFFER.duration}
-                        expirationDate={NEW_OFFER.expirationDate}
+                        company={newOffer.company}
+                        title={newOffer.title}
+                        partnerName={newOffer.partnerName}
+                        compensation={newOffer.compensation}
+                        engagementTerms={newOffer.engagementTerms}
+                        duration={newOffer.duration}
+                        expirationDate={newOffer.expirationDate}
                         onCtaPress={() => {}}
                         rowProps={{ onClick: () => {} }}
-                        dismissLabel="Dismiss offer"
-                        onDismiss={() => setOfferDismissed(true)}
+                        dismissLabel="Decline offer"
+                        onDismiss={handleDeclineOffer}
                         className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
                       />
                     </motion.div>
@@ -298,12 +326,17 @@ function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: Dashboar
               <NextStepsSection steps={NEXT_STEPS} />
 
               <div className="flex w-full flex-col items-start gap-4">
-                <Typography size="xl" weight="semibold">
-                  Active work
-                </Typography>
-                {/* 2-up below `xl`, 3-up from `xl` — unlike Next steps, every contract stays visible, so extras wrap to a new row (Figma's 16px row gap) rather than queueing. */}
-                <div className="grid w-full grid-cols-2 items-start gap-x-5 gap-y-4 xl:grid-cols-3">
-                  {ACTIVE_WORK.map(({ key, filter: _filter, ...contract }) => (
+                <div className="flex w-full flex-col items-start gap-0.5">
+                  <Typography size="xl" weight="semibold">
+                    Active work
+                  </Typography>
+                  <Typography size="sm" className="text-foreground-muted">
+                    Showing {visibleActiveWork.length} of {ACTIVE_WORK.length}
+                  </Typography>
+                </div>
+                {/* 2-up below `xl`, 3-up from `xl`, one row only (`visibleActiveWork`). */}
+                <div className="grid w-full grid-cols-2 items-start gap-x-5 xl:grid-cols-3">
+                  {visibleActiveWork.map(({ key, filter: _filter, ...contract }) => (
                     <ContractCard
                       key={key}
                       {...contract}
@@ -313,12 +346,21 @@ function Dashboard({ navHrefOverrides, viewAllApplicationsHref = "#" }: Dashboar
                     />
                   ))}
                 </div>
+                <Hyperlink href={viewAllContractsHref} showArrow>
+                  View All
+                </Hyperlink>
               </div>
 
               <div className="flex w-full flex-col items-start gap-4">
-                <Typography size="xl" weight="semibold">
-                  Active Applications
-                </Typography>
+                {/* Figma: title + `sm` muted subtitle, 2px apart — same header as `NextStepsSection`. */}
+                <div className="flex w-full flex-col items-start gap-0.5">
+                  <Typography size="xl" weight="semibold">
+                    Active Applications
+                  </Typography>
+                  <Typography size="sm" className="text-foreground-muted">
+                    Showing {ACTIVE_APPLICATIONS.length} of {OPEN_APPLICATIONS.length}
+                  </Typography>
+                </div>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
                   {ACTIVE_APPLICATIONS.map(({ key, filter: _filter, ...application }) => (
                     <ApplicationCard

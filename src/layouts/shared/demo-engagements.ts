@@ -181,16 +181,23 @@ type DemoContract = Pick<
   | "duration"
   | "progress"
   | "primaryActionLabel"
+  | "statusLabel"
+  | "statusTone"
+  | "instructions"
 > & { key: string; filter: ContractFilter };
 
-/** Contracts (`engagements.md` §5.2). Home's "Active work" shows the `Open` ones. */
+/**
+ * Contracts (`engagements.md` §5.2). Home's "Active work" shows the `Open`
+ * ones. Compensation follows `contract-card.md` §3.3.1's formats ("$85/hour",
+ * "$600/day"), not the application cards' "/hr" shorthand.
+ */
 const DEMO_CONTRACTS: DemoContract[] = [
   {
     key: "backend-integration",
     filter: "open",
     company: "verita",
     title: "Backend Integration Engineer",
-    compensation: "$85/hr",
+    compensation: "$85/hour",
     partnerName: "Verita partner",
     engagementTerms: "Up to 40 hrs/week",
     duration: "3 months",
@@ -220,6 +227,22 @@ const DEMO_CONTRACTS: DemoContract[] = [
     duration: "3 months",
     progress: { metricLabel: "4 of 5 deliverables submitted", percentageLabel: "80%", percentage: 80 },
     primaryActionLabel: "Resume work",
+  },
+  {
+    // `contract-card.md` §6.1 "Paused": warning badge (§3.1.2 tone table), the resume condition, progress
+    // kept as-is, and no primary action — resume-work actions are suppressed while paused.
+    key: "clinical-research-advisor",
+    filter: "open",
+    statusLabel: "Paused",
+    statusTone: "warning",
+    company: "verita",
+    title: "Clinical Research Advisor",
+    compensation: "$600/day",
+    partnerName: "Verita partner",
+    engagementTerms: "Up to 3 days/week",
+    duration: "4 months",
+    progress: { metricLabel: "6 of 12 days completed", percentageLabel: "50%", percentage: 50 },
+    instructions: "Paused until the partner confirms the next study phase",
   },
 ];
 

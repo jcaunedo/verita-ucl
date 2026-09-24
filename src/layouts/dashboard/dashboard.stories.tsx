@@ -18,7 +18,8 @@ type Story = StoryObj<typeof Dashboard>;
  * `?viewMode=story` URL; clicking Home lands on the empty-state dashboard,
  * Engagements on the `Engagements` layout). "Active Applications" → "View
  * All" also opens `Engagements`, whose default story lands on Applications
- * with the `Open` filter selected.
+ * with the `Open` filter selected; "Active work" → "View All" opens its
+ * `Contracts` story (Contracts view, `Open` filter).
  * Relative `iframe.html` URL so it works on any Storybook host (local dev
  * server or a static build), not just `localhost:6009`.
  */
@@ -29,5 +30,6 @@ export const Default: Story = {
       engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
     },
     viewAllApplicationsHref: "iframe.html?id=layouts-engagements--default&viewMode=story",
+    viewAllContractsHref: "iframe.html?id=layouts-engagements--contracts&viewMode=story",
   },
 };
