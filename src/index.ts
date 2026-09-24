@@ -97,6 +97,17 @@ export {
 export { Badge, badgeVariants, type BadgeProps } from "./components/data-display/badge";
 
 /* -------------------------------------------------------------------------- */
+/* Feedback                                                                   */
+/* -------------------------------------------------------------------------- */
+
+export {
+  InlineAlert,
+  inlineAlertVariants,
+  type InlineAlertProps,
+  type InlineAlertTone,
+} from "./components/feedback/inline-alert";
+
+/* -------------------------------------------------------------------------- */
 /* Cards                                                                      */
 /* -------------------------------------------------------------------------- */
 

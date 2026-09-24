@@ -27,7 +27,6 @@ type Story = StoryObj<typeof TabButton>;
 
 const tabs = [
   { id: "open", label: "Open", count: 5 },
-  { id: "moving-forward", label: "Moving forward", count: 1 },
   { id: "not-moving-forward", label: "Not moving forward" },
 ];
 

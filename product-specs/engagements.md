@@ -1,7 +1,7 @@
 <!--
 Created: Sep 8, 2026
 Created by: Julio Caunedo
-Last updated: Sep 23, 2026
+Last updated: Sep 24, 2026
 Scope: Verita AI professional Engagements page — Applications, Offers, Contracts, Assessments, Talent Network, plus the Training and Payments concerns that hang off an active Contract.
 Purpose: Define the product, UX, and data requirements for the Engagements destination, split out of the Dashboard PRD (product-specs/dashboard.md) once Engagements grew into its own page-level scope.
 -->
@@ -52,7 +52,7 @@ Object model this supports:
 
 `Saved` (user bookmark relationship) and `Match` (system-identified relevance) live in [dashboard.md §6.3](dashboard.md#63-opportunity-views)'s object model instead.
 
-> ✅ **Resolved (2026-09-23) — Applications → Offers → Contracts are progressive destinations:** this replaces the earlier "Applications preserves history" rule, under which every application stayed in `Applications` after producing an offer. That rule treated `Applications` as a full archive, which conflicts with what `Open` and `Moving forward` now mean: applications still in the application process (§3.1). The rule now:
+> ✅ **Resolved (2026-09-23) — Applications → Offers → Contracts are progressive destinations:** this replaces the earlier "Applications preserves history" rule, under which every application stayed in `Applications` after producing an offer. That rule treated `Applications` as a full archive, which conflicts with what `Open` now means: applications still in the application process (§3.1). The rule now:
 >
 > - An application stays in `Applications` while the application process is active, or when it ends without an offer. `Not moving forward` is the history of unsuccessful applications.
 > - Once an offer is issued, the opportunity moves to `Offers` and leaves the `Applications` views. The Offer owns the proposed terms, the expiration, and Accept/Decline (§4).
@@ -113,8 +113,8 @@ Suggested application lifecycle:
 
 ✅ **Resolved (2026-09-23) — Apply submits immediately; no draft state:** in Verita's flow, clicking Apply submits the application at once. There is no `Not submitted`, `Draft`, or `In progress` application, so the earlier `Application started` and `Submitted` stages are gone from the lifecycle and `Applied` is the first Application stage. Requirements the professional still owes after applying (e.g. an assessment) are shown as `Action required` (or `Interview · Action required` during an interview, §8), not as a pre-submission stage. Conceptually:
 
-- `Opportunity → Apply → Open → Moving forward → Offer → Contract` (the application leaves `Applications` at `Offer`, §2)
-- `Opportunity → Apply → Open → Not moving forward` (or `Moving forward → Not moving forward`)
+- `Opportunity → Apply → Open → Offer → Contract` (the application leaves `Applications` at `Offer`, §2)
+- `Opportunity → Apply → Open → Not moving forward`
 
 Terminal alternatives must include at least rejected, withdrawn, and closed — surfaced together as the `Not moving forward` filter (§3.1).
 
@@ -122,13 +122,12 @@ Terminal alternatives must include at least rejected, withdrawn, and closed — 
 
 ### 3.1 Application filters
 
-The `Applications` view is filtered by three top-level groups that describe where an application stands, not its exact stage. The specific user-facing status label (§8) still renders on each row; the filter is a grouping over those labels, not a replacement for them.
+The `Applications` view is filtered by two top-level groups that describe where an application stands, not its exact stage. The specific user-facing status label (§8) still renders on each row; the filter is a grouping over those labels, not a replacement for them.
 
-| Filter                | Meaning                                                        |
-| --------------------- | -------------------------------------------------------------- |
-| **Open**              | Application submitted and still waiting for a partner decision. |
-| **Moving forward**    | Partner has responded positively and the application is advancing. Ends when an offer is issued: the application then leaves `Applications` for `Offers`. |
-| **Not moving forward** | Application is no longer progressing, for any reason.          |
+| Filter                 | Meaning                                                                                                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Open**               | Application is still in the application process: waiting on a decision, in an interview, or needing action from the professional. Ends when an offer is issued (the application then leaves `Applications` for `Offers`) or when the application stops progressing. |
+| **Not moving forward** | Application is no longer progressing, for any reason.                                                                                                                                                   |
 
 Inside `Not moving forward`, the row shows the specific outcome:
 
@@ -138,37 +137,54 @@ Inside `Not moving forward`, the row shows the specific outcome:
 
 The resulting model:
 
-- `Opportunity → Apply → Open → Moving forward → Offers → Contracts`
-- `Open / Moving forward → Not moving forward` (`Not selected`, `Withdrawn`, or `Closed`)
+- `Opportunity → Apply → Open → Offers → Contracts`
+- `Open → Not moving forward` (`Not selected`, `Withdrawn`, or `Closed`)
+
+✅ **Resolved (2026-09-24) — `Moving forward` removed; `Open` covers every active application:** Engagements is a live tracking view of what the professional is pursuing, not an archive. For `Applications`, what matters is seeing every active application, its status, and any action required on it, in one list. A separate `Moving forward` filter split that list in two without telling the professional anything the row's status label doesn't already say. An application that advances doesn't need a filter of its own: once it produces an offer, the professional tracks it under `Offers`, and once the offer is accepted and contracting completes, under `Contracts`. History stays with the object the item ended as: `Not moving forward` for applications, `Declined` for offers (§4.1), and `Completed` for contracts (§5.2). This supersedes the three-filter model (`Open`, `Moving forward`, `Not moving forward`) from 2026-09-23.
 
 ✅ **Resolved (2026-09-23) — `Not moving forward` is the umbrella, `Closed` is one reason:** `Closed` is not used as the top-level filter name. As the umbrella, it would blur three different outcomes into one; as a concrete reason, it stays clearly distinct from `Not selected`. `Closed` is defined around the **opportunity**, not the applicant ("the opportunity closed before the application advanced"), while `Not selected` is a decision about the applicant. This extends the existing model, where `Not selected` and `Withdrawn` were already separate outcomes (§2, §8), rather than contradicting it.
 
 Proposed status → filter mapping (labels per §8):
 
-| Filter                 | User-facing statuses                                                                 |
-| ---------------------- | ------------------------------------------------------------------------------------ |
-| **Open**               | `Applied`, `Action required`, `On hold`                                              |
-| **Moving forward**     | `Interview · Action required`, `Interview scheduled`, `In review`                    |
-| **Not moving forward** | `Not selected`, `Withdrawn`, `Closed`                                                |
+| Filter                 | User-facing statuses                                                                                        |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Open**               | `Applied`, `Action required`, `Interview · Action required`, `Interview scheduled`, `In review`, `On hold` |
+| **Not moving forward** | `Not selected`, `Withdrawn`, `Closed`                                                                       |
 
-✅ **Resolved (2026-09-23) — `Offer received` is not a `Moving forward` status:** `Moving forward` means the application itself is still progressing. Once an offer is issued, the application has reached its successful outcome and the `Offer` owns what happens next, so the row leaves `Applications` for `Offers` (§2's "progressive destinations" note). The Applications row keeps no "View offer" action: the row stays a single click target to application detail (§3's row interaction), and offer actions live on the Offer.
+✅ **Resolved (2026-09-23) — `Offer received` is not an Applications list status:** `Open` means the application itself is still in the application process. Once an offer is issued, the application has reached its successful outcome and the `Offer` owns what happens next, so the row leaves `Applications` for `Offers` (§2's "progressive destinations" note). The Applications row keeps no "View offer" action: the row stays a single click target to application detail (§3's row interaction), and offer actions live on the Offer.
 
-`Action required` never moves a row between filters. Before an interview it's a standalone status and sits under `Open`; on an interview it's a suffix (`Interview · Action required`) and stays under `Moving forward` with its base status.
+`Action required` has no filter of its own. Both forms sit under `Open`: the standalone status before an interview, and the `Interview · Action required` suffix during one.
 
 **Counts:**
 
-- **Filter counters:** each filter shows the number of applications in it. A filter with zero applications stays visible and selectable; only its counter is hidden, never shown as "0".
-- **Applications total:** the count on the `Applications` view tab is the sum of active applications: `Open` + `Moving forward`. Applications under `Not moving forward` are not included, but they stay visible under that filter. Offers aren't counted here either: an application that produced an offer has left this view, so each pending offer is counted once, on the `Offers` tab.
+- **Filter counters:** `Open` shows no counter, because its count is already the `Applications` view-tab count (below) and repeating it on the filter is redundant. Every other filter shows the number of applications in it. A filter with zero applications stays visible and selectable; only its counter is hidden, never shown as "0".
+- **Applications total:** the count on the `Applications` view tab is the number of active applications, which is the `Open` count. Applications under `Not moving forward` are not included, but they stay visible under that filter. Offers aren't counted here either: an application that produced an offer has left this view, so each pending offer is counted once, on the `Offers` tab.
+
+✅ **Resolved (2026-09-24) — no counter on `Open`:** the `Open` count and the view-tab count are the same number, shown a few pixels apart. The view tab keeps it; the `Open` filter drops it. The same rule applies to `Offers` (§4.1), whose view-tab count is also `Open` only, and to `Contracts` (§5.2).
+
+**Default sort (`Open`):** rows are ordered by what the professional needs to do next, most urgent first. Each status belongs to one rank, and ranks are listed top to bottom:
+
+| Rank | Statuses                                         | Why it ranks here                                                                  | Order within the rank                                                   |
+| ---- | ------------------------------------------------ | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 1    | `Action required`, `Interview · Action required` | The application is waiting on the professional and can't advance until they act.   | Nearest deadline first. Rows without a deadline follow rows that have one. |
+| 2    | `Interview scheduled`                            | A confirmed event the professional has to attend.                                  | Soonest interview first.                                                |
+| 3    | `In review`                                      | The professional has finished the interview and a decision is the next step.       | Most recent update first.                                               |
+| 4    | `Applied`                                        | Submitted and waiting on Verita or the partner. Nothing is needed from the professional. | Most recently applied first.                                       |
+| 5    | `On hold`                                        | Paused. Nothing is expected from anyone right now.                                 | Most recent update first.                                               |
+
+"Most recent update" is the application's last meaningful update (§9). Remaining ties break by most recently applied, then by application ID, so the list never reorders between visits without a status change ([dashboard.md §4](dashboard.md#4-dashboard-priority-engine)'s deterministic tie-breaking rule). A row moves when its status changes: once the professional completes a required action, the row drops to the rank of its new status.
+
+⚠️ **Decision needed:** the default sort for `Not moving forward`, likely most recent outcome first, and whether the professional can change the sort in either filter.
 
 **Search:** a search button sits before the filters. Collapsed, it is an icon-only button. Clicking it expands it in place into a search input. Search narrows the rows shown, alongside the selected filter.
 
 ⚠️ **Decision needed:** which fields search matches (e.g. opportunity title, partner name) and whether it searches only the selected filter or all applications. The same applies to what happens to the input when the professional switches filters or clears it.
 
-Every application starts in `Open`: applying submits immediately, so there is no draft state that sits outside the three filters.
+Every application starts in `Open`: applying submits immediately, so there is no draft state that sits outside the two filters.
 
 ✅ **Resolved (2026-09-23) — `On hold` is `Open`:** an application on hold is paused, not ended. It is still an open application with no final partner decision, so it stays under `Open`. Where `ON_HOLD` sits in the lifecycle (§8) is a separate question and still open.
 
-⚠️ **Risk:** `Interview` maps to `Moving forward` on the assumption that an interview is a positive partner response. `INTERVIEW_PENDING` is an AI interview (§8), which may be a standard screening step rather than a partner signal. Confirm that AI-interview applications belong under `Moving forward` rather than `Open`.
+✅ **Resolved (2026-09-24) — interview statuses are `Open`:** this closes the earlier risk that an AI interview (`INTERVIEW_PENDING`, §8) might be a standard screening step rather than a positive partner signal, and so not belong under `Moving forward`. With `Moving forward` removed, every interview status sits under `Open`, whatever the interview means for the partner's decision.
 
 ## 4. Offers and contracting
 
@@ -232,7 +248,7 @@ The `Offers` view uses the same search button and filter row as `Applications` (
 | **Open**     | Offers awaiting the professional's response, and accepted offers still in contracting. |
 | **Declined** | Offers the professional declined.                                                    |
 
-Search and counter behavior follow §3.1: the search button sits before the filters, and a filter with zero offers keeps its tab but hides its counter. The `Offers` view-tab count is `Open` only, so it reflects the offers that still need attention.
+Search and counter behavior follow §3.1: the search button sits before the filters, `Open` shows no counter, and a filter with zero offers keeps its tab but hides its counter. The `Offers` view-tab count is `Open` only, so it reflects the offers that still need attention.
 
 ✅ **Resolved (2026-09-23) — `Declined` is the Offers history:** it works the same way as `Not moving forward` in `Applications` (§3.1) and `Completed` in `Contracts` (§5.2). Declined offers stay visible under this filter and aren't counted in the view-tab total.
 
@@ -273,11 +289,11 @@ The `Contracts` view uses the same search button and filter row as `Applications
 | **Open**      | The contract is still in effect.                 |
 | **Completed** | The work under the contract has finished.        |
 
-Search and counter behavior follow §3.1: the search button sits before the filters, and a filter with zero contracts keeps its tab but hides its counter.
+Search and counter behavior follow §3.1: the search button sits before the filters, `Open` shows no counter, and a filter with zero contracts keeps its tab but hides its counter.
 
 ⚠️ **Decision needed:** §2 lists four contract states (upcoming, active, completed, terminated). Upcoming and active fit `Open`, but where terminated contracts go is not defined: under `Completed`, or in a third filter.
 
-⚠️ **Decision needed:** whether the `Contracts` view-tab count includes completed contracts or only open ones. The `Applications` count is active-only (§3.1 "Counts").
+⚠️ **Decision needed:** whether the `Contracts` view-tab count includes completed contracts or only open ones. The `Applications` count is active-only (§3.1 "Counts"). Hiding the `Open` counter assumes it's open-only: if the view tab counts completed contracts too, the `Open` count is no longer redundant and should come back.
 
 ## 6. Training
 
@@ -396,4 +412,5 @@ User
 - 🙋 Define a system status backing `Closed` (§8), and which event sets it: the opportunity closing to new applications, the last slot being filled, or both.
 - 🙋 Can a professional belong to more than one Talent Network pool at once (§2, §10)?
 - 🙋 Where do terminated contracts go in the `Contracts` filters, and does the view-tab count include completed contracts (§5.2)?
+- 🙋 What is the default sort for `Not moving forward`, and can the professional change the sort in either Applications filter (§3.1)?
 - 🙋 Applications search (§3.1): which fields does it match, does it search only the selected filter or all applications, and does the query persist when the filter changes?

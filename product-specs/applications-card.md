@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 23, 2026
+Last updated: Sep 24, 2026
 Scope: Verita AI Dashboard — the Applications module's row/card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Applications view definition in product-specs/engagements.md [§3](engagements.md#3-applications).
 Purpose: Define the Applications card's stage/status model, content fields, row-interaction behavior, and priority behavior as a Home-module surface over the underlying Application object.
 -->
@@ -210,7 +210,7 @@ For the "Submitted, additional requirements" scenario (§2.4.1), where the card 
 | `WITHDRAWN`         | Withdrawn         |
 | *(none yet)*        | Closed            |
 
-ℹ️ `Closed` is a proposed terminal outcome with no backing system status yet. It means the opportunity closed before the application advanced, so it must never be mapped from `REJECTED` (a decision about the applicant). The Engagements → Applications view groups these labels under three filters (`Open`, `Moving forward`, `Not moving forward`; see [`engagements.md` §3.1](engagements.md#31-application-filters)). The card shows only the specific status label, never the filter name. The Home preview (§5) is unfiltered.
+ℹ️ `Closed` is a proposed terminal outcome with no backing system status yet. It means the opportunity closed before the application advanced, so it must never be mapped from `REJECTED` (a decision about the applicant). The Engagements → Applications view groups these labels under two filters (`Open`, `Not moving forward`; see [`engagements.md` §3.1](engagements.md#31-application-filters)). The card shows only the specific status label, never the filter name. The Home preview (§5) is unfiltered.
 
 The card must never render the raw system value (`SCORING_PENDING`, `SELECTED`, etc.) — only the mapped user-facing label. `APPLIED`, `SCORING_PENDING`, and `UNDER_REVIEW` all show `Applied` for now: the card does not distinguish submission, AI scoring, and ops review for the professional.
 
@@ -296,7 +296,7 @@ Selecting any menu item must not also trigger the row's own click-through to app
 
 > The Home module renders even with zero applications, as the Dashboard's default empty state: the Applications module is not hidden when the professional has no applications — per [Empty State — A](https://www.figma.com/design/hdxBo3xOg3uMSovZwidJF5/Verita?node-id=5642-2215), it is the module that carries the pre-Contract, pre-application default empty condition for the whole Dashboard (see [`dashboard.md` §7.6](dashboard.md#76-applications-offers-active-engagement-training-payments)'s resolved note for the full Dashboard-level fallback logic). This supersedes the earlier assumption that Home "drops the module entirely when no application exists" (§5.1's older wording, now corrected). Once at least one application exists, the module switches from its empty state to the row list (§5's other resolved note below); once an application progresses to an active Contract, the Contracts module (`dashboard.md` §6 item 3) takes over as dominant per its own resolution, but the Applications module keeps rendering its row list — it does not hide once a Contract exists, since the professional can still have other in-flight applications.
 
-> Home preview: most-recently-applied first, capped at 5, with a link to see all: the Home "Your applications" preview (§6 module 5 of [`dashboard.md`](dashboard.md#6-information-architecture)) sorts by most recently applied first and shows at most 5 rows, regardless of status — including terminal ones (e.g. `Withdrawn`, `Not selected`). Applications that produced an offer aren't in the list at all (§3.1). No separate terminal-state cutoff or recency window is needed beyond the fixed count: a terminal application simply ages out of the top 5 as more recent applications accumulate, the same as any other row. Below the list, a link routes to Engagements → Applications for the full, unfiltered history. This resolves the earlier open question about a distinct recency/filtering rule — the fixed-count-plus-link pattern replaces the need for one. This also resolves §7's related open item on Home ordering; the full Engagements → Applications list's own ordering remains open (§8).
+> Home preview: most-recently-applied first, capped at 5, with a link to see all: the Home "Your applications" preview (§6 module 5 of [`dashboard.md`](dashboard.md#6-information-architecture)) sorts by most recently applied first and shows at most 5 rows, regardless of status — including terminal ones (e.g. `Withdrawn`, `Not selected`). Applications that produced an offer aren't in the list at all (§3.1). No separate terminal-state cutoff or recency window is needed beyond the fixed count: a terminal application simply ages out of the top 5 as more recent applications accumulate, the same as any other row. Below the list, a link routes to Engagements → Applications for the full, unfiltered history. This resolves the earlier open question about a distinct recency/filtering rule — the fixed-count-plus-link pattern replaces the need for one. This also resolves §7's related open item on Home ordering. The full Engagements → Applications list sorts `Open` by action needed ([`engagements.md` §3.1](engagements.md#31-application-filters)); the `Not moving forward` order is still open.
 
 Per [`engagements.md` §2](engagements.md#2-engagement-views), an application is never removed from the `Applications` view when it progresses to an offer or ends in rejection/withdrawal — it stays accessible there with its terminal stage shown. This applies to the full Engagements → Applications view; the Home preview instead uses the fixed-count-plus-link rule above.
 
@@ -342,7 +342,7 @@ Required behaviors:
 - Each row opens its corresponding application detail independently.
 - An error loading one application's data must not affect other rows.
 - A status change on one application must not affect another.
-- Row order should be deterministic. Home's preview order is resolved — most recently applied first, capped at 5 (§5). The ordering policy for the full Engagements → Applications list remains open (§8).
+- Row order should be deterministic. Home's preview order is resolved — most recently applied first, capped at 5 (§5). The Engagements → Applications `Open` filter sorts by action needed ([`engagements.md` §3.1](engagements.md#31-application-filters)); the `Not moving forward` order is still open (§8).
 
 ## 8. Open questions
 
@@ -355,7 +355,7 @@ Required behaviors:
 - 🙋 Define a system status backing `Closed` — the user-facing label and tone are set (§3), but no enum value exists yet ([`engagements.md` §8](engagements.md#8-application-status-enum)).
 - 🙋 Confirm whether `· Action required` should be formalized as a display-only suffix composable onto any mapped status label (proposed in §3), and which statuses besides `Interview` it applies to, and whether standalone `Action required` should replace `Interview · Action required` too.
 - 🙋 Whether `supporting-text` should name the review owner after an interview completes ("Awaiting partner review" / "Awaiting Verita review") or should always stay owner-agnostic ("Interview completed" alone) — to discuss with the team. (§2.4.1)
-- 🙋 What is the ordering policy for the full Engagements → Applications list? Home's own ordering is resolved (most recently applied first, capped at 5; §5, §7).
+- 🙋 What is the default sort for Engagements → Applications → `Not moving forward`? `Open` is resolved (action needed first, [`engagements.md` §3.1](engagements.md#31-application-filters)), and so is Home (most recently applied first, capped at 5; §5, §7).
 - 🙋 Whether the Engagements → Applications destination zero-state should reuse the confirmed Home copy ("No applications yet" / "Find opportunities that fit your expertise and interests." / "Discover opportunities") verbatim, or use its own variant suited to a full-page destination rather than an inline module. (§5.1)
 - 🙋 Confirm the full actions-menu status→availability mapping with design/product. (§4.1)
 - 🙋 Confirm the exact `Share` mechanism (link copy, native share sheet, or something else). (§4.1)

@@ -27,7 +27,7 @@ import { MenuItem, MenuSeparator } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 
-type ApplicationFilter = "open" | "moving-forward" | "not-moving-forward";
+type ApplicationFilter = "open" | "not-moving-forward";
 
 type ApplicationRow = Pick<
   ApplicationCardProps,
@@ -46,16 +46,34 @@ type ApplicationRow = Pick<
 
 /**
  * Applications grouped by filter, per `product-specs/engagements.md` §3.1
- * (Open: Applied, Action required, On hold; Moving forward: Interview
- * scheduled, Interview · Action required, In review; Not moving forward: Not
- * selected, Withdrawn, Closed). An application with an offer leaves this view
- * for Offers (§2), so there are no `Offer received` rows. The five
- * Open rows are Figma's; the Moving forward rows come from verita.ds's
- * `table-application-listing` examples and the `ApplicationCard` stories. Statuses and supporting text follow
- * the specs where the Figma frame drifts from them — `applications-card.md`
- * §2.4.1's status matrix and approved `Action required` examples.
+ * (Open: Applied, Action required, Interview · Action required, Interview
+ * scheduled, In review, On hold; Not moving forward: Not selected, Withdrawn,
+ * Closed). An application with an offer leaves this view for Offers (§2), so
+ * there are no `Offer received` rows. Five rows are Figma's; the three
+ * interview rows come from verita.ds's `table-application-listing` examples
+ * and the `ApplicationCard` stories. Rows are listed in `Open`'s default
+ * sort (§3.1 "Default sort"): action required (nearest deadline first),
+ * interview scheduled, in review, applied, on hold. Statuses and supporting
+ * text follow the specs where the Figma frame drifts from them —
+ * `applications-card.md` §2.4.1's status matrix and approved `Action
+ * required` examples.
  */
 const APPLICATIONS: ApplicationRow[] = [
+  {
+    key: "retail-operations-contractor",
+    filter: "open",
+    title: "Retail Operations Contractor",
+    company: "apple",
+    logoSrc: partnerLogos.apple,
+    logoAlt: "Apple",
+    partnerName: "Apple",
+    compensation: "$42/hr",
+    engagementTerms: "Up to 30 hrs/week",
+    duration: "5 months",
+    statusLabel: "Interview · Action required",
+    statusTone: "warning",
+    supportingText: "Schedule your interview by Sep 30",
+  },
   {
     key: "senior-financial-analyst",
     filter: "open",
@@ -81,6 +99,34 @@ const APPLICATIONS: ApplicationRow[] = [
     statusLabel: "Action required",
     statusTone: "warning",
     supportingText: "Verify your work authorization",
+  },
+  {
+    key: "amazon-clinical-data-coordinator",
+    filter: "open",
+    title: "Clinical Data Coordinator",
+    company: "amazon",
+    logoSrc: partnerLogos.amazon,
+    logoAlt: "Amazon Health",
+    partnerName: "Amazon Health",
+    compensation: "$85/hr",
+    engagementTerms: "15 hrs/week",
+    duration: "2 weeks",
+    statusLabel: "Interview scheduled",
+    statusTone: "success",
+    supportingText: "Sep 30 at 2 PM EDT",
+  },
+  {
+    key: "strategic-finance-expert",
+    filter: "open",
+    title: "Strategic Finance Expert",
+    company: "verita",
+    partnerName: "Verita partner",
+    compensation: "$56/hour",
+    engagementTerms: "Up to 30 hrs/week",
+    duration: "3 months",
+    statusLabel: "In review",
+    statusTone: "success",
+    supportingText: "Awaiting partner review after your Sep 18 interview",
   },
   {
     key: "movement-physical-activity-expert",
@@ -119,49 +165,6 @@ const APPLICATIONS: ApplicationRow[] = [
     duration: "Ongoing",
     statusLabel: "On hold",
     statusTone: "purple",
-  },
-  {
-    key: "amazon-clinical-data-coordinator",
-    filter: "moving-forward",
-    title: "Clinical Data Coordinator",
-    company: "amazon",
-    logoSrc: partnerLogos.amazon,
-    logoAlt: "Amazon Health",
-    partnerName: "Amazon Health",
-    compensation: "$85/hr",
-    engagementTerms: "15 hrs/week",
-    duration: "2 weeks",
-    statusLabel: "Interview scheduled",
-    statusTone: "success",
-    supportingText: "Sep 30 at 2 PM EDT",
-  },
-  {
-    key: "retail-operations-contractor",
-    filter: "moving-forward",
-    title: "Retail Operations Contractor",
-    company: "apple",
-    logoSrc: partnerLogos.apple,
-    logoAlt: "Apple",
-    partnerName: "Apple",
-    compensation: "$42/hr",
-    engagementTerms: "Up to 30 hrs/week",
-    duration: "5 months",
-    statusLabel: "Interview · Action required",
-    statusTone: "warning",
-    supportingText: "Schedule your interview by Sep 30",
-  },
-  {
-    key: "strategic-finance-expert",
-    filter: "moving-forward",
-    title: "Strategic Finance Expert",
-    company: "verita",
-    partnerName: "Verita partner",
-    compensation: "$56/hour",
-    engagementTerms: "Up to 30 hrs/week",
-    duration: "3 months",
-    statusLabel: "In review",
-    statusTone: "success",
-    supportingText: "Awaiting partner review after your Sep 18 interview",
   },
 ];
 
@@ -222,7 +225,6 @@ const offerCountFor = (filter: OfferFilter) =>
 
 const FILTERS: { id: ApplicationFilter; label: string }[] = [
   { id: "open", label: "Open" },
-  { id: "moving-forward", label: "Moving forward" },
   { id: "not-moving-forward", label: "Not moving forward" },
 ];
 
@@ -234,7 +236,9 @@ type EngagementView = "applications" | "offers" | "contracts" | "assessments" | 
 /**
  * The search button + filter tabs row shared by every filtered view
  * (`engagements.md` §3.1). Search is the icon button only — no expand yet.
- * A filter with a zero count keeps its tab but hides its counter.
+ * `Open` never shows a counter: the view tab's `MetricTab` value already
+ * carries that number. Any other filter with a zero count keeps its tab but
+ * hides its counter.
  */
 function FilterBar({
   searchLabel,
@@ -247,10 +251,17 @@ function FilterBar({
 }) {
   return (
     <div className="flex items-center gap-4">
-      <Button color="secondary" size="md" iconLeading={SearchMd} aria-label={searchLabel} />
-      <TabButtonList aria-label={filtersLabel}>
+      <Button color="secondary" size="sm" iconLeading={SearchMd} aria-label={searchLabel} />
+      {/* Figma `Tab Group Button`: `spacing/0_5` (2px) between tabs, tighter than the list's default gap. */}
+      <TabButtonList aria-label={filtersLabel} className="gap-0.5">
         {filters.map(({ id, label, count }) => (
-          <TabButton key={id} id={id} label={label} count={count > 0 ? count : undefined} />
+          <TabButton
+            key={id}
+            id={id}
+            label={label}
+            size="sm"
+            count={id !== "open" && count > 0 ? count : undefined}
+          />
         ))}
       </TabButtonList>
     </div>
@@ -274,8 +285,9 @@ interface EngagementsProps {
  *   panel is designed. Contracts reuses `Dashboard`'s contract cards; Offers
  *   has its filter row (§4.1) but no rows; the other panels are empty
  *   placeholders.
- * - Applications total = `Open` + `Moving forward` (§3.1 "Counts"). A filter
- *   with zero applications keeps its tab but hides its counter.
+ * - Applications total = the `Open` count (§3.1 "Counts"), so the `Open`
+ *   filter shows no counter of its own. Any other filter with zero
+ *   applications keeps its tab but hides its counter.
  * - Search: icon-only button, no expand behavior yet — the expanded input has
  *   no design and UCL has no `Input` component (§3.1 "Search").
  * - Rows: `ApplicationCard` with the hover-revealed `···` menu (§3 "Row
@@ -310,7 +322,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
     setSidebarCollapsed(collapsed);
   };
 
-  const applicationsTotal = countFor("open") + countFor("moving-forward");
+  const applicationsTotal = countFor("open");
 
   return (
     <div className="flex min-h-screen w-full items-start bg-white">

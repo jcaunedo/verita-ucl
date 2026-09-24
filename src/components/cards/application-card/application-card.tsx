@@ -111,18 +111,16 @@ function ApplicationCard({
   className,
   ...props
 }: ApplicationCardProps) {
-  // Figma: compensation/engagement-terms bind `foreground/foreground`; duration binds `foreground/muted`.
-  const termsParts = [
-    { value: compensation, muted: false },
-    { value: engagementTerms, muted: false },
-    { value: duration, muted: true },
-  ].filter((part) => part.value);
+  // Figma: every terms part (incl. duration) binds `foreground/foreground`; only the `·` separators are `foreground/muted`.
+  const termsParts = [compensation, engagementTerms, duration].filter(
+    Boolean,
+  );
 
   return (
     <div
       data-slot="application-card"
       className={cn(
-        "group flex w-full items-center gap-10 py-5 pr-6 pl-5 transition-colors duration-150 ease-out",
+        "group flex w-full items-center gap-10 py-4 pr-6 pl-5 transition-colors duration-150 ease-out",
         "hover:bg-hover-row has-[[aria-expanded=true]]:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
@@ -134,16 +132,19 @@ function ApplicationCard({
         <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           <div className="flex w-full flex-col items-start gap-0.5">
-            <Typography size="xs" className="w-full text-foreground-muted">
-              {partnerName}
-            </Typography>
-            <Typography
-              as="h3"
-              weight="semibold"
-              className="w-full text-foreground"
-            >
-              {title}
-            </Typography>
+            {/* Figma groups partner name + title with no gap; the 2px gap sits between that pair and the terms row. */}
+            <div className="flex w-full flex-col items-start">
+              <Typography size="xs" className="w-full text-foreground-muted">
+                {partnerName}
+              </Typography>
+              <Typography
+                as="h3"
+                weight="semibold"
+                className="w-full text-foreground"
+              >
+                {title}
+              </Typography>
+            </div>
             {termsParts.length > 0 && (
               <Typography
                 size="sm"
@@ -159,13 +160,7 @@ function ApplicationCard({
                         ·
                       </span>
                     )}
-                    <span
-                      className={
-                        part.muted ? "text-foreground-muted" : "text-foreground"
-                      }
-                    >
-                      {part.value}
-                    </span>
+                    <span className="text-foreground">{part}</span>
                   </React.Fragment>
                 ))}
               </Typography>
