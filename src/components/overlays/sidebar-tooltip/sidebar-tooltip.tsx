@@ -12,9 +12,9 @@ import { enterTransition, motionDistance, useMotionPreference } from "@/lib/moti
 /**
  * A small pill-shaped label tooltip — e.g. the sidebar's collapsed nav-item
  * hint. Figma: `sidebar-tooltip` (single style, no variant states; updated
- * 2026-09-21 — dropped the rosewood/primary accent for the same
- * neutral/brand grayscale scheme as `SidebarMenuItem`'s Active state:
- * `tone-brand-subtle` fill/border, `tone-brand` text). Wraps
+ * 2026-09-24 — a white floating pill: `card/card` fill, `border/neutral/border`
+ * border, `shadow/popover` shadow, `color/tone/brand/brand` text, replacing
+ * the earlier `tone-brand-subtle` tinted pill). Wraps
  * React Aria's `Tooltip` for real positioning/focus/hover-delay/escape
  * behavior rather than a bare styled `div`; pair with the re-exported
  * `SidebarTooltipTrigger` (React Aria's `TooltipTrigger`) around the actual
@@ -53,7 +53,7 @@ function SidebarTooltip({
           }}
           transition={resolve(enterTransition)}
           className={cn(
-            "inline-flex items-center justify-center rounded-full border border-tone-brand-subtle bg-tone-brand-subtle px-4 py-2 text-sm text-tone-brand",
+            "inline-flex items-center justify-center rounded-full border border-border bg-card px-4 py-2 text-sm whitespace-nowrap text-tone-brand shadow-popover",
             className,
           )}
         >
