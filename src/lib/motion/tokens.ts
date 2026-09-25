@@ -23,6 +23,8 @@ const motionDuration = {
 const motionDistance = {
 	/** Hover movement: 2–4px. */
 	hover: 3,
+	/** Card hover Lift (CLAUDE.md "Lift"): half of `hover`, so hoverable cards rise just perceptibly (2026-09-25). */
+	lift: 1.5,
 	/** Small element reveal: 4–8px. */
 	subtle: 8,
 	/** Component transition: 8–16px. */

@@ -168,18 +168,21 @@ into the other.
 behavior. A sticky `Sidebar` sits on the left, and a canvas column fills the
 rest. Don't give one page its own gutters, breakpoints, or sidebar logic.
 
-| Width               | Sidebar        | Canvas padding (x), left / right                                    | Card grids              |
-| ------------------- | -------------- | ------------------------------------------------------------------- | ----------------------- |
-| below `lg` (1024)   | auto-collapsed | `px-12` (48 / 48)                                                   | 2-up                    |
-| `lg` to below `xl`  | user's choice  | `px-12` (48 / 48)                                                   | 2-up                    |
-| `xl` (1280) and up  | user's choice  | expanded: `xl:pl-16 xl:pr-40` (64 / 160); collapsed: `xl:pl-40 xl:pr-40` (160 / 160) | 3-up |
-| `2xl` (1536) and up | user's choice  | same as `xl`                                                        | 3-up (Next Steps: 4-up) |
+Boundaries include the frame width: each row starts 1px past the previous
+breakpoint (see "Breakpoints include their own width").
+
+| Width                     | Sidebar        | Canvas padding (x), left / right                                    | Card grids              |
+| ------------------------- | -------------- | ------------------------------------------------------------------- | ----------------------- |
+| `lg` (1024) and below     | auto-collapsed | `px-12` (48 / 48)                                                   | 2-up                    |
+| 1025 to `xl` (1280)       | user's choice  | `px-12` (48 / 48)                                                   | 2-up (Next Steps: 3-up) |
+| 1281 to `2xl` (1536)      | user's choice  | expanded: `xl:pl-16 xl:pr-40` (64 / 160); collapsed: `xl:pl-40 xl:pr-40` (160 / 160) | 3-up (Next Steps: 4-up) |
+| 1537 and up               | user's choice  | same as the row above                                               | 3-up (Next Steps: 4-up) |
 
 - **Canvas padding** comes from `layoutCanvasPaddingClassName(sidebarCollapsed)`
   in `src/layouts/shared/layout-canvas.ts`. From `xl` up, collapsing the
   sidebar widens the left gutter to match the right one, so the content sits
-  evenly between the rail and the window edge. Below `xl` both gutters are
-  already equal. Use it on the canvas column:
+  evenly between the rail and the window edge. At `xl` and below both gutters
+  are already equal. Use it on the canvas column:
   `cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))`.
 - **Padding motion:** the left padding transitions with the same duration and
   curve as the sidebar's width (`enterTransition`: 500ms,
@@ -189,17 +192,20 @@ rest. Don't give one page its own gutters, breakpoints, or sidebar logic.
   changes, update `layout-canvas.ts` too.
 - **Content column:** `w-full max-w-[1400px]`, centered by the canvas, with
   `pt-10 pb-[104px]` (40px top, 104px bottom).
-- **Sidebar auto-collapse:** below `lg` the sidebar collapses on its own,
-  including on first load at a narrow width. Crossing back above `lg`
+- **Sidebar auto-collapse:** at `lg` (1024) and below the sidebar collapses
+  on its own, including on first load at a narrow width. Crossing back above `lg`
   restores the earlier state, but only if the collapse was automatic. Once
   the user toggles the sidebar, their choice sticks. The logic and its full
   rationale live in `Dashboard` (`wasAutoCollapsedRef`).
 - **Callout row** (Dashboards): one column at `lg` (1024px) and below,
-  two side by side above it (`flex-col min-[1025px]:flex-row`), where
+  two side by side above it (`flex-col lg:flex-row`), where
   `items-stretch` gives both cards the same height.
-- **Card grids:** `grid-cols-2 xl:grid-cols-3`. The Next Steps grid adds
-  `2xl:grid-cols-4`, and queues extra cards instead of wrapping them to a
-  second row (see `NextStepsSection`).
+- **Card grids:** `grid-cols-2 xl:grid-cols-3`. The Next Steps grid is
+  `grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`, a band ahead of the other
+  grids: 3-up across the `xl` range (1025–1280) and 4-up from the `2xl`
+  frame (1281) up (design direction, 2026-09-25).
+  It queues extra cards instead of wrapping them to a second row (see
+  `NextStepsSection`).
 
 **Why:** Each layout used to set its own canvas padding, and they drifted.
 Dashboard started at a fixed `pr-[216px]`, later became `xl:pr-30` with a
@@ -217,8 +223,8 @@ direction), replacing the fixed 64px left gutter in that state.
   content column). Don't hand-write `px-*`/`pr-*`/`pl-*` on the canvas.
 - **Changing the gutters:** edit `layoutCanvasPaddingClassName` and update
   the table above in the same change. Don't override it in one layout.
-- **Verify:** check each changed layout in Storybook below `lg`, between
-  `lg` and `xl`, and at `xl`+, with the sidebar both open and collapsed.
+- **Verify:** check each changed layout in Storybook at exactly 1024, 1280,
+  and 1536 and 1px above each, with the sidebar both open and collapsed.
 
 ⚠️ **Gap:** the sidebar auto-collapse effect is copied into each layout
 rather than shared. Extract it into a hook (e.g. `useAutoCollapseSidebar`)
@@ -457,3 +463,28 @@ This is a documented exception to the Motion System's "prefer `layout`".
 - Collapsed, an invisible React Aria `Button` covers the pill as the
   trigger, and the input sits in an `inert` wrapper so it can't be tabbed
   to. It collapses on blur only when empty.
+
+## Breakpoints include their own width (`src/styles/theme.css`, `src/lib/breakpoints.ts`)
+
+**Rule:** whatever applies to a breakpoint includes its frame width: the
+breakpoint covers widths up to and including it. The frames are md 768,
+lg 1024, xl 1280, 2xl 1536, and 3xl 1920. So the lg frame at exactly 1024px
+gets the "lg and below" layout, and the next layout starts at 1025px.
+
+**Why:** design direction (2026-09-25): designs are reviewed at those exact
+frame widths, and each frame has to show the layout designed for it. With
+Tailwind's default min-width breakpoints, a frame at exactly 1024px or
+1280px got the next layout up.
+
+**How it's built:**
+
+- `theme.css` registers each Tailwind breakpoint 1px past its frame width
+  (`--breakpoint-lg: 1025px`, …). `lg:` means above 1024 and `max-lg:`
+  means 1024 and below. Write the usual `lg:`/`xl:` classes; never an
+  arbitrary `min-[1025px]:`.
+- JS media queries use `mediaAbove("lg")` from `@/lib/breakpoints` instead
+  of a hand-written `(min-width: …)`. It follows the same +1px boundary.
+- Keep `theme.css` and `src/lib/breakpoints.ts` in sync when a breakpoint
+  changes.
+- Describe breakpoints in comments and specs as "at `lg` (1024) and below" /
+  "above `lg`", not "below `lg`" / "from `lg`".

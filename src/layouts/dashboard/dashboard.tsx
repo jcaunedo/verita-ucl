@@ -5,6 +5,7 @@ import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 import { cn } from "@/lib/utils";
 import { partnerLogos } from "@/assets/logos";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import { mediaAbove } from "@/lib/breakpoints";
 import { cardDismissVariants, reflowTransition, rowDismissVariants, useMotionPreference } from "@/lib/motion";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
@@ -198,11 +199,11 @@ function Dashboard({
   // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
   /**
-   * Below `lg` (1024px) the sidebar auto-collapses — including on initial
+   * At `lg` (1024px) and below the sidebar auto-collapses — including on initial
    * load at a narrow width, not only when resizing into that range. Crossing
    * back above `lg` restores whatever state the sidebar was in *before* the
    * auto-collapse, but only if the current collapse was the automatic one:
-   * if the user manually collapsed it themselves while already below `lg`,
+   * if the user manually collapsed it themselves while already at or below `lg`,
    * that's their own choice and must stick even after crossing back above
    * `lg` — `wasAutoCollapsedRef` distinguishes the two so the restore only
    * ever undoes this effect's own action, never a manual one. `Sidebar`'s
@@ -210,14 +211,14 @@ function Dashboard({
    * the user interacts with it, so any manual toggle — collapse or expand —
    * immediately "promotes" the current state to user-owned.
    */
-  const isLgUp = useMediaQuery("(min-width: 1024px)");
+  const isLgUp = useMediaQuery(mediaAbove("lg"));
   /**
    * "Current contracts" stays one row: as many contracts as the grid has columns
-   * (2 below `xl`, 3 from `xl`), with the rest behind "View All". Same
+   * (2 at `xl` and below, 3 above `xl`), with the rest behind "View All". Same
    * breakpoint-driven cap as `NextStepsSection`, so "Showing # of {total}"
    * always matches what's on screen.
    */
-  const isXlUp = useMediaQuery("(min-width: 1280px)");
+  const isXlUp = useMediaQuery(mediaAbove("xl"));
   const visibleActiveWork = ACTIVE_WORK.slice(0, isXlUp ? 3 : 2);
   const wasAutoCollapsedRef = React.useRef(false);
   const preCollapseStateRef = React.useRef(false);
@@ -273,7 +274,7 @@ function Dashboard({
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     // A manual toggle always promotes the current state to user-owned —
-    // even a manual re-collapse while already below `lg` should stick
+    // even a manual re-collapse while already at or below `lg` should stick
     // through a later crossing back above `lg`, per `wasAutoCollapsedRef`'s
     // own comment above.
     wasAutoCollapsedRef.current = false;
@@ -393,7 +394,7 @@ function Dashboard({
                     Showing {visibleActiveWork.length} of {ACTIVE_WORK.length}
                   </Typography>
                 </div>
-                {/* 2-up below `xl`, 3-up from `xl`, one row only (`visibleActiveWork`). */}
+                {/* 2-up at `xl` (1280px) and below, 3-up above it, one row only (`visibleActiveWork`). */}
                 <div className="grid w-full grid-cols-2 items-start gap-x-5 xl:grid-cols-3">
                   {visibleActiveWork.map(({ key, filter: _filter, ...contract }) => (
                     <ContractCard
@@ -474,7 +475,7 @@ function Dashboard({
 
               {/* One column at `lg` (1024px) and below, two side by side above it; side by side, `items-stretch` keeps both cards
     the same height however their text wraps. */}
-              <div className="flex w-full flex-col gap-5 min-[1025px]:flex-row min-[1025px]:items-stretch">
+              <div className="flex w-full flex-col gap-5 lg:flex-row lg:items-stretch">
                 {CALLOUTS.map(({ key, ...callout }) => (
                   <CalloutCard key={key} {...callout} />
                 ))}

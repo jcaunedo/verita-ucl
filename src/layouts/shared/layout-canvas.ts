@@ -3,7 +3,7 @@
  * `Sidebar`). Shared so Dashboard, Dashboard Empty State, and Engagements keep
  * the same gutters at every breakpoint instead of drifting apart per layout.
  *
- * `px-12` below `xl`. From `xl` up the right gutter is `pr-40`; the left one
+ * `px-12` at `xl` (1280px) and below. Above `xl` the right gutter is `pr-40`; the left one
  * is `pl-16` beside the expanded sidebar and matches the right (`pl-40`) when
  * the sidebar is collapsed.
  *

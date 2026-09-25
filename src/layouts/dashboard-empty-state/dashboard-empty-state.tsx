@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import { mediaAbove } from "@/lib/breakpoints";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
@@ -104,11 +105,11 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
   // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
   /**
-   * Below `lg` (1024px) the sidebar auto-collapses — including on initial
+   * At `lg` (1024px) and below the sidebar auto-collapses — including on initial
    * load at a narrow width, not only when resizing into that range. Crossing
    * back above `lg` restores whatever state the sidebar was in *before* the
    * auto-collapse, but only if the current collapse was the automatic one:
-   * if the user manually collapsed it themselves while already below `lg`,
+   * if the user manually collapsed it themselves while already at or below `lg`,
    * that's their own choice and must stick even after crossing back above
    * `lg` — `wasAutoCollapsedRef` distinguishes the two so the restore only
    * ever undoes this effect's own action, never a manual one. `Sidebar`'s
@@ -116,7 +117,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
    * the user interacts with it, so any manual toggle — collapse or expand —
    * immediately "promotes" the current state to user-owned.
    */
-  const isLgUp = useMediaQuery("(min-width: 1024px)");
+  const isLgUp = useMediaQuery(mediaAbove("lg"));
   const wasAutoCollapsedRef = React.useRef(false);
   const preCollapseStateRef = React.useRef(false);
   React.useEffect(() => {
@@ -136,7 +137,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     // A manual toggle always promotes the current state to user-owned —
-    // even a manual re-collapse while already below `lg` should stick
+    // even a manual re-collapse while already at or below `lg` should stick
     // through a later crossing back above `lg`, per `wasAutoCollapsedRef`'s
     // own comment above.
     wasAutoCollapsedRef.current = false;
@@ -185,7 +186,7 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
 
             {/* One column at `lg` (1024px) and below, two side by side above it; side by side, `items-stretch` keeps both cards
     the same height however their text wraps. */}
-            <div className="flex w-full flex-col gap-5 min-[1025px]:flex-row min-[1025px]:items-stretch">
+            <div className="flex w-full flex-col gap-5 lg:flex-row lg:items-stretch">
               {CALLOUTS.map(({ key, ...callout }) => (
                 <CalloutCard key={key} {...callout} />
               ))}

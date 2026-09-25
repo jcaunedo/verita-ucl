@@ -183,7 +183,7 @@ function NextStepCard({
   })!;
 
   /**
-   * Lift on hover (CLAUDE.md "Lift", same as `CalloutCard`): up `motionDistance.hover` on `subtleSpring`. The spring is
+   * Lift on hover (CLAUDE.md "Lift", same as `CalloutCard`): up `motionDistance.lift` on `subtleSpring`. The spring is
    * scoped to `y` — in `whileHover` for the rise, and on the `animate` variant for the return — so the card's `layout`
    * reflow and entrance keep their own transitions. Dropped under reduced motion; the hover fill/border stay.
    */
@@ -201,7 +201,7 @@ function NextStepCard({
       data-slot="next-step-card"
       layout={!prefersReducedMotion && !enterFromRight}
       variants={variants}
-      whileHover={prefersReducedMotion ? undefined : { y: -motionDistance.hover, transition: subtleSpring }}
+      whileHover={prefersReducedMotion ? undefined : { y: -motionDistance.lift, transition: subtleSpring }}
       initial="initial"
       animate="animate"
       exit={

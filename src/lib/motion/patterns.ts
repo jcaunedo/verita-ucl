@@ -11,9 +11,9 @@ import { responsiveSpring, subtleSpring } from "./transitions";
  * `variants.ts` instead since they're keyed by mount state, not gesture.
  */
 
-/** Hoverable cards and interactive surfaces: small upward translate. */
+/** Hoverable cards and interactive surfaces: small upward translate (`motionDistance.lift`). */
 const liftPattern: Pick<HTMLMotionProps<"div">, "whileHover" | "transition"> = {
-  whileHover: { y: -motionDistance.hover },
+  whileHover: { y: -motionDistance.lift },
   transition: subtleSpring,
 };
 

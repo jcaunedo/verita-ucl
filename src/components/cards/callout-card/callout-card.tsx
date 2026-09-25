@@ -31,7 +31,7 @@ import { Typography } from "@/components/typography";
  * `items-stretch` row so they share one height however their text wraps.
  *
  * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
- * cards translate up by `motionDistance.hover` on a `subtleSpring`) via a
+ * cards translate up by `motionDistance.lift` on a `subtleSpring`) via a
  * thin `motion.div` wrapper around the React Aria `Link` (same box), so the
  * link keeps React Aria's hover/focus/press semantics untouched. Fill,
  * border, shadow, and arrow color fade with a CSS transition limited to those

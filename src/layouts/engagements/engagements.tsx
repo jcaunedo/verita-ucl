@@ -5,6 +5,7 @@ import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 import { cn } from "@/lib/utils";
 import { cardDismissVariants, rowDismissVariants, standardTransition, useMotionPreference } from "@/lib/motion";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import { mediaAbove } from "@/lib/breakpoints";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import {
   MetricTab,
@@ -366,7 +367,7 @@ interface EngagementsProps {
  * - `Open` sections (§3.1 "Sections"): `Action needed` → `Last 15 days` →
  *   `Older`, each its own list under a label. Empty sections are hidden.
  *
- * Reuses `Dashboard`'s sidebar auto-collapse below `lg`.
+ * Reuses `Dashboard`'s sidebar auto-collapse at `lg` and below.
  */
 function Engagements({
   navHrefOverrides,
@@ -391,7 +392,7 @@ function Engagements({
   const countFor = (filter: ApplicationFilter) =>
     applications.filter((application) => application.filter === filter).length;
   // Same auto-collapse-below-`lg` behavior as `Dashboard` — see its comment for the full rationale.
-  const isLgUp = useMediaQuery("(min-width: 1024px)");
+  const isLgUp = useMediaQuery(mediaAbove("lg"));
   const wasAutoCollapsedRef = React.useRef(false);
   const preCollapseStateRef = React.useRef(false);
   React.useEffect(() => {

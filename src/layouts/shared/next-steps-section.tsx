@@ -2,6 +2,7 @@ import * as React from "react";
 import { AnimatePresence } from "motion/react";
 
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import { mediaAbove } from "@/lib/breakpoints";
 import { Typography } from "@/components/typography";
 import { NextStepCard, type NextStepCardProps } from "@/components/cards/next-step-card";
 
@@ -46,15 +47,16 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
   const [dismissedKeys, setDismissedKeys] = React.useState<Set<string>>(new Set());
   const eligibleNextSteps = steps.filter((step) => !dismissedKeys.has(step.key));
   /**
-   * The Next Steps grid caps its column count in two tiers — below `xl`
-   * (1280px) it's 2-up, from `xl` to below `2xl` (1536px) it's 3-up, and at
-   * `2xl`+ it's the full 4-up. Rather than wrapping the overflow to a second
+   * The Next Steps grid caps its column count in two tiers — at `lg`
+   * (1024px) and below it's 2-up, the `xl` range (1025–1280px) is 3-up, and
+   * above `xl` (the `2xl` frame and up) it's the full 4-up (DESIGN.md
+   * "Breakpoints include their own width"). Rather than wrapping the overflow to a second
    * row, any card beyond the current tier's column count is queued and only
    * mounted once a dismiss/completion frees a slot within the visible tier.
    */
-  const isXlUp = useMediaQuery("(min-width: 1280px)");
-  const is2xlUp = useMediaQuery("(min-width: 1536px)");
-  const maxVisible = is2xlUp ? Infinity : isXlUp ? 3 : 2;
+  const isLgUp = useMediaQuery(mediaAbove("lg"));
+  const isXlUp = useMediaQuery(mediaAbove("xl"));
+  const maxVisible = isXlUp ? Infinity : isLgUp ? 3 : 2;
   const visibleNextSteps = eligibleNextSteps.slice(0, maxVisible);
   /**
    * Tracks each card's `key` the first time it appears in `visibleNextSteps`
@@ -100,7 +102,7 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
           Complete these to unlock more opportunities and improve your matches.
         </Typography>
       </div>
-      <div className="grid h-[248px] w-full grid-cols-2 gap-5 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid h-[248px] w-full grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
         <AnimatePresence
           onExitComplete={() => {
             if (eligibleNextSteps.length === 0) {
