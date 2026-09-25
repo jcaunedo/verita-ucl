@@ -295,7 +295,7 @@ function Dashboard({
             {newOffer && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-3">
                 <Typography size="xl" weight="semibold">
-                  You have a new offer
+                  New offer for you
                 </Typography>
                 <AnimatePresence onExitComplete={() => setOfferSectionVisible(false)}>
                   {!offerDismissed && (

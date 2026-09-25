@@ -1,7 +1,7 @@
 <!--
 Created: Sep 8, 2026
 Created by: Julio Caunedo
-Last updated: Sep 24, 2026
+Last updated: Sep 25, 2026
 Scope: Verita AI professional Engagements page — Applications, Offers, Contracts, Assessments, Talent Network, plus the Training and Payments concerns that hang off an active Contract.
 Purpose: Define the product, UX, and data requirements for the Engagements destination, split out of the Dashboard PRD (product-specs/dashboard.md) once Engagements grew into its own page-level scope.
 -->
@@ -250,7 +250,7 @@ The `Offers` view uses the same search button and filter row as `Applications` (
 
 Search and counter behavior follow §3.1: the search button sits before the filters, `Open` shows no counter, and a filter with zero offers keeps its tab but hides its counter. The `Offers` view-tab count is `Open` only, so it reflects the offers that still need attention.
 
-✅ **Resolved (2026-09-24) — offers are declined from the row's `···` menu:** an open offer's row, on the Home "You have a new offer" module and in `Offers` → `Open`, reveals a `···` actions menu on hover, the same pattern as application rows ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Its items are **View details** and a destructive **Decline**, with no separator between them. Decline moves the offer to `Declined`; on Home the card fades out and the module closes. A declined offer's menu has only View details, and its row no longer shows the expiration date, since a declined offer doesn't expire. This replaces the earlier hover X, which declined the offer while reading as "hide".
+✅ **Resolved (2026-09-24) — offers are declined from the row's `···` menu:** an open offer's row, on the Home "New offer for you" module and in `Offers` → `Open`, reveals a `···` actions menu on hover, the same pattern as application rows ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Its items are **View details** and a destructive **Decline**, with no separator between them. Decline moves the offer to `Declined`; on Home the card fades out and the module closes. A declined offer's menu has only View details, and its row no longer shows the expiration date, since a declined offer doesn't expire. This replaces the earlier hover X, which declined the offer while reading as "hide".
 
 ⚠️ **Gap:** Decline runs immediately, with no confirmation or undo, like Withdraw on applications ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Declining an offer is irreversible, so the product likely needs the same confirmation step once UCL has a dialog component.
 

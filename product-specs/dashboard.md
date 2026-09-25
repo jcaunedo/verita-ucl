@@ -1,7 +1,7 @@
 <!--
 Created: Aug 28, 2026
 Created by: Julio Caunedo
-Last updated: Sep 24, 2026
+Last updated: Sep 25, 2026
 Scope: Verita AI professional Home/Dashboard after sign-in — onboarding, matching, task orchestration, and the Home-page previews of Applications/Offers/Contracts. Full Engagements-page detail (Applications, Offers, Contracts, Assessments, Talent Network, Training, Payments) lives in product-specs/engagements.md.
 Purpose: Define the product, UX, information architecture, state, and data requirements needed to design the Dashboard.
 -->
@@ -204,10 +204,23 @@ Qualifying events (non-exhaustive):
 
 When the module is populated, it must include:
 
-- Event title (e.g. "You have a new offer").
+- Event title (e.g. "New offer for you" — see the heading copy rule below).
 - The opportunity, partner, and key terms (compensation, engagement type) when applicable.
 - Deadline or expiration when material (e.g. an offer's expiration date/time).
 - One primary CTA (e.g. "View offer").
+
+**Offer heading copy.** When the event is a new offer, the module heading reads **"New offer for you"**. If the module ever shows more than one offer at once, the heading counts them with a numeral: **"2 new offers for you"**, **"3 new offers for you"**, and so on. It never reads "1 new offer for you" — a single offer always uses the singular heading with no number.
+
+| Offers shown | Heading               |
+| ------------ | --------------------- |
+| 1            | New offer for you     |
+| 2 or more    | {n} new offers for you |
+
+The count is the number of offers rendered in the module, not the professional's total open offers — offers that aren't shown here are counted in Engagements → Offers ([`engagements.md` §4.1](engagements.md#41-offer-filters)), not in this heading. When an offer is declined from the module, the heading updates to the new count; declining the last one closes the module ([`engagements.md` §4.1](engagements.md#41-offer-filters): offers are declined from the row's `···` menu).
+
+> ✅ **Copy fix (2026-09-25):** "You have a new offer" → "New offer for you". The new heading leads with what arrived and reads as a section title, matching the Dashboard's other module headings.
+
+> ℹ️ Today the module shows a single offer (single-emphasis, above), so only the singular heading appears. The plural form applies only if the multi-offer decision below lands on showing several offers together.
 
 If no qualifying event exists, the module does not render — it must not be replaced with a placeholder or generic empty state; the Dashboard falls through to its next-highest content (Contracts, Applications, Matches — see §7.6's resolved default-empty-state note for what renders when none of those have content either).
 

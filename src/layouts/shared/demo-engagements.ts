@@ -152,7 +152,7 @@ type DemoOffer = Pick<
   "company" | "title" | "partnerName" | "compensation" | "engagementTerms" | "duration" | "expirationDate"
 > & { key: string; filter: OfferFilter };
 
-/** Offers (`engagements.md` §4.1). Home's "You have a new offer" alert shows the first `Open` one. */
+/** Offers (`engagements.md` §4.1). Home's "New offer for you" alert shows the first `Open` one. */
 const DEMO_OFFERS: DemoOffer[] = [
   {
     key: "sleep-specialist",
