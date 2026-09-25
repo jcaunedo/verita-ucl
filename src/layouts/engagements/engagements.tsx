@@ -32,6 +32,7 @@ import {
   DEMO_APPLICATIONS,
   DEMO_CONTRACTS,
   DEMO_OFFERS,
+  DEMO_TODAY,
   type ApplicationFilter,
   type ContractFilter,
   type OfferFilter,
@@ -74,6 +75,35 @@ const FILTERS: { id: ApplicationFilter; label: string }[] = [
   { id: "open", label: "Open" },
   { id: "not-moving-forward", label: "Not moving forward" },
 ];
+
+/**
+ * `Open` is split into sections that answer "what deserves my attention first?" (`engagements.md` §3.1 "Sections").
+ * Figma: `Engagements` (`node-id=5672-4301`). The row's status label still says where each application stands.
+ */
+type OpenSection = "need-action" | "recent" | "older";
+
+// Figma's label reads "Last 15 day"; the spec's "Last 15 days" is used.
+const OPEN_SECTIONS: { id: OpenSection; label: string }[] = [
+  { id: "need-action", label: "Need action" },
+  { id: "recent", label: "Last 15 days" },
+  { id: "older", label: "Older" },
+];
+
+const RECENT_ACTIVITY_DAYS = 15;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Need action overrides recency: an application waiting on the professional sits in `Need action` however old its
+ * last activity is. Every other open application goes by its last meaningful update, measured from `DEMO_TODAY`.
+ */
+function openSectionOf({
+  nextActionOwner,
+  lastActivityAt,
+}: Pick<(typeof DEMO_APPLICATIONS)[number], "nextActionOwner" | "lastActivityAt">): OpenSection {
+  if (nextActionOwner === "professional") return "need-action";
+  const daysSinceActivity = (Date.parse(DEMO_TODAY) - Date.parse(lastActivityAt)) / DAY_MS;
+  return daysSinceActivity <= RECENT_ACTIVITY_DAYS ? "recent" : "older";
+}
 
 /**
  * Talent Network view filters. Figma: Verita → `Talent Network` (`node-id=5702-7522`): `Active` / `Completed`. The
@@ -185,6 +215,41 @@ function FilterBar({
   );
 }
 
+/** Application rows stacked in one bordered list — the same container as `Dashboard`'s Open applications. */
+function ApplicationList({
+  rows,
+  onWithdraw,
+}: {
+  rows: (typeof DEMO_APPLICATIONS)[number][];
+  onWithdraw: (key: string) => void;
+}) {
+  return (
+    <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+      {rows.map(({ key, filter, nextActionOwner: _owner, lastActivityAt: _lastActivityAt, ...application }) => (
+        <ApplicationCard
+          key={key}
+          {...application}
+          actionsMenuLabel={`More actions for ${application.title}`}
+          actionsMenu={
+            <>
+              <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
+              <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
+              {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
+              {filter === "open" && (
+                <MenuItem icon={XCircle} tone="destructive" onAction={() => onWithdraw(key)}>
+                  Withdraw
+                </MenuItem>
+              )}
+            </>
+          }
+          rowProps={{ onClick: () => {} }}
+          className="border-b border-border last:border-b-0"
+        />
+      ))}
+    </div>
+  );
+}
+
 interface EngagementsProps {
   /** Passed through to the internal `Sidebar` — see `Dashboard`'s same prop. */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
@@ -209,6 +274,8 @@ interface EngagementsProps {
  * - Rows: `ApplicationCard` with the hover-revealed `···` menu (§3 "Row
  *   interaction", `applications-card.md` §4.1), stacked in the same bordered
  *   container as `Dashboard`'s Open applications list.
+ * - `Open` sections (§3.1 "Sections"): `Need action` → `Last 15 days` →
+ *   `Older`, each its own list under a label. Empty sections are hidden.
  *
  * Reuses `Dashboard`'s sidebar auto-collapse below `lg`.
  */
@@ -300,33 +367,34 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                   return (
                     <TabButtonPanel key={id} id={id} className="flex w-full flex-1 flex-col outline-none">
                       {rows.length === 0 && <EmptyState {...APPLICATION_EMPTY_STATES[id]} className="flex-1" />}
-                      {rows.length > 0 && (
-                        <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
-                          {/* One supporting-text position for the whole list (`ApplicationCardGroup`). */}
-                          <ApplicationCardGroup>
-                            {rows.map(({ key, filter, ...application }) => (
-                              <ApplicationCard
-                                key={key}
-                                {...application}
-                                actionsMenuLabel={`More actions for ${application.title}`}
-                                actionsMenu={
-                                  <>
-                                    <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
-                                    <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
-                                    {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
-                                    {filter === "open" && (
-                                      <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
-                                        Withdraw
-                                      </MenuItem>
-                                    )}
-                                  </>
-                                }
-                                rowProps={{ onClick: () => {} }}
-                                className="border-b border-border last:border-b-0"
-                              />
-                            ))}
-                          </ApplicationCardGroup>
-                        </div>
+                      {/* One supporting-text position for the whole filter, across sections (`ApplicationCardGroup`). */}
+                      {rows.length > 0 && id === "open" && (
+                        <ApplicationCardGroup>
+                          <div className="flex w-full flex-col items-start gap-8">
+                            {OPEN_SECTIONS.map((section) => {
+                              const sectionRows = rows.filter((application) => openSectionOf(application) === section.id);
+                              if (sectionRows.length === 0) return null;
+                              const headingId = `applications-open-${section.id}`;
+                              return (
+                                <section
+                                  key={section.id}
+                                  aria-labelledby={headingId}
+                                  className="flex w-full flex-col items-start gap-2"
+                                >
+                                  <Typography as="h2" id={headingId} size="sm" className="text-foreground-muted">
+                                    {section.label}
+                                  </Typography>
+                                  <ApplicationList rows={sectionRows} onWithdraw={withdraw} />
+                                </section>
+                              );
+                            })}
+                          </div>
+                        </ApplicationCardGroup>
+                      )}
+                      {rows.length > 0 && id !== "open" && (
+                        <ApplicationCardGroup>
+                          <ApplicationList rows={rows} onWithdraw={withdraw} />
+                        </ApplicationCardGroup>
                       )}
                     </TabButtonPanel>
                   );

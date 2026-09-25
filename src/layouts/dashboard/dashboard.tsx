@@ -387,7 +387,7 @@ function Dashboard({
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
                   {/* One supporting-text position for the whole list (`ApplicationCardGroup`). */}
                   <ApplicationCardGroup>
-                    {activeApplications.map(({ key, filter: _filter, ...application }) => (
+                    {activeApplications.map(({ key, filter: _filter, nextActionOwner: _owner, lastActivityAt: _lastActivityAt, ...application }) => (
                       <ApplicationCard
                         key={key}
                         {...application}

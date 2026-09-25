@@ -12,6 +12,15 @@ import type { OfferCardProps } from "@/components/cards/offer-card";
 
 type ApplicationFilter = "open" | "not-moving-forward";
 
+/** Who the application is waiting on (`engagements.md` §3, §9). */
+type NextActionOwner = "professional" | "verita" | "partner";
+
+/**
+ * The fixed "today" the demo's recency groups are measured from, so rows don't drift from `Last 15 days` into
+ * `Older` as real time passes.
+ */
+const DEMO_TODAY = "2026-09-25";
+
 type DemoApplication = Pick<
   ApplicationCardProps,
   | "title"
@@ -25,7 +34,13 @@ type DemoApplication = Pick<
   | "statusLabel"
   | "statusTone"
   | "supportingText"
-> & { key: string; filter: ApplicationFilter };
+> & {
+  key: string;
+  filter: ApplicationFilter;
+  nextActionOwner: NextActionOwner;
+  /** Last meaningful update (`engagements.md` §9), ISO date. Places an `Open` row in `Last 15 days` or `Older`. */
+  lastActivityAt: string;
+};
 
 /**
  * Applications grouped by filter, per `product-specs/engagements.md` §3.1
@@ -39,11 +54,17 @@ type DemoApplication = Pick<
  * Listed in `Open`'s default sort (§3.1 "Default sort"): action required,
  * then interview scheduled, then applied. Consumers rely on this order
  * instead of sorting.
+ *
+ * Activity dates spread the `Open` rows across Engagements' sections (§3.1
+ * "Sections"). The `Action required` row is 22 days old on purpose: it still
+ * sits in `Need action`, because Need action overrides recency.
  */
 const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "senior-financial-analyst",
     filter: "open",
+    nextActionOwner: "professional",
+    lastActivityAt: "2026-09-03",
     title: "Senior Financial Analyst",
     company: "verita",
     partnerName: "Verita partner",
@@ -57,6 +78,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "amazon-clinical-data-coordinator",
     filter: "open",
+    nextActionOwner: "partner",
+    lastActivityAt: "2026-09-22",
     title: "Clinical Data Coordinator",
     company: "amazon",
     logoSrc: partnerLogos.amazon,
@@ -72,6 +95,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "retail-operations-contractor",
     filter: "open",
+    nextActionOwner: "verita",
+    lastActivityAt: "2026-09-21",
     title: "Retail Operations Contractor",
     company: "verita",
     partnerName: "Verita partner",
@@ -84,6 +109,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "clinical-data-coordinator",
     filter: "open",
+    nextActionOwner: "verita",
+    lastActivityAt: "2026-09-17",
     title: "Clinical Data Coordinator",
     company: "verita",
     partnerName: "Verita partner",
@@ -96,6 +123,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "strategic-finance-expert",
     filter: "open",
+    nextActionOwner: "verita",
+    lastActivityAt: "2026-09-12",
     title: "Strategic Finance Expert",
     company: "verita",
     partnerName: "Verita partner",
@@ -108,6 +137,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "movement-physical-activity-expert",
     filter: "open",
+    nextActionOwner: "verita",
+    lastActivityAt: "2026-09-05",
     title: "Movement & Physical Activity Expert Annotator",
     company: "verita",
     partnerName: "Verita partner",
@@ -120,6 +151,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "search-quality-analyst",
     filter: "open",
+    nextActionOwner: "partner",
+    lastActivityAt: "2026-08-29",
     title: "Search Quality Analyst",
     company: "google",
     logoSrc: partnerLogos.google,
@@ -134,6 +167,8 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   {
     key: "developer-relations-contractor",
     filter: "open",
+    nextActionOwner: "verita",
+    lastActivityAt: "2026-08-14",
     title: "Developer Relations Contractor",
     company: "verita",
     partnerName: "Verita partner",
@@ -247,10 +282,12 @@ const DEMO_CONTRACTS: DemoContract[] = [
 ];
 
 export {
+  DEMO_TODAY,
   DEMO_APPLICATIONS,
   DEMO_OFFERS,
   DEMO_CONTRACTS,
   type ApplicationFilter,
+  type NextActionOwner,
   type OfferFilter,
   type ContractFilter,
 };

@@ -174,6 +174,31 @@ Proposed status → filter mapping (labels per §8):
 
 "Most recent update" is the application's last meaningful update (§9). Remaining ties break by most recently applied, then by application ID, so the list never reorders between visits without a status change ([dashboard.md §4](dashboard.md#4-dashboard-priority-engine)'s deterministic tie-breaking rule). A row moves when its status changes: once the professional completes a required action, the row drops to the rank of its new status.
 
+**Sections (`Open`):** `Open` is split into three labeled sections, listed top to bottom. Each section is its own list. A section with no applications is hidden. The default sort above applies within each section.
+
+| Section          | What it holds                                                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Need action**  | Every open application where the professional owns the next action (§3, §9), however old it is: complete an assessment, schedule an interview, finish an application step, provide requested information, or respond to another required step. In status terms: `Action required` and `Interview · Action required`. |
+| **Last 15 days** | Every other open application whose last meaningful update (§9) was 15 days ago or less. This is the main monitoring area: `Applied`, `Interview scheduled`, `In review`, `On hold`. |
+| **Older**        | Open applications whose last meaningful update was more than 15 days ago. They stay visible because they're still open, but lower in the page. |
+
+`Need action` overrides recency. An application that has been waiting on the professional for 22 days belongs in `Need action`, not `Older`. Once the professional completes the action, the next-action owner changes and the row moves to `Last 15 days`, because completing the action is itself a meaningful update.
+
+`Not moving forward` has no sections. It is the history of applications that ended, so a single list is enough.
+
+✅ **Resolved (2026-09-25) — `Open` sections instead of more status filters:** Engagements is an operational tracking surface, not a chronological archive. Status filters answer "where does this application stand?", and each row's status label already answers that. Sections answer a different question: "what deserves my attention first?". The result:
+
+- `Open` → `Need action` → `Last 15 days` → `Older`: the working queue.
+- `Not moving forward`: the application history.
+
+This adds no new filters. It maps to data the application already carries: the next-action owner (professional, Verita, or partner, §3 and [`applications-card.md` §2.2](applications-card.md#22-next-action-owner)) and the last meaningful update (§9). Figma: Verita → `Engagements` (`node-id=5672-4301`).
+
+✅ **Copy fix:** the Figma section label reads "Last 15 day". The spec and the prototype use "Last 15 days".
+
+⚠️ **Decision needed:** which events count as a "last meaningful update" for placing a row in `Last 15 days` or `Older`: status changes only, or also partner messages, document requests, and interview reschedules. A professional viewing the application should not count.
+
+⚠️ **Dependency:** `Need action` depends on the next-action owner, which §3 currently models as professional-only for the row summary. The section needs the system to tell "waiting on you" apart from "waiting on Verita or the partner" for every open application, even if the row never shows the owner label.
+
 ⚠️ **Decision needed:** the default sort for `Not moving forward`, likely most recent outcome first, and whether the professional can change the sort in either filter.
 
 **Search:** a search button sits before the filters. Collapsed, it is an icon-only button. Clicking it expands it in place into a search input. Search narrows the rows shown, alongside the selected filter.
@@ -422,3 +447,4 @@ User
 - 🙋 Where do terminated contracts go in the `Contracts` filters, and does the view-tab count include completed contracts (§5.2)?
 - 🙋 What is the default sort for `Not moving forward`, and can the professional change the sort in either Applications filter (§3.1)?
 - 🙋 Applications search (§3.1): which fields does it match, does it search only the selected filter or all applications, and does the query persist when the filter changes?
+- 🙋 Which events count as a "last meaningful update" when placing an open application in `Last 15 days` or `Older` (§3.1 "Sections")?
