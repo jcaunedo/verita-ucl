@@ -88,7 +88,7 @@ const ACTIVE_APPLICATIONS_LIMIT = 3;
 
 
 /**
- * Most recent matches (Figma's "Matches" section, stacked `match-card` rows).
+ * Top matches for you (Figma's "Matches" section, stacked `match-card` rows).
  * None of them is already an application, offer, or contract in the shared
  * demo data: a match the professional acted on would have left this list.
  */
@@ -419,7 +419,7 @@ function Dashboard({
 
               <div className="flex w-full flex-col items-start gap-3">
                 <Typography size="xl" weight="semibold">
-                  Most recent matches
+                  Top matches for you
                 </Typography>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
                   {RECENT_MATCHES.map(({ key, ...match }) => (
