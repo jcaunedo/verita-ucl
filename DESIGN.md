@@ -194,6 +194,9 @@ rest. Don't give one page its own gutters, breakpoints, or sidebar logic.
   restores the earlier state, but only if the collapse was automatic. Once
   the user toggles the sidebar, their choice sticks. The logic and its full
   rationale live in `Dashboard` (`wasAutoCollapsedRef`).
+- **Callout row** (Dashboards): one column at `lg` (1024px) and below,
+  two side by side above it (`flex-col min-[1025px]:flex-row`), where
+  `items-stretch` gives both cards the same height.
 - **Card grids:** `grid-cols-2 xl:grid-cols-3`. The Next Steps grid adds
   `2xl:grid-cols-4`, and queues extra cards instead of wrapping them to a
   second row (see `NextStepsSection`).

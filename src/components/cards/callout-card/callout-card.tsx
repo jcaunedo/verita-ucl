@@ -27,6 +27,10 @@ import { Typography } from "@/components/typography";
  * Typography lg's 24px default, and the description is `sm` (14/22) —
  * together keeping the card at exactly 102px.
  *
+ * Height: the card fills its row's height (the lift wrapper and the link both
+ * stretch), with its content vertically centered. Place callouts in an
+ * `items-stretch` row so they share one height however their text wraps.
+ *
  * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
  * cards translate up by `motionDistance.hover` on a `subtleSpring`) via a
  * thin `motion.div` wrapper around the React Aria `Link` (same box), so the

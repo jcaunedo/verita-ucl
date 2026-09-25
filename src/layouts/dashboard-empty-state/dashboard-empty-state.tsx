@@ -183,7 +183,9 @@ function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptySt
               buttonLabel="Discover work"
             />
 
-            <div className="flex w-full items-start gap-5">
+            {/* One column at `lg` (1024px) and below, two side by side above it; side by side, `items-stretch` keeps both cards
+    the same height however their text wraps. */}
+            <div className="flex w-full flex-col gap-5 min-[1025px]:flex-row min-[1025px]:items-stretch">
               {CALLOUTS.map(({ key, ...callout }) => (
                 <CalloutCard key={key} {...callout} />
               ))}
