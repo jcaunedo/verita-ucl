@@ -339,12 +339,12 @@ function ApplicationCard({
         {(actionsMenu || onActionsPress) && (
           // Hover/focus-within reveal: the slot grows 0 → 48px (Figma's 16px gap + 32px button), pushing the badge left, while the button dissolves in.
           // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out` = cubic-bezier(0.4,0,0.2,1)); exit is shorter per CLAUDE.md "Dismiss".
-          // Kept mounted (clipped, not unmounted) so keyboard users can still tab to it — focus expands the slot via `group-focus-within`.
+          // Kept mounted (clipped, not unmounted) so keyboard users can still tab to it — keyboard focus (on the row, or `data-focus-visible` on the trigger) expands the slot. Not `group-focus-within`: after a menu closes, focus returns to the trigger programmatically and would keep the slot open after mouse use.
           // The reveal lives on the slot, not the Button, so the Button keeps its own look + hover transition untouched. The 4px `py-1 pr-1`
           // (cancelled by `-my-1 -mr-1`, hence 52px = 48 + 4) keeps Button's outset focus ring inside the `overflow-hidden` clip.
           <div
             data-slot="application-card-actions"
-            className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-within:w-[52px] group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
+            className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-visible:w-[52px] group-focus-visible:opacity-100 group-focus-visible:duration-300 group-has-[[data-focus-visible]]:w-[52px] group-has-[[data-focus-visible]]:opacity-100 group-has-[[data-focus-visible]]:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
           >
             {actionsMenu ? (
               <MenuTrigger>

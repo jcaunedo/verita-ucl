@@ -107,6 +107,8 @@ export {
   type InlineAlertTone,
 } from "./components/feedback/inline-alert";
 
+export { EmptyState, type EmptyStateProps } from "./components/feedback/empty-state";
+
 /* -------------------------------------------------------------------------- */
 /* Cards                                                                      */
 /* -------------------------------------------------------------------------- */

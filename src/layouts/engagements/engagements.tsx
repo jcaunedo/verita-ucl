@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { AlignLeft, SearchMd, Share06, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
-import { cardDismissVariants, reflowTransition, useMotionPreference } from "@/lib/motion";
+import { cardDismissVariants, reflowTransition, standardTransition, useMotionPreference } from "@/lib/motion";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import {
@@ -24,6 +24,7 @@ import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/applic
 import { MenuItem } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
 import { OfferCard } from "@/components/cards/offer-card";
+import { EmptyState, type EmptyStateProps } from "@/components/feedback/empty-state";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
@@ -53,8 +54,10 @@ import {
  */
 const CONTRACTS = DEMO_CONTRACTS;
 
+// `Current` (not `Open`, and not `Active`, which is also a contract status) — `engagements.md` §5.2. The id stays
+// `open` so the shared filter-row rules (no counter on the default filter) apply as in Applications and Offers.
 const CONTRACT_FILTERS: { id: ContractFilter; label: string }[] = [
-  { id: "open", label: "Open" },
+  { id: "open", label: "Current" },
   { id: "completed", label: "Completed" },
 ];
 
@@ -71,6 +74,77 @@ const FILTERS: { id: ApplicationFilter; label: string }[] = [
   { id: "open", label: "Open" },
   { id: "not-moving-forward", label: "Not moving forward" },
 ];
+
+/**
+ * Talent Network view filters. Figma: Verita → `Talent Network` (`node-id=5702-7522`): `Active` / `Completed`. The
+ * prototype has no memberships yet, so both show their empty state.
+ */
+type TalentNetworkFilter = "active" | "completed";
+
+const TALENT_NETWORK_FILTERS: { id: TalentNetworkFilter; label: string }[] = [
+  { id: "active", label: "Active" },
+  { id: "completed", label: "Completed" },
+];
+
+/**
+ * What each view or filter shows when it has nothing to list: the shared `EmptyState` layout, with its own copy (and
+ * optional CTA). Figma copy: Contracts → Completed (`node-id=5701-7251`) and Talent Network → Active (`node-id=5702-7522`).
+ * Every other entry is draft copy written in the same voice, pending product/design review.
+ */
+type EmptyStateCopy = Pick<EmptyStateProps, "title" | "description" | "buttonLabel" | "buttonProps">;
+
+const APPLICATION_EMPTY_STATES: Record<ApplicationFilter, EmptyStateCopy> = {
+  open: {
+    title: "No open applications",
+    description: "Applications you submit will appear here while they're in progress.",
+    buttonLabel: "Discover opportunities",
+    buttonProps: { onPress: () => {} },
+  },
+  "not-moving-forward": {
+    title: "No past applications",
+    description: "Applications that don't move forward will appear here.",
+  },
+};
+
+const OFFER_EMPTY_STATES: Record<OfferFilter, EmptyStateCopy> = {
+  open: {
+    title: "No open offers",
+    description: "Offers you receive will appear here for you to review.",
+  },
+  declined: {
+    title: "No declined offers",
+    description: "Offers you decline will appear here.",
+  },
+};
+
+const CONTRACT_EMPTY_STATES: Record<ContractFilter, EmptyStateCopy> = {
+  open: {
+    title: "No current contracts",
+    description: "Contracts will appear here once an offer you accept is finalized.",
+  },
+  completed: {
+    title: "No completed contracts",
+    description: "Contracts will appear here when your work is complete.",
+  },
+};
+
+const ASSESSMENTS_EMPTY_STATE: EmptyStateCopy = {
+  title: "No assessments yet",
+  description: "Assessments assigned to you will appear here.",
+};
+
+const TALENT_NETWORK_EMPTY_STATES: Record<TalentNetworkFilter, EmptyStateCopy> = {
+  active: {
+    title: "No talent network applied yet",
+    description: "Apply to roles that match your expertise and get considered for future projects.",
+    buttonLabel: "Browse roles",
+    buttonProps: { onPress: () => {} },
+  },
+  completed: {
+    title: "No completed talent networks",
+    description: "Talent networks you're no longer part of will appear here.",
+  },
+};
 
 
 type EngagementView = "applications" | "offers" | "contracts" | "assessments" | "talent-network";
@@ -89,7 +163,8 @@ function FilterBar({
 }: {
   searchLabel: string;
   filtersLabel: string;
-  filters: { id: string; label: string; count: number }[];
+  /** `count` omitted → no counter for that filter (e.g. Applications → Not moving forward). */
+  filters: { id: string; label: string; count?: number }[];
 }) {
   return (
     <div className="flex items-center gap-4">
@@ -102,7 +177,7 @@ function FilterBar({
             id={id}
             label={label}
             size="sm"
-            count={id !== "open" && count > 0 ? count : undefined}
+            count={id !== "open" && count != null && count > 0 ? count : undefined}
           />
         ))}
       </TabButtonList>
@@ -133,7 +208,7 @@ interface EngagementsProps {
  *   no design and UCL has no `Input` component (§3.1 "Search").
  * - Rows: `ApplicationCard` with the hover-revealed `···` menu (§3 "Row
  *   interaction", `applications-card.md` §4.1), stacked in the same bordered
- *   container as `Dashboard`'s Active Applications list.
+ *   container as `Dashboard`'s Open applications list.
  *
  * Reuses `Dashboard`'s sidebar auto-collapse below `lg`.
  */
@@ -142,7 +217,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
   // An offer declined with its X, here or on `Dashboard`, shows under `Declined` — see `useDeclinedOffers`.
   const { declined, decline } = useDeclinedOffers();
-  const { prefersReducedMotion } = useMotionPreference();
+  const { prefersReducedMotion, resolve } = useMotionPreference();
   const offers = applyDeclinedOffers(DEMO_OFFERS, declined);
   const offerCountFor = (filter: OfferFilter) => offers.filter((offer) => offer.filter === filter).length;
   // Withdraw (row `···` menu), here or on `Dashboard`, moves an application to `Not moving forward` — see `useWithdrawnApplications`.
@@ -189,7 +264,7 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
         />
       </div>
       {/* Figma `Canvas`: 64px left / 160px right padding at desktop. */}
-      <div className={cn("flex min-w-px flex-1 flex-col items-center", layoutCanvasPaddingClassName(sidebarCollapsed))}>
+      <div className={cn("flex min-w-px flex-1 flex-col items-center self-stretch", layoutCanvasPaddingClassName(sidebarCollapsed))}>
         <div className="flex w-full max-w-[1400px] flex-1 flex-col items-start gap-8 pt-10 pb-[104px]">
           <div className="flex w-full flex-col items-start gap-1.5">
             <PageTitle>Engagements</PageTitle>
@@ -199,7 +274,8 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
             </Typography>
           </div>
 
-          <MetricTabs defaultSelectedKey={defaultView} className="flex w-full flex-col gap-8">
+          {/* `flex-1` down to each filter panel so an `EmptyState` can center itself in the space left below the filters. */}
+          <MetricTabs defaultSelectedKey={defaultView} className="flex w-full flex-1 flex-col gap-8">
             <MetricTabList aria-label="Engagement views">
               <MetricTab id="applications" label="Applications" value={applicationsTotal} />
               {/* Offers total = `Open` only (§4.1). */}
@@ -209,19 +285,21 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
               <MetricTab id="talent-network" label="Talent Network" value={0} />
             </MetricTabList>
 
-            <MetricTabPanel id="applications" className="outline-none">
-              <TabButtons defaultSelectedKey="open" className="flex w-full flex-col gap-8">
+            <MetricTabPanel id="applications" className="flex flex-1 flex-col outline-none">
+              <TabButtons defaultSelectedKey="open" className="flex w-full flex-1 flex-col gap-8">
                 <FilterBar
                   searchLabel="Search applications"
                   filtersLabel="Application filters"
-                  filters={FILTERS.map(({ id, label }) => ({ id, label, count: countFor(id) }))}
+                  // No counters on Applications filters: `Open` repeats the view-tab count, and `Not moving forward` has
+                  // none by design direction (`engagements.md` §3.1 "Counts").
+                  filters={FILTERS.map(({ id, label }) => ({ id, label }))}
                 />
 
                 {FILTERS.map(({ id }) => {
                   const rows = applications.filter((application) => application.filter === id);
                   return (
-                    <TabButtonPanel key={id} id={id} className="w-full outline-none">
-                      {/* Zero-state for an empty filter isn't designed yet — the panel renders nothing. */}
+                    <TabButtonPanel key={id} id={id} className="flex w-full flex-1 flex-col outline-none">
+                      {rows.length === 0 && <EmptyState {...APPLICATION_EMPTY_STATES[id]} className="flex-1" />}
                       {rows.length > 0 && (
                         <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
                           {/* One supporting-text position for the whole list (`ApplicationCardGroup`). */}
@@ -255,8 +333,8 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                 })}
               </TabButtons>
             </MetricTabPanel>
-            <MetricTabPanel id="offers" className="outline-none">
-              <TabButtons defaultSelectedKey="open" className="flex w-full flex-col gap-8">
+            <MetricTabPanel id="offers" className="flex flex-1 flex-col outline-none">
+              <TabButtons defaultSelectedKey="open" className="flex w-full flex-1 flex-col gap-8">
                 <FilterBar
                   searchLabel="Search offers"
                   filtersLabel="Offer filters"
@@ -265,10 +343,21 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                 {OFFER_FILTERS.map(({ id }) => {
                   const filterOffers = offers.filter((offer) => offer.filter === id);
                   return (
-                    <TabButtonPanel key={id} id={id} className="w-full outline-none">
-                      {/* Zero-state for an empty filter isn't designed yet — an empty filter renders nothing. */}
-                      <div className="flex w-full flex-col items-start gap-4">
+                    <TabButtonPanel key={id} id={id} className="flex w-full flex-1 flex-col outline-none">
+                      <div className="flex w-full flex-1 flex-col items-start gap-4">
                         <AnimatePresence initial={false}>
+                          {/* Fades in once the last offer's exit (after Decline) finishes, so the two never overlap. */}
+                          {filterOffers.length === 0 && (
+                            <motion.div
+                              key="empty"
+                              className="flex w-full flex-1"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1, transition: resolve(standardTransition) }}
+                              exit={{ opacity: 0, transition: { duration: 0 } }}
+                            >
+                              <EmptyState {...OFFER_EMPTY_STATES[id]} className="flex-1" />
+                            </motion.div>
+                          )}
                           {filterOffers.map(({ key, filter, expirationDate, ...offer }) => (
                             <motion.div
                               key={key}
@@ -313,9 +402,8 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                 })}
               </TabButtons>
             </MetricTabPanel>
-            {/* Assessments / Talent Network views aren't designed yet. */}
-            <MetricTabPanel id="contracts" className="outline-none">
-              <TabButtons defaultSelectedKey="open" className="flex w-full flex-col gap-8">
+            <MetricTabPanel id="contracts" className="flex flex-1 flex-col outline-none">
+              <TabButtons defaultSelectedKey="open" className="flex w-full flex-1 flex-col gap-8">
                 <FilterBar
                   searchLabel="Search contracts"
                   filtersLabel="Contract filters"
@@ -328,10 +416,10 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                 {CONTRACT_FILTERS.map(({ id }) => {
                   const contracts = CONTRACTS.filter((contract) => contract.filter === id);
                   return (
-                    <TabButtonPanel key={id} id={id} className="w-full outline-none">
-                      {/* Zero-state for an empty filter isn't designed yet — the panel renders nothing. */}
+                    <TabButtonPanel key={id} id={id} className="flex w-full flex-1 flex-col outline-none">
+                      {contracts.length === 0 && <EmptyState {...CONTRACT_EMPTY_STATES[id]} className="flex-1" />}
                       {contracts.length > 0 && (
-                        // Same 2-up / 3-up-from-`xl` grid as `Dashboard`'s "Active work".
+                        // Same 2-up / 3-up-from-`xl` grid as `Dashboard`'s "Current contracts".
                         <div className="grid w-full grid-cols-2 items-start gap-x-5 gap-y-4 xl:grid-cols-3">
                           {contracts.map(({ key, filter: _filter, ...contract }) => (
                             <ContractCard
@@ -349,8 +437,25 @@ function Engagements({ navHrefOverrides, defaultView = "applications" }: Engagem
                 })}
               </TabButtons>
             </MetricTabPanel>
-            <MetricTabPanel id="assessments" />
-            <MetricTabPanel id="talent-network" />
+            {/* Assessments has no filters or rows designed yet — just its empty state. */}
+            <MetricTabPanel id="assessments" className="flex flex-1 flex-col outline-none">
+              <EmptyState {...ASSESSMENTS_EMPTY_STATE} className="flex-1" />
+            </MetricTabPanel>
+            {/* Talent Network (Figma `node-id=5702-7522`): `Active` / `Completed` filters, both empty in the prototype. */}
+            <MetricTabPanel id="talent-network" className="flex flex-1 flex-col outline-none">
+              <TabButtons defaultSelectedKey="active" className="flex w-full flex-1 flex-col gap-8">
+                <FilterBar
+                  searchLabel="Search talent network"
+                  filtersLabel="Talent network filters"
+                  filters={TALENT_NETWORK_FILTERS.map(({ id, label }) => ({ id, label, count: 0 }))}
+                />
+                {TALENT_NETWORK_FILTERS.map(({ id }) => (
+                  <TabButtonPanel key={id} id={id} className="flex w-full flex-1 flex-col outline-none">
+                    <EmptyState {...TALENT_NETWORK_EMPTY_STATES[id]} className="flex-1" />
+                  </TabButtonPanel>
+                ))}
+              </TabButtons>
+            </MetricTabPanel>
           </MetricTabs>
         </div>
       </div>

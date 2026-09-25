@@ -229,7 +229,7 @@ function MatchCard({
       </div>
       {onActionsPress && (
         // Reveal on a wrapper, not the Button, so the Button keeps its own look + hover transition.
-        <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-focus-within:opacity-100 group-hover:opacity-100">
+        <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-focus-visible:opacity-100 group-has-[[data-focus-visible]]:opacity-100 group-hover:opacity-100">
           <Button
             color="tertiary"
             size="xs"

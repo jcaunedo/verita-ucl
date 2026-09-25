@@ -75,15 +75,15 @@ const NEXT_STEPS = [
 ] as const;
 
 /**
- * Active work, Active Applications, and the offer alert come from the shared
+ * Current contracts, Open applications, and the offer alert come from the shared
  * demo data (`src/layouts/shared/demo-engagements.ts`), so they match what
- * the `Engagements` layout lists: "Active work" is the `Open` contracts, and
- * "Active Applications" is the top of Engagements → Applications → `Open`,
+ * the `Engagements` layout lists: "Current contracts" is the `Open` contracts, and
+ * "Open applications" is the top of Engagements → Applications → `Open`,
  * in that filter's default sort (`engagements.md` §3.1).
  */
 const ACTIVE_WORK = DEMO_CONTRACTS.filter((contract) => contract.filter === "open");
 
-/** Max rows in "Active Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
+/** Max rows in "Open applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
 const ACTIVE_APPLICATIONS_LIMIT = 3;
 
 
@@ -150,12 +150,12 @@ interface DashboardProps {
    */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
   /**
-   * Target for "Active Applications" → "View All": Engagements → Applications,
+   * Target for "Open applications" → "View All": Engagements → Applications,
    * `Open` filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllApplicationsHref?: string;
   /**
-   * Target for "Active work" → "View All": Engagements → Contracts, `Open`
+   * Target for "Current contracts" → "View All": Engagements → Contracts, `Current`
    * filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllContractsHref?: string;
@@ -177,7 +177,7 @@ interface DashboardProps {
  * offer alert, active-work grid, active-applications list, and
  * recent-matches list Figma shows once the professional has real activity.
  *
- * The "Active Applications"/"Matches" sections are plain bordered containers
+ * The "Open applications"/"Matches" sections are plain bordered containers
  * of stacked `ApplicationCard`/`MatchCard` rows (`divide-y`-style borders
  * already built into each card) — Figma's `table-application-listing`/
  * `table-match-listing` instances are not real data-table components, just
@@ -206,7 +206,7 @@ function Dashboard({
    */
   const isLgUp = useMediaQuery("(min-width: 1024px)");
   /**
-   * "Active work" stays one row: as many contracts as the grid has columns
+   * "Current contracts" stays one row: as many contracts as the grid has columns
    * (2 below `xl`, 3 from `xl`), with the rest behind "View All". Same
    * breakpoint-driven cap as `NextStepsSection`, so "Showing # of {total}"
    * always matches what's on screen.
@@ -245,7 +245,7 @@ function Dashboard({
   const { prefersReducedMotion } = useMotionPreference();
   const { declined, decline } = useDeclinedOffers();
   // Withdraw (row `···` menu) moves the application to Engagements → `Not moving forward`, so it drops off
-  // "Active Applications" and the next open one takes its place — see `useWithdrawnApplications`.
+  // "Open applications" and the next open one takes its place — see `useWithdrawnApplications`.
   const { withdrawn, withdraw } = useWithdrawnApplications();
   const openApplications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn).filter(
     (application) => application.filter === "open",
@@ -351,7 +351,7 @@ function Dashboard({
               <div className="flex w-full flex-col items-start gap-3">
                 <div className="flex w-full flex-col items-start gap-0.5">
                   <Typography size="lg" weight="semibold" className="leading-6.5">
-                    Active work
+                    Current contracts
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
                     Showing {visibleActiveWork.length} of {ACTIVE_WORK.length}
@@ -378,7 +378,7 @@ function Dashboard({
                 {/* Figma: title + `sm` muted subtitle, 2px apart — same header as `NextStepsSection`. */}
                 <div className="flex w-full flex-col items-start gap-0.5">
                   <Typography size="lg" weight="semibold" className="leading-6.5">
-                    Active Applications
+                    Open applications
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
                     Showing {activeApplications.length} of {openApplications.length}

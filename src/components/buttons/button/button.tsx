@@ -93,7 +93,11 @@ const buttonVariants = cva(
   [
     // Hover feedback: `motionDuration.fast` (160ms) on `standardTransition`'s curve — Tailwind's `ease-in-out` is the same cubic-bezier(0.4,0,0.2,1). CSS rather than Motion: it's a pseudo-class color change, and nothing else animates these properties.
     "group relative inline-flex items-center justify-center gap-1 rounded-full font-medium whitespace-nowrap outline-none transition duration-160 ease-in-out",
-    "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+    // React Aria's `data-focus-visible`, not the CSS `:focus-visible` pseudo-class: when a menu closes (e.g. a click outside
+    // a `···` menu), React Aria returns focus to its trigger programmatically, and the browser's heuristic can match
+    // `:focus-visible` there even after mouse use — the trigger was left showing its ring. React Aria sets the attribute
+    // only for keyboard focus, so the ring appears for keyboard users and never after a pointer interaction.
+    "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
     "disabled:pointer-events-none disabled:cursor-not-allowed",
     "*:data-[icon]:pointer-events-none *:data-[icon]:shrink-0 *:data-[icon]:transition-inherit-all",
     "data-loading:pointer-events-none",

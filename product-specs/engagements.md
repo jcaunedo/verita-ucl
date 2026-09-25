@@ -157,10 +157,10 @@ Proposed status → filter mapping (labels per §8):
 
 **Counts:**
 
-- **Filter counters:** `Open` shows no counter, because its count is already the `Applications` view-tab count (below) and repeating it on the filter is redundant. Every other filter shows the number of applications in it. A filter with zero applications stays visible and selectable; only its counter is hidden, never shown as "0".
+- **Filter counters:** `Open` shows no counter, because its count is already the `Applications` view-tab count (below) and repeating it on the filter is redundant. `Not moving forward` shows no counter either (design direction, 2026-09-24). So no `Applications` filter shows a counter; `Offers` and `Contracts` keep theirs on `Declined` and `Completed`. A filter with zero applications stays visible and selectable; only its counter is hidden, never shown as "0".
 - **Applications total:** the count on the `Applications` view tab is the number of active applications, which is the `Open` count. Applications under `Not moving forward` are not included, but they stay visible under that filter. Offers aren't counted here either: an application that produced an offer has left this view, so each pending offer is counted once, on the `Offers` tab.
 
-✅ **Resolved (2026-09-24) — no counter on `Open`:** the `Open` count and the view-tab count are the same number, shown a few pixels apart. The view tab keeps it; the `Open` filter drops it. The same rule applies to `Offers` (§4.1), whose view-tab count is also `Open` only, and to `Contracts` (§5.2).
+✅ **Resolved (2026-09-24) — no counter on `Open`:** the `Open` count and the view-tab count are the same number, shown a few pixels apart. The view tab keeps it; the `Open` filter drops it. The same rule applies to `Offers` (§4.1), whose view-tab count is also `Open` only, and to `Contracts`' `Current` filter (§5.2).
 
 **Default sort (`Open`):** rows are ordered by what the professional needs to do next, most urgent first. Each status belongs to one rank, and ranks are listed top to bottom:
 
@@ -290,16 +290,18 @@ The `Contracts` view uses the same search button and filter row as `Applications
 
 | Filter        | Meaning                                          |
 | ------------- | ------------------------------------------------ |
-| **Open**      | The contract is still in effect: awaiting start, active, or paused. |
+| **Current**   | The contract is still in effect: awaiting start, active, or paused. |
 | **Completed** | The work under the contract has finished.        |
 
-Search and counter behavior follow §3.1: the search button sits before the filters, `Open` shows no counter, and a filter with zero contracts keeps its tab but hides its counter.
+Search and counter behavior follow §3.1: the search button sits before the filters, `Current` shows no counter (like `Open` in the other views), and a filter with zero contracts keeps its tab but hides its counter.
 
-✅ **Resolved (2026-09-24) — `Paused` is `Open`:** a paused contract is still in effect, just not running, so it stays under `Open` with `Awaiting start` and `Active`. This matches Home, which keeps paused contracts in "Active work" ([`contract-card.md` §6.1](contract-card.md#61-contract-status-rules)).
+✅ **Resolved (2026-09-24) — the default contracts filter is `Current`, not `Open` or `Active`:** "Open contract" reads awkwardly for work in progress. `Active` would clash with the `Active` contract status: the filter also holds `Awaiting start` and `Paused` contracts, so an "Active" filter would list contracts badged `Paused`. `Current` describes every contract still in effect without naming a status. `Applications` and `Offers` keep `Open`.
+
+✅ **Resolved (2026-09-24) — `Paused` is `Current`:** a paused contract is still in effect, just not running, so it stays under `Current` with `Awaiting start` and `Active`. This matches Home, which keeps paused contracts in "Current contracts" ([`contract-card.md` §6.1](contract-card.md#61-contract-status-rules)).
 
 ⚠️ **Decision needed:** where terminated contracts go is not defined: under `Completed`, or in a third filter.
 
-⚠️ **Decision needed:** whether the `Contracts` view-tab count includes completed contracts or only open ones. The `Applications` count is active-only (§3.1 "Counts"). Hiding the `Open` counter assumes it's open-only: if the view tab counts completed contracts too, the `Open` count is no longer redundant and should come back.
+⚠️ **Decision needed:** whether the `Contracts` view-tab count includes completed contracts or only current ones. The `Applications` count is active-only (§3.1 "Counts"). Hiding the `Current` counter assumes the view tab counts current contracts only: if it counts completed contracts too, the `Current` count is no longer redundant and should come back.
 
 ## 6. Training
 

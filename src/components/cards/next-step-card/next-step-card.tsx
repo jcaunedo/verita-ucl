@@ -228,7 +228,7 @@ function NextStepCard({
           <Badge tone={badgeTone} label={label} />
           {dismissible && (
             // Reveal on a wrapper, not the Button, so the Button keeps its own look + hover transition.
-            <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 focus-within:opacity-100">
+            <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 has-[[data-focus-visible]]:opacity-100">
               <Button
                 color="tertiary"
                 size="xs"

@@ -187,7 +187,7 @@ type DemoContract = Pick<
 > & { key: string; filter: ContractFilter };
 
 /**
- * Contracts (`engagements.md` §5.2). Home's "Active work" shows the `Open`
+ * Contracts (`engagements.md` §5.2). Home's "Current contracts" shows the `Open`
  * ones. Compensation follows `contract-card.md` §3.3.1's formats ("$85/hour",
  * "$600/day"), not the application cards' "/hr" shorthand.
  */

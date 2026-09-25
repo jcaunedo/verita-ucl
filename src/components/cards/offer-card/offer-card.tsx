@@ -185,7 +185,7 @@ function OfferCard({
             // The reveal lives on the slot so the Button keeps its own look + hover transition; `py-1 pr-1` (cancelled by `-my-1 -mr-1`, hence 52px) keeps its focus ring inside the clip.
             <div
               data-slot="offer-card-actions"
-              className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-within:w-[52px] group-focus-within:opacity-100 group-focus-within:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
+              className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-visible:w-[52px] group-focus-visible:opacity-100 group-focus-visible:duration-300 group-has-[[data-focus-visible]]:w-[52px] group-has-[[data-focus-visible]]:opacity-100 group-has-[[data-focus-visible]]:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
             >
               <MenuTrigger>
                 <Button color="tertiary" size="xs" iconLeading={DotsHorizontal} aria-label={actionsMenuLabel} />
