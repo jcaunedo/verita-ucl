@@ -20,11 +20,12 @@ import { Typography } from "@/components/typography";
  * `border/neutral/border` outline and the `shadow/hover-card` shadow
  * appear (the shared hovered-card look, DESIGN.md "Row hover"). The border is reserved as
  * `border-transparent` at rest so the card doesn't shift 1px when it shows
- * (both Figma variants are the same 104px height). Figma's stroke is inside
+ * (both Figma variants are the same 102px height). Figma's stroke is inside
  * the frame, so padding is Figma's 24px vertical / 32px left / 40px right
  * minus the 1px border (`py-[23px] pr-[39px] pl-[31px]`), and the title
  * (`lg -semibold`) uses Figma's bound `line-height/lg` (26px) rather than
- * Typography lg's 24px default — together keeping the card at exactly 104px.
+ * Typography lg's 24px default, and the description is `sm` (14/22) —
+ * together keeping the card at exactly 102px.
  *
  * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
  * cards translate up by `motionDistance.hover` on a `subtleSpring`) via a
@@ -95,7 +96,8 @@ function CalloutCard({
               {title}
             </Typography>
           </div>
-          <Typography size="base" className="w-full text-foreground">
+          {/* Figma `sm/sm` (14/22). */}
+          <Typography size="sm" className="w-full text-foreground">
             {description}
           </Typography>
         </div>
