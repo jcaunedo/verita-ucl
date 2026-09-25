@@ -44,7 +44,7 @@ Translate the Verita AI design system in Figma into the `verita-ai-ucl` library.
 
 ### C. Syncing typography
 
-Typography lives in Figma **text styles**, not on a node. Enumerate with `getLocalTextStylesAsync` (script: `references/enumerate-text-styles.js`). The scale is size × weight (xs→7xl × regular/medium/semibold/bold/black); sizes ≤ lg use the body font, xl+ the headline/display font.
+Typography lives in Figma **text styles**, not on a node. Enumerate with `getLocalTextStylesAsync` (script: `references/enumerate-text-styles.js`). The scale is size × weight (xs→7xl × regular/medium/semibold/bold — no black, see DESIGN.md); sizes ≤ lg use the body font, xl+ the headline/display font.
 
 ## Always verify
 

@@ -86,7 +86,7 @@ radii `rounded-lg`/`rounded-[10px]`/`rounded-xl`, `shadow-xs`.
 - `size`: `xs sm md lg xl` (+ `icon-*` counterparts). Heights 24/28/32/36/40; radii 8/10/12/12/12.
 - extras: `asChild` (radix `Slot`), `loading` (dependency-free spinner).
 
-**Typography API:** `size` (xs→7xl) × `weight` (regular/medium/semibold/bold/black), `as` for the element. Sizes ≤ lg → `font-sans`; xl+ → `font-display`.
+**Typography API:** `size` (xs→7xl) × `weight` (regular/medium/semibold/bold — no black, see DESIGN.md), `as` for the element. Sizes ≤ lg → `font-sans`; xl+ → `font-display`.
 
 ## Translation rules (Figma → clean UCL)
 

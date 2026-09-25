@@ -22,10 +22,9 @@ import { Typography } from "@/components/typography";
  * `border-transparent` at rest so the card doesn't shift 1px when it shows
  * (both Figma variants are the same 102px height). Figma's stroke is inside
  * the frame, so padding is Figma's 24px vertical / 32px left / 40px right
- * minus the 1px border (`py-[23px] pr-[39px] pl-[31px]`), and the title
- * (`lg -semibold`) uses Figma's bound `line-height/lg` (26px) rather than
- * Typography lg's 24px default, and the description is `sm` (14/22) —
- * together keeping the card at exactly 102px.
+ * minus the 1px border (`py-[23px] pr-[39px] pl-[31px]`), and the title is
+ * `lg -semibold` (18/26) and the description `sm` (14/22) — together keeping
+ * the card at exactly 102px.
  *
  * Height: the card fills its row's height (the lift wrapper and the link both
  * stretch), with its content vertically centered. Place callouts in an
@@ -96,7 +95,7 @@ function CalloutCard({
               (icon ?? (
                 <CheckCircleBroken className="size-6 shrink-0 text-foreground" />
               ))}
-            <Typography size="lg" weight="semibold" className="leading-6.5 text-foreground">
+            <Typography size="lg" weight="semibold" className="text-foreground">
               {title}
             </Typography>
           </div>

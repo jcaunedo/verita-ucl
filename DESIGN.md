@@ -303,3 +303,15 @@ and application menus and are to be left out everywhere by default.
 - `MenuSeparator` stays available for those cases (see the `WithSeparator`
   story in Overlays/Menu). The account menu's divider before the prototype
   items was explicitly requested, so it stays.
+
+## No `black` (900) font weight (`src/components/typography/`)
+
+**Rule:** Typography's `weight` axis is `regular` / `medium` / `semibold` /
+`bold` only. There is no `black` variant and no `--font-weight-black` token
+in `theme.css`.
+
+**Why:** Verita doesn't use the 900 weight (decided 2026-09-25). verita.ds
+still ships `-black` text styles for every size (and some are mis-set, e.g.
+`xs -black` is Regular), so a Figma resync would otherwise re-add the
+variant. Skip `-black` styles when syncing; if a design binds one, flag it
+rather than mapping it to `font-black`.

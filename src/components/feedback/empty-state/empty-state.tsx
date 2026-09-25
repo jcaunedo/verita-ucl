@@ -51,7 +51,7 @@ function EmptyState({ title, description, icon, buttonLabel, buttonProps, classN
             {icon}
           </div>
         )}
-        <Typography as="h2" size="lg" weight="semibold" className="leading-6.5 text-foreground">
+        <Typography as="h2" size="lg" weight="semibold" className="text-foreground">
           {title}
         </Typography>
         {description && (

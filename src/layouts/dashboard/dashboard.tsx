@@ -287,14 +287,14 @@ function Dashboard({
           <div className="flex w-full items-center justify-between">
             <div className="flex min-w-px flex-1 flex-col items-start gap-1.5">
               <PageTitle>Welcome back, Theresa</PageTitle>
-              <Typography size="lg" className="leading-6.5">Let’s make today count.</Typography>
+              <Typography size="lg">Let’s make today count.</Typography>
             </div>
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
             {newOffer && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-3">
-                <Typography size="lg" weight="semibold" className="leading-6.5">
+                <Typography size="xl" weight="semibold">
                   You have a new offer
                 </Typography>
                 <AnimatePresence onExitComplete={() => setOfferSectionVisible(false)}>
@@ -350,7 +350,7 @@ function Dashboard({
 
               <div className="flex w-full flex-col items-start gap-3">
                 <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="lg" weight="semibold" className="leading-6.5">
+                  <Typography size="xl" weight="semibold">
                     Current contracts
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
@@ -377,7 +377,7 @@ function Dashboard({
               <div className="flex w-full flex-col items-start gap-3">
                 {/* Figma: title + `sm` muted subtitle, 2px apart — same header as `NextStepsSection`. */}
                 <div className="flex w-full flex-col items-start gap-0.5">
-                  <Typography size="lg" weight="semibold" className="leading-6.5">
+                  <Typography size="xl" weight="semibold">
                     Open applications
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
@@ -418,7 +418,7 @@ function Dashboard({
               </div>
 
               <div className="flex w-full flex-col items-start gap-3">
-                <Typography size="lg" weight="semibold" className="leading-6.5">
+                <Typography size="xl" weight="semibold">
                   Most recent matches
                 </Typography>
                 <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">

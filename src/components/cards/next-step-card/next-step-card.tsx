@@ -26,7 +26,7 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * call-to-action button, on a dashed-border card. Figma: `next-step-card`
  * (`Property 1`: Default, Hover). Composes the existing `Badge` (default
  * `tone="neutral"`, default `size="sm"`), `Button` (`size="xs"`), and
- * `Typography` (`size="lg"`/`"sm"`) rather than reproducing their look inline.
+ * `Typography` (`size="base"`/`"sm"`) rather than reproducing their look inline.
  * `badgeTone` defaults to `"neutral"` (the original Figma component's only
  * observed tone) but is exposed since consuming layouts (e.g. the
  * Dashboard's four next-step cards) bind different per-card tones
@@ -240,8 +240,8 @@ function NextStepCard({
           )}
         </div>
         <div className="flex w-full flex-col items-start gap-1.5">
-          {/* Figma `base -bold` (16/24). */}
-          <Typography size="base" weight="bold" className="text-foreground">
+          {/* Figma `base -semibold` (16/24). */}
+          <Typography size="base" weight="semibold" className="text-foreground">
             {title}
           </Typography>
           <Typography size="sm" className="text-foreground-muted">

@@ -175,17 +175,16 @@ function ContractCard({
         {/* Figma `Content`: min 150px tall so single-line titles keep the card's rhythm; grows for multiline titles. */}
         <div className="flex min-h-[150px] w-full flex-col items-start gap-3">
           <div className="flex w-full flex-col items-start gap-1.5">
-            {/* Figma binds `line-height/xl` (28px) here, not Typography xl's 30px default. */}
             <Typography
               as="h3"
               size="xl"
               weight="bold"
-              className="line-clamp-2 leading-7 text-foreground"
+              className="line-clamp-2 text-foreground"
             >
               {title}
             </Typography>
             {/* Figma: `xl -medium`. */}
-            <Typography size="xl" weight="medium" className="leading-7 text-foreground">
+            <Typography size="xl" weight="medium" className="text-foreground">
               {compensation}
             </Typography>
           </div>

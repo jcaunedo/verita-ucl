@@ -93,7 +93,7 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
   return (
     <div className="flex w-full flex-col items-start gap-3">
       <div className="flex w-full flex-col items-start gap-0.5">
-        <Typography size="lg" weight="semibold" className="leading-6.5">
+        <Typography size="xl" weight="semibold">
           Next steps
         </Typography>
         <Typography size="sm" className="text-foreground-muted">

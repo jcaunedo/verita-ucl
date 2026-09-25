@@ -19,7 +19,7 @@ From `verita-ai/CLAUDE.md` and existing components.
 ## Reference: button + typography APIs (current)
 
 - **Button** sizes: `xs sm md(default) lg xl` + `icon-xs icon-sm icon icon-lg icon-xl`. Heights 24/28/32/36/40, radii 8/10/12/12/12. Variants: `default` (solid primary), `destructive` (light-red fill, default destructive), `destructiveSolid` (solid red, alt), `secondary` (flat neutral), `outline`, `ghost`, `link`. Has a `loading` prop (dependency-free spinner).
-- **Typography**: `size` (xs→7xl) × `weight` (regular/medium/semibold/bold/black), `as` for the element. Sizes ≤ lg → `font-sans`; xl+ → `font-display`; lg/xl carry `tracking-[0.01em]`.
+- **Typography**: `size` (xs→7xl) × `weight` (regular/medium/semibold/bold — no black, see DESIGN.md), `as` for the element. Sizes ≤ lg → `font-sans`; xl+ → `font-display`; lg/xl carry `tracking-[0.01em]`.
 
 ## Verify
 

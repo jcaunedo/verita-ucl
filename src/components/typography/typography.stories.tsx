@@ -24,7 +24,7 @@ const meta: Meta<typeof Typography> = {
     },
     weight: {
       control: "select",
-      options: ["regular", "medium", "semibold", "bold", "black"],
+      options: ["regular", "medium", "semibold", "bold"],
     },
     as: {
       control: "text",
@@ -103,7 +103,7 @@ export const AllVariants: Story = {
   ),
 };
 
-const WEIGHTS = ["regular", "medium", "semibold", "bold", "black"] as const;
+const WEIGHTS = ["regular", "medium", "semibold", "bold"] as const;
 
 export const Weights: Story = {
   render: () => (
