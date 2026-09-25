@@ -4,12 +4,13 @@ import { DotsHorizontal } from "@untitledui/icons";
 import { cn } from "@/lib/utils";
 import { clickableRowProps } from "@/lib/clickable-row";
 import { Button } from "@/components/buttons/button";
+import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import {
   AvatarCompanies,
   type AvatarCompaniesProps,
 } from "@/components/data-display/avatar-companies";
 import { Typography } from "@/components/typography";
-import { MenuContent, MenuTrigger } from "@/components/overlays/menu";
+import { MenuContent, MenuTrigger, countMenuItems } from "@/components/overlays/menu";
 
 /**
  * A single offer row — identity, engagement terms, expiration, and a
@@ -35,13 +36,19 @@ import { MenuContent, MenuTrigger } from "@/components/overlays/menu";
  * dissolves in. While the menu is open, the trigger stays revealed and the
  * row keeps its hover tint.
  *
- * `expirationDate` renders in `text-destructive` with the repo's standard
- * Inter font. Figma's `expiration-date` label binds to a raw, unbound hex
- * (`#d64242`, matching no existing token exactly — nearest is
- * `destructive-400`/`#c63333`) and a `Google Sans Flex` font-family that
- * doesn't exist anywhere else in this design system (only Inter is
- * configured) — treated as unintentional drift in the Figma file rather
- * than a deliberate new token/typeface.
+ * `expirationDate` renders in `text-destructive` (or `text-foreground-muted`
+ * via `expirationTone` when the deadline is more than 5 days out), in Inter like Figma's
+ * `sm` text style. Figma's `expiration-date` label still uses a raw,
+ * unbound hex (`#d64242`, matching no existing token exactly — nearest is
+ * `destructive-400`/`#c63333`), treated as drift in the Figma file rather
+ * than a new token.
+ *
+ * A closed offer (`engagements.md` §4.1) shows its outcome the way a closed
+ * application does: `statusLabel` renders the same `Badge` as
+ * `ApplicationCard`, with `supportingText` before it in the same muted
+ * style (e.g. "Declined by you on Sep 25"). Closed rows also drop the
+ * expiration date and pass `showCta={false}`, since there's nothing left to
+ * act on. No Figma design exists for this state yet.
  */
 interface OfferCardProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
@@ -63,17 +70,31 @@ interface OfferCardProps
   partnerName: string;
   /** Discipline/domain label (Figma's optional `Discipline` text). Omit when not applicable. */
   discipline?: string;
-  /** Offer expiration display string, already formatted, e.g. "Expires in 3 days" (Figma's `expiration-date`). Rendered in the destructive tone as a time-sensitive warning. Omit when the offer has no expiration. */
+  /** Offer expiration display string, already formatted, e.g. "Expires in 3 days" (Figma's `expiration-date`). Omit when the offer has no expiration. */
   expirationDate?: string;
+  /**
+   * `"destructive"` (default) while the offer expires in 5 days or fewer, `"muted"` (the supporting-text color) before
+   * that (`offer-card.md` §2.3). The copy changes with it ("Expires in 3 days" vs "Expires on Oct 9"), so color is
+   * never the only signal.
+   */
+  expirationTone?: "muted" | "destructive";
+  /** Offer status label, e.g. "Declined" (`engagements.md` §4.1). Renders the same status `Badge` as `ApplicationCard`. Omit for an open offer awaiting a response, which Figma shows without a badge. */
+  statusLabel?: string;
+  /** Tone for the status badge. Defaults to `"neutral"`. */
+  statusTone?: BadgeProps["tone"];
+  /** One muted line before the badge with the outcome's details, e.g. "Declined by you on Sep 25". Omit entirely rather than passing an empty string. */
+  supportingText?: string;
+  /** Whether to render the "View offer" CTA. Defaults to `true`; closed offers pass `false`. */
+  showCta?: boolean;
   /** Label for the "View offer" CTA (Figma's `button` instance). Defaults to "View offer" to match Figma. */
   ctaLabel?: string;
   /** Called when the "View offer" CTA is activated. */
   onCtaPress?: () => void;
   /** Accessible label for the hover-revealed actions-menu (`···`) trigger. Required whenever `actionsMenu` is set. */
   actionsMenuLabel?: string;
-  /** The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View details, Decline). Omit to hide the `···` trigger entirely. Same contract as `ApplicationCard`'s `actionsMenu`. */
+  /** The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View details, Decline). The `···` trigger only shows with 2 or more items: omit it, or pass a single item, and there is no trigger (DESIGN.md "Hide a `···` menu with only one item"). Same contract as `ApplicationCard`'s `actionsMenu`. */
   actionsMenu?: React.ReactNode;
-  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
+  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. Omit `onClick` (and `actionsMenu`) for a row that opens nothing: it then has no hover tint either. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
@@ -90,6 +111,11 @@ function OfferCard({
   partnerName,
   discipline,
   expirationDate,
+  expirationTone = "destructive",
+  statusLabel,
+  statusTone = "neutral",
+  supportingText,
+  showCta = true,
   ctaLabel = "View offer",
   onCtaPress,
   actionsMenuLabel,
@@ -98,6 +124,8 @@ function OfferCard({
   className,
   ...props
 }: OfferCardProps) {
+  // A menu with one item isn't worth a trigger: that one action is the row's own click or already on screen.
+  const showActionsMenu = countMenuItems(actionsMenu) > 1;
   // Same terms treatment as `ApplicationCard`: compensation semibold, engagement terms and duration regular.
   const termsParts = [
     { value: compensation, className: "font-semibold" },
@@ -110,14 +138,18 @@ function OfferCard({
       data-slot="offer-card"
       className={cn(
         "group flex w-full items-center gap-10 py-4 pr-6 pl-5 transition-colors duration-150 ease-out",
-        "hover:bg-hover-row has-[[aria-expanded=true]]:bg-hover-row",
+        // Hover tint only when the row does something: a row with no click target and no menu (e.g. an expired offer
+        // with no detail to open) stays flat, so it doesn't look clickable.
+        (rowProps?.onClick || showActionsMenu) && "hover:bg-hover-row has-[[aria-expanded=true]]:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
       {...clickableRowProps(rowProps)}
       {...props}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-5">
+      {/* Same zone split as `ApplicationCard` (and Figma's `flex-1` zones): 50/50 by default. With supporting text,
+          the left keeps its natural width and the text takes the rest of the right zone. */}
+      <div className={cn("flex min-w-0 items-center gap-5", supportingText ? "flex-initial" : "flex-1")}>
         <AvatarCompanies company={company} logoSrc={logoSrc} logoAlt={logoAlt} />
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
           <div className="flex w-full flex-col items-start gap-0.5">
@@ -157,8 +189,8 @@ function OfferCard({
           </div>
         </div>
       </div>
-      {/* Right zone hugs its content so the identity block (title) fills the rest of the row — not Figma's 50/50 `flex-1` split, which wrapped titles at the midpoint. */}
-      <div className="flex shrink-0 items-center justify-end gap-4">
+      {/* Figma `Right Container`: content right-aligned, sharing the row with the left zone. */}
+      <div className="flex min-w-px flex-1 items-center justify-end gap-4">
         {discipline && (
           <Typography
             size="base"
@@ -170,16 +202,32 @@ function OfferCard({
         {expirationDate && (
           <Typography
             size="sm"
-            className="whitespace-nowrap text-destructive"
+            className={cn(
+              "whitespace-nowrap",
+              expirationTone === "destructive" ? "text-destructive" : "text-foreground-muted",
+            )}
           >
             {expirationDate}
           </Typography>
         )}
+        {supportingText && (
+          // Same as `ApplicationCard`'s right-side supporting text: fills the space before the badge, up to 2 lines.
+          <Typography size="sm" className="line-clamp-2 min-w-px flex-1 text-right text-foreground-muted">
+            {supportingText}
+          </Typography>
+        )}
+        {/* Badge, CTA, and `···` slot share one gapless wrapper (the slot's width carries its own 16px gap), so a row
+            without the CTA ends flush with the slot, like `ApplicationCard`. */}
         <div className="flex shrink-0 items-center">
-          <Button size="sm" onPress={onCtaPress}>
-            {ctaLabel}
-          </Button>
-          {actionsMenu && (
+          {statusLabel && <Badge tone={statusTone} label={statusLabel} size="md" />}
+          {showCta && (
+            <span className={cn("flex", statusLabel && "ml-4")}>
+              <Button size="sm" onPress={onCtaPress}>
+                {ctaLabel}
+              </Button>
+            </span>
+          )}
+          {showActionsMenu && (
             // Same hover/focus-within reveal as `ApplicationCard`'s `···` slot: grows 0 → 48px (Figma's 16px gap + 32px button), pushing the CTA and expiration date left, while the trigger dissolves in.
             // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out`); exit is shorter per CLAUDE.md "Dismiss". Kept mounted (clipped) so it stays keyboard-reachable.
             // The reveal lives on the slot so the Button keeps its own look + hover transition; `py-1 pr-1` (cancelled by `-my-1 -mr-1`, hence 52px) keeps its focus ring inside the clip.

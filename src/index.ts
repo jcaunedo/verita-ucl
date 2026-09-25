@@ -83,6 +83,8 @@ export {
   type SelectItemProps,
 } from "./components/forms/select";
 
+export { SearchField, type SearchFieldProps } from "./components/forms/search-field";
+
 /* -------------------------------------------------------------------------- */
 /* Data display                                                               */
 /* -------------------------------------------------------------------------- */
@@ -172,6 +174,7 @@ export {
   MenuItem,
   MenuSeparator,
   menuItemVariants,
+  countMenuItems,
   type MenuContentProps,
   type MenuItemProps,
 } from "./components/overlays/menu";

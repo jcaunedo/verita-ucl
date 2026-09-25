@@ -315,3 +315,145 @@ still ships `-black` text styles for every size (and some are mis-set, e.g.
 `xs -black` is Regular), so a Figma resync would otherwise re-add the
 variant. Skip `-black` styles when syncing; if a design binds one, flag it
 rather than mapping it to `font-black`.
+
+## Primary CTAs follow the next action, not clickability (`src/components/cards/`)
+
+**Rule:** a card gets a persistent primary button only when the professional
+owns the next action and that action is a meaningful step toward secured
+work. `OfferCard` ("View offer"), `ContractCard` ("Open work"), and
+`MatchCard` (its recommended action) have one. `ApplicationCard` has none:
+the whole row opens the detail, and an action the professional owes shows
+through its status and supporting text instead.
+
+**Why:** every row is clickable, so "it can be opened" is not a reason for a
+button (decided 2026-09-25). A button on every application would compete
+with the few rows that really need the professional, and dilute the Offer's
+"View offer", the step closest to securing work.
+
+**How to apply:**
+
+- Don't add a CTA to `ApplicationCard` because a design shows one, or to
+  make the row "more clickable". Flag it instead. Rationale:
+  `product-specs/offer-card.md` §4.1.
+- Remove the CTA when the action goes away: a closed offer passes
+  `showCta={false}`, and a paused contract suppresses its primary action.
+
+## Lists of rows are one table list (`src/components/cards/`, `src/layouts/`)
+
+**Rule:** row cards (`ApplicationCard`, `MatchCard`, `OfferCard`, and any
+future row-shaped card) are always listed inside one bordered container,
+with a divider between rows. They are never stacked as separate bordered
+cards with gaps between them. This holds on every surface (Home modules,
+Engagements views) and for any number of rows. A single row uses the same
+container, so it looks the same as a standalone card.
+
+**Why:** design direction (2026-09-25): a list of offers read differently
+from the Applications and Matches lists next to it. One list pattern keeps
+every row family consistent as items move between views and modules.
+
+**Known-good shape:**
+
+- Container: `flex w-full flex-col items-start overflow-hidden rounded-card
+  border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]`.
+- Each row: `border-b border-border last:border-b-0`, on the row itself or
+  on its motion wrapper when rows animate. The row card carries no border,
+  radius, or shadow of its own.
+- Removing a row in place (e.g. Decline): while other rows remain, the row
+  leaves with `rowDismissVariants` (fade + height collapse, wrapper
+  `overflow-hidden`). When it's the last row, the whole container leaves
+  with `cardDismissVariants` instead, so an empty bordered box never shows.
+  If an empty state replaces the list, it fades in after that exit
+  (`AnimatePresence mode="wait"`).
+- Grid cards are not rows: `ContractCard`, `NextStepCard`, and `CalloutCard`
+  keep their own card treatment in a grid.
+
+## Hide a `···` menu with only one item (`src/components/cards/`, `src/components/overlays/menu/`)
+
+**Rule:** a row's `···` actions menu only shows when it holds 2 or more
+items. With one item (or none), the trigger doesn't render at all. That one
+action is either the row's own click (e.g. View details, when the whole row
+already opens the detail) or belongs on the row itself.
+
+**Why:** design direction (2026-09-25): a menu that opens to a single item
+is an extra click that hides an action instead of offering a choice.
+
+**How to apply:**
+
+- `ApplicationCard` and `OfferCard` enforce it: they count `actionsMenu`
+  with `countMenuItems` (from `@/components/overlays/menu`) and skip the
+  trigger below 2 items. Keep passing the full, status-gated menu from the
+  layout; don't add your own "only one item" branch.
+- `countMenuItems` looks inside fragments, skips `false`/`null` from
+  conditional items, and doesn't count `MenuSeparator`s.
+- Any new card or row with a `···` menu must apply the same check. A
+  consumer-owned menu opened through `onActionsPress` can't be counted, so
+  that consumer applies the rule itself.
+- `OfferCard` also drops its hover tint when a row has no click target and
+  no menu, so a row that does nothing doesn't look clickable.
+
+## Show section headings only when two sections have rows (`src/layouts/`)
+
+**Rule:** a list split into labeled sections (e.g. `Action needed` /
+`Last 15 days` / `Older`) shows its section headings only when at least two
+sections have rows. With one section, the list renders on its own, with no
+heading. Sections with no rows are always hidden. This applies to
+Engagements → Applications (`Open`, `Not moving forward`), Engagements →
+Offers → `Closed`, and any future list with the same layout.
+
+**Why:** design direction (2026-09-25): a single heading above the only
+list tells the professional nothing. It just pushes the list down. Grouping
+only helps when there is something to tell apart.
+
+**How to apply:**
+
+- Render sectioned lists through `GroupedList` (in
+  `src/layouts/engagements/engagements.tsx`). It takes every section with its
+  rows and a `renderList` function, skips empty sections, and drops the
+  headings when only one is left. Don't hand-roll the section loop.
+- Section headings use `ListSection`: `sm` muted text, 8px above its list,
+  32px between sections.
+- Each section's list follows "Lists of rows are one table list".
+
+## Hide search and filters when a view is empty (`src/layouts/`)
+
+**Rule:** when a view has nothing under any of its filters (e.g.
+Engagements → Talent Network with no memberships), it shows only the empty
+state of its default filter: no search button and no filter row. The search
+and filters come back as soon as any filter has an item.
+
+**Why:** design direction (2026-09-25): search and filters over nothing are
+controls with nothing to act on. They push the empty state down and suggest
+there is content to narrow.
+
+**How to apply:**
+
+- Check the view's total across all filters, not the selected filter's.
+  A view where only one filter is empty (e.g. `Closed` with no offers yet)
+  keeps its search and filters, and that filter shows its own empty state.
+- Show the default filter's empty state copy (e.g. Talent Network →
+  `Active`), including its CTA.
+- Engagements applies it to every filtered view: Applications, Offers,
+  Contracts, and Talent Network. Assessments has no filters.
+
+## Expanding search animates `width`, not `layout` (`src/components/forms/search-field/`)
+
+**Rule:** `SearchField`'s expand/collapse animates the pill's `width`
+directly with Motion (44px ↔ 240px), with `overflow-hidden` and
+`rounded-full` on the same element. Don't switch it to a `layout`
+animation.
+
+**Why:** design direction (2026-09-25): the corners must stay fully round
+while it expands and collapses. A `layout` size animation scales the
+element with a transform, which squashes the radius and the border mid-way.
+This is a documented exception to the Motion System's "prefer `layout`".
+
+**Known-good shape:**
+
+- Expand uses `standardTransition`, collapse the shorter `exitTransition`,
+  both through `useMotionPreference().resolve` (instant under reduced
+  motion).
+- The 2px focused border is `border` + `inset-ring-1` in `input-ring`, so
+  the icon and text never shift when focus arrives.
+- Collapsed, an invisible React Aria `Button` covers the pill as the
+  trigger, and the input sits in an `inert` wrapper so it can't be tabbed
+  to. It collapses on blur only when empty.

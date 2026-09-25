@@ -17,31 +17,36 @@ const DECLINED_OFFERS_KEY = `${STORAGE_PREFIX}declined-offers`;
 const WITHDRAWN_APPLICATIONS_KEY = `${STORAGE_PREFIX}withdrawn-applications`;
 const SIDEBAR_COLLAPSED_KEY = `${STORAGE_PREFIX}sidebar-collapsed`;
 
-function readDeclinedOffers(): Set<string> {
+/** Declined offers, as offer key → ISO date it was declined. */
+type DeclinedOffers = Record<string, string>;
+
+function readDeclinedOffers(): DeclinedOffers {
   try {
     const raw = window.sessionStorage.getItem(DECLINED_OFFERS_KEY);
-    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+    const parsed = raw ? (JSON.parse(raw) as DeclinedOffers | string[]) : {};
+    // Tabs from before declines were dated stored a plain key list: date those declines today.
+    if (Array.isArray(parsed)) {
+      const today = new Date().toISOString();
+      return Object.fromEntries(parsed.map((key) => [key, today]));
+    }
+    return parsed;
   } catch {
-    return new Set();
+    return {};
   }
 }
 
-function writeDeclinedOffers(keys: Set<string>) {
-  try {
-    window.sessionStorage.setItem(DECLINED_OFFERS_KEY, JSON.stringify([...keys]));
-  } catch {
-    // Storage unavailable: the decline still applies on this page, it just won't carry over.
-  }
-}
-
-/** Offers the professional declined in this tab, plus `decline` to add one. */
+/** Offers the professional declined in this tab, plus `decline` to add one (dated today). */
 function useDeclinedOffers() {
   const [declined, setDeclined] = React.useState(readDeclinedOffers);
 
   const decline = React.useCallback((key: string) => {
     setDeclined((current) => {
-      const next = new Set(current).add(key);
-      writeDeclinedOffers(next);
+      const next = { ...current, [key]: new Date().toISOString() };
+      try {
+        window.sessionStorage.setItem(DECLINED_OFFERS_KEY, JSON.stringify(next));
+      } catch {
+        // Storage unavailable: the decline still applies on this page, it just won't carry over.
+      }
       return next;
     });
   }, []);
@@ -51,9 +56,21 @@ function useDeclinedOffers() {
 
 type DemoOffer = (typeof DEMO_OFFERS)[number];
 
-/** `offers` with every declined one moved to the `Declined` filter (`engagements.md` §4.1). */
-function applyDeclinedOffers<T extends DemoOffer>(offers: readonly T[], declined: Set<string>): T[] {
-  return offers.map((offer) => (declined.has(offer.key) ? { ...offer, filter: "declined" } : offer));
+const formatShortDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+/**
+ * `offers` with every declined one moved to `Closed` (`engagements.md` §4.1), stamped with when it was declined.
+ * `closedOfferOutcome` turns that into the row's badge and supporting text ("Declined by you on {date}").
+ * Declined rows come first, most recent first.
+ */
+function applyDeclinedOffers<T extends DemoOffer>(offers: readonly T[], declined: DeclinedOffers): T[] {
+  const updated = offers.map((offer) => {
+    const declinedAt = declined[offer.key];
+    return declinedAt ? { ...offer, filter: "closed" as const, declinedAt } : offer;
+  });
+  const declinedAtOf = (offer: T) => declined[offer.key] ?? "";
+  return [...updated].sort((a, b) => declinedAtOf(b).localeCompare(declinedAtOf(a)));
 }
 
 /** Withdrawn applications, as application key → ISO date it was withdrawn. */
@@ -100,8 +117,6 @@ function applyWithdrawnApplications<T extends DemoApplication>(
   applications: readonly T[],
   withdrawn: WithdrawnApplications,
 ): T[] {
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const updated = applications.map((application) => {
     const withdrawnAt = withdrawn[application.key];
     if (!withdrawnAt) return application;
@@ -110,7 +125,9 @@ function applyWithdrawnApplications<T extends DemoApplication>(
       filter: "not-moving-forward" as const,
       statusLabel: "Withdrawn",
       statusTone: "neutral" as const,
-      supportingText: `Withdrawn by you on ${formatDate(withdrawnAt)}`,
+      supportingText: `Withdrawn by you on ${formatShortDate(withdrawnAt)}`,
+      // Withdrawing is the application's last meaningful update: places it in `Not moving forward`'s recency sections.
+      lastActivityAt: withdrawnAt,
     };
   });
   const withdrawnAtOf = (application: T) => withdrawn[application.key] ?? "";
@@ -166,7 +183,21 @@ function restartPrototype() {
   window.location.assign(PROTOTYPE_START_HREF);
 }
 
+/**
+ * Opens `href` with every declined offer restored, so a scenario page that's about its offers (the "2 offers"
+ * Dashboard) always starts with all of them. Other demo state (withdrawn applications, sidebar) is kept.
+ */
+function openWithOffersRestored(href: string) {
+  try {
+    window.sessionStorage.removeItem(DECLINED_OFFERS_KEY);
+  } catch {
+    // Storage unavailable: no decline was persisted, so every offer already shows.
+  }
+  window.location.assign(href);
+}
+
 export {
+  openWithOffersRestored,
   useDeclinedOffers,
   applyDeclinedOffers,
   useWithdrawnApplications,

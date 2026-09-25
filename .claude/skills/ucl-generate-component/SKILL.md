@@ -28,6 +28,7 @@ Both workflows are deliberate about two things the user cares about:
 
 ## Prerequisites (both workflows)
 
+- **Read [DESIGN.md](../../../DESIGN.md) in full first** (mandatory). Some rules shape the component itself (e.g. no `···` menu with a single item, primary CTAs only for high-value actions, row vs. card hover, no `black` weight). Follow them even where the Figma design differs, and flag the difference.
 - **Load the `figma-use` skill before any `use_figma` call** (mandatory).
 - Batch-load the Figma MCP tool schemas in one `ToolSearch`:
   `select:get_metadata,get_design_context,get_variable_defs,use_figma`
@@ -152,6 +153,8 @@ Compare the freshly pulled Figma values against the existing `cva` definition an
 - Follow the same "Always verify" steps as Workflow A (lint, build) and check the component's Storybook stories (and any layout that renders it) to confirm the drift is resolved.
 
 ## Always verify
+
+- Every [DESIGN.md](../../../DESIGN.md) rule that applies to the component holds (actions menus, CTAs, hover treatments, typography weights).
 
 From `verita-ai/`:
 

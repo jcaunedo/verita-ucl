@@ -98,6 +98,8 @@
 	--color-border: var(--border);
 	--color-border-soft: var(--border-soft);
 	--color-input: var(--input);
+	/* Figma: input/ring — a focused input's 2px border (e.g. `SearchField`). */
+	--color-input-ring: var(--input-ring);
 	--color-ring: var(--ring);
 
 	/* ---------- Extended semantic colors ---------- */
@@ -115,6 +117,8 @@
 	--shadow-popover: 0px 12px 20px 0px rgba(8, 13, 20, 0.12);
 	/* Figma: shadow/hover-card — the lifted look of a hovered standalone card (callout, next step, contract). */
 	--shadow-hover-card: 0px 4px 12px 0px rgba(8, 13, 20, 0.06);
+	/* Figma: shadow/Input — text inputs at rest (e.g. `SearchField`). */
+	--shadow-input: 0px 1px 4px 0px rgba(0, 0, 0, 0.04);
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);

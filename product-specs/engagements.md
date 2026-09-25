@@ -34,7 +34,7 @@ Listed below in tab order (see the resolved note below the table): `Applications
 | View            | Meaning                                                                                                                                                                                                                                                                                                                                                                        |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Applications    | Specific opportunities the user has pursued. Applications still in the application process, plus applications that ended without an offer, with their current stage. Once an application produces an offer it leaves this view, and the Offer takes over under `Offers`. User-facing labels: `Applied`, `Action required`, `Interview scheduled`, `In review`, `On hold`, `Not selected`, `Withdrawn`, or `Closed` (backed by the system status enum, §8 — `Closed` is a proposed addition, not yet backed by a system status; see §8). There is no draft or unsubmitted state: applying submits the application immediately (§3). Not selected, withdrawn, and closed applications remain visible here rather than being removed from the user's history, grouped under the `Not moving forward` filter (§3.1). |
-| Offers          | Proposals the user has received. Offers awaiting a response, and accepted offers until contracting completes and the Contract takes over under `Contracts`. Declined offers stay here under the `Declined` filter as the Offers history (§4.1).                                                                                                                                                                                                                                                              |
+| Offers          | Proposals the user has received. Offers awaiting a response, and accepted offers until contracting completes and the Contract takes over under `Contracts`. Offers that ended without a contract (declined, expired, or withdrawn) stay here under the `Closed` filter as the Offers history (§4.1).                                                                                                                                                                                                                                                              |
 | Contracts       | Work agreements. The opportunity has reached the contractual stage, including upcoming, active, paused, completed, or terminated work. `Completed` contracts are the history of work the professional secured, the same way `Not moving forward` is the history of applications that ended without an offer (where terminated contracts go is still open, §5.2).                                                                                                                                                                                                                                                                |
 | Assessments     | Qualification activities. Tests, AI interviews, screening exercises, or other qualification activities used to establish expertise or qualify the user for specific opportunities — whether general (not tied to a role) or opportunity-specific.                                                                                                                                                        |
 | Talent Network  | Pools the user joined for future consideration. Membership in one or more Talent Network-type Opportunities ([dashboard.md §11.1](dashboard.md#111-opportunity-types)) — no active project or application, just standing eligibility for Verita or a partner to match or invite the user when relevant work becomes available.                                                                                                                                                        |
@@ -60,7 +60,7 @@ Object model this supports:
 >
 > Each view answers one question. `Applications`: where did my candidacy end up? `Offers`: what proposal do I need to review or manage? `Contracts`: what work have I secured? Accepting an offer doesn't create a Contract by itself: the Offer stays the active object until contracting completes. This also means one real-world event never shows up as two actionable items in two views.
 >
-> Each view keeps its own history under a filter: `Not moving forward` in `Applications`, `Declined` in `Offers` (§4.1), and `Completed` in `Contracts` (§5.2).
+> Each view keeps its own history under a filter: `Not moving forward` in `Applications`, `Closed` in `Offers` (§4.1), and `Completed` in `Contracts` (§5.2).
 >
 > ⚠️ **Decision needed:** whether the Offer and Contract detail link back to the original application so the candidacy record is still reachable.
 >
@@ -140,7 +140,7 @@ The resulting model:
 - `Opportunity → Apply → Open → Offers → Contracts`
 - `Open → Not moving forward` (`Not selected`, `Withdrawn`, or `Closed`)
 
-✅ **Resolved (2026-09-24) — `Moving forward` removed; `Open` covers every active application:** Engagements is a live tracking view of what the professional is pursuing, not an archive. For `Applications`, what matters is seeing every active application, its status, and any action required on it, in one list. A separate `Moving forward` filter split that list in two without telling the professional anything the row's status label doesn't already say. An application that advances doesn't need a filter of its own: once it produces an offer, the professional tracks it under `Offers`, and once the offer is accepted and contracting completes, under `Contracts`. History stays with the object the item ended as: `Not moving forward` for applications, `Declined` for offers (§4.1), and `Completed` for contracts (§5.2). This supersedes the three-filter model (`Open`, `Moving forward`, `Not moving forward`) from 2026-09-23.
+✅ **Resolved (2026-09-24) — `Moving forward` removed; `Open` covers every active application:** Engagements is a live tracking view of what the professional is pursuing, not an archive. For `Applications`, what matters is seeing every active application, its status, and any action required on it, in one list. A separate `Moving forward` filter split that list in two without telling the professional anything the row's status label doesn't already say. An application that advances doesn't need a filter of its own: once it produces an offer, the professional tracks it under `Offers`, and once the offer is accepted and contracting completes, under `Contracts`. History stays with the object the item ended as: `Not moving forward` for applications, `Closed` for offers (§4.1), and `Completed` for contracts (§5.2). This supersedes the three-filter model (`Open`, `Moving forward`, `Not moving forward`) from 2026-09-23.
 
 ✅ **Resolved (2026-09-23) — `Not moving forward` is the umbrella, `Closed` is one reason:** `Closed` is not used as the top-level filter name. As the umbrella, it would blur three different outcomes into one; as a concrete reason, it stays clearly distinct from `Not selected`. `Closed` is defined around the **opportunity**, not the applicant ("the opportunity closed before the application advanced"), while `Not selected` is a decision about the applicant. This extends the existing model, where `Not selected` and `Withdrawn` were already separate outcomes (§2, §8), rather than contradicting it.
 
@@ -157,7 +157,7 @@ Proposed status → filter mapping (labels per §8):
 
 **Counts:**
 
-- **Filter counters:** `Open` shows no counter, because its count is already the `Applications` view-tab count (below) and repeating it on the filter is redundant. `Not moving forward` shows no counter either (design direction, 2026-09-24). So no `Applications` filter shows a counter; `Offers` and `Contracts` keep theirs on `Declined` and `Completed`. A filter with zero applications stays visible and selectable; only its counter is hidden, never shown as "0".
+- **Filter counters:** `Open` shows no counter, because its count is already the `Applications` view-tab count (below) and repeating it on the filter is redundant. `Not moving forward` shows no counter either (design direction, 2026-09-24). So no `Applications` filter shows a counter; `Offers` and `Contracts` keep theirs on `Closed` and `Completed`. A filter with zero applications stays visible and selectable; only its counter is hidden, never shown as "0".
 - **Applications total:** the count on the `Applications` view tab is the number of active applications, which is the `Open` count. Applications under `Not moving forward` are not included, but they stay visible under that filter. Offers aren't counted here either: an application that produced an offer has left this view, so each pending offer is counted once, on the `Offers` tab.
 
 ✅ **Resolved (2026-09-24) — no counter on `Open`:** the `Open` count and the view-tab count are the same number, shown a few pixels apart. The view tab keeps it; the `Open` filter drops it. The same rule applies to `Offers` (§4.1), whose view-tab count is also `Open` only, and to `Contracts`' `Current` filter (§5.2).
@@ -174,21 +174,23 @@ Proposed status → filter mapping (labels per §8):
 
 "Most recent update" is the application's last meaningful update (§9). Remaining ties break by most recently applied, then by application ID, so the list never reorders between visits without a status change ([dashboard.md §4](dashboard.md#4-dashboard-priority-engine)'s deterministic tie-breaking rule). A row moves when its status changes: once the professional completes a required action, the row drops to the rank of its new status.
 
-**Sections (`Open`):** `Open` is split into three labeled sections, listed top to bottom. Each section is its own list. A section with no applications is hidden. The default sort above applies within each section.
+**Sections (`Open`):** `Open` is split into three labeled sections, listed top to bottom. Each section is its own list. A section with no applications is hidden, and the headings only show when at least two sections have applications: with one, the list shows on its own, with no heading. The default sort above applies within each section.
 
 | Section          | What it holds                                                                                                                                  |
 | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Need action**  | Every open application where the professional owns the next action (§3, §9), however old it is: complete an assessment, schedule an interview, finish an application step, provide requested information, or respond to another required step. In status terms: `Action required` and `Interview · Action required`. |
+| **Action needed**  | Every open application where the professional owns the next action (§3, §9), however old it is: complete an assessment, schedule an interview, finish an application step, provide requested information, or respond to another required step. In status terms: `Action required` and `Interview · Action required`. |
 | **Last 15 days** | Every other open application whose last meaningful update (§9) was 15 days ago or less. This is the main monitoring area: `Applied`, `Interview scheduled`, `In review`, `On hold`. |
 | **Older**        | Open applications whose last meaningful update was more than 15 days ago. They stay visible because they're still open, but lower in the page. |
 
-`Need action` overrides recency. An application that has been waiting on the professional for 22 days belongs in `Need action`, not `Older`. Once the professional completes the action, the next-action owner changes and the row moves to `Last 15 days`, because completing the action is itself a meaningful update.
+`Action needed` overrides recency. An application that has been waiting on the professional for 22 days belongs in `Action needed`, not `Older`. Once the professional completes the action, the next-action owner changes and the row moves to `Last 15 days`, because completing the action is itself a meaningful update.
 
-`Not moving forward` has no sections. It is the history of applications that ended, so a single list is enough.
+**Sections (`Not moving forward`):** the history list is split into `Last 15 days` and `Older` by when each application ended (its last meaningful update, §9: the withdrawal, rejection, or closure), most recent first. There is no `Action needed`, because nothing here needs the professional. This matches `Offers` → `Closed` (§4.1).
+
+✅ **Resolved (2026-09-25) — section headings only show when two sections have rows:** for every sectioned list in Engagements (`Open` and `Not moving forward` here, `Closed` in §4.1), a single heading above the only list adds nothing, so the list shows on its own until there is something to tell apart. See [DESIGN.md](../DESIGN.md) "Show section headings only when two sections have rows". This supersedes the earlier rule that `Not moving forward` has no sections.
 
 ✅ **Resolved (2026-09-25) — `Open` sections instead of more status filters:** Engagements is an operational tracking surface, not a chronological archive. Status filters answer "where does this application stand?", and each row's status label already answers that. Sections answer a different question: "what deserves my attention first?". The result:
 
-- `Open` → `Need action` → `Last 15 days` → `Older`: the working queue.
+- `Open` → `Action needed` → `Last 15 days` → `Older`: the working queue.
 - `Not moving forward`: the application history.
 
 This adds no new filters. It maps to data the application already carries: the next-action owner (professional, Verita, or partner, §3 and [`applications-card.md` §2.2](applications-card.md#22-next-action-owner)) and the last meaningful update (§9). Figma: Verita → `Engagements` (`node-id=5672-4301`).
@@ -197,13 +199,27 @@ This adds no new filters. It maps to data the application already carries: the n
 
 ⚠️ **Decision needed:** which events count as a "last meaningful update" for placing a row in `Last 15 days` or `Older`: status changes only, or also partner messages, document requests, and interview reschedules. A professional viewing the application should not count.
 
-⚠️ **Dependency:** `Need action` depends on the next-action owner, which §3 currently models as professional-only for the row summary. The section needs the system to tell "waiting on you" apart from "waiting on Verita or the partner" for every open application, even if the row never shows the owner label.
+✅ **Copy fix (2026-09-25):** the first section's title is "Action needed", replacing "Need action", on every page with this grouping.
+
+⚠️ **Dependency:** `Action needed` depends on the next-action owner, which §3 currently models as professional-only for the row summary. The section needs the system to tell "waiting on you" apart from "waiting on Verita or the partner" for every open application, even if the row never shows the owner label.
 
 ⚠️ **Decision needed:** the default sort for `Not moving forward`, likely most recent outcome first, and whether the professional can change the sort in either filter.
 
 **Search:** a search button sits before the filters. Collapsed, it is an icon-only button. Clicking it expands it in place into a search input. Search narrows the rows shown, alongside the selected filter.
 
-⚠️ **Decision needed:** which fields search matches (e.g. opportunity title, partner name) and whether it searches only the selected filter or all applications. The same applies to what happens to the input when the professional switches filters or clears it.
+✅ **Resolved (2026-09-25) — search behavior:** Figma: verita.ds `Input` states Default (`node-id=6035-1175`), Focus (`6035-1166`), and Dirty (`6036-1189`), built as the UCL `SearchField` component.
+
+- **Expanding:** the 44px search button widens to a 240px input on press, with a short, subtle motion. The fully rounded corners stay round throughout. The input takes focus and shows a 2px darker border while focused.
+- **Clearing:** a clear (×) icon appears on the right as soon as there is text. Pressing it, or Escape, clears the query and keeps the input open.
+- **Collapsing:** clicking or tabbing outside collapses it only when it's empty; a query stays visible. A second Escape on an empty input also collapses it and returns focus to the search button.
+- **Matching:** the query matches the opportunity title or the partner name, case-insensitively, within the selected filter. Each view (`Applications`, `Offers`, `Contracts`, `Talent Network`) keeps its own query, and it stays as the professional switches filters in that view. Filter and view-tab counts stay unfiltered.
+- **No results:** a filter with items but no matches shows "No results for “{query}”" / "Try a different search term." (draft copy). Sections (§3.1 "Sections") group the matching rows and follow the same two-section heading rule.
+
+**Empty view:** when a view has nothing under any of its filters, it shows only the default filter's empty state (including its CTA), with no search button and no filter row. They come back as soon as any filter has an item. A view where only one filter is empty keeps its search and filters. This applies to every filtered Engagements view (`Applications`, `Offers`, `Contracts`, `Talent Network`).
+
+✅ **Resolved (2026-09-25) — no search or filters over an empty view:** controls with nothing to act on push the empty state down and suggest there is content to narrow. See [DESIGN.md](../DESIGN.md) "Hide search and filters when a view is empty".
+
+⚠️ **Decision needed:** whether search should match more than the title and partner name (e.g. status or supporting text), and whether filter counts should reflect the search while a query is active.
 
 Every application starts in `Open`: applying submits immediately, so there is no draft state that sits outside the two filters.
 
@@ -242,7 +258,7 @@ The professional can then:
 
 Once accepted, the offer typically moves into Contract or contract preparation.
 
-Where it lives: an Offer appears under `Offers` from the moment it's issued, when the application leaves `Applications` (§2). It stays there through acceptance and contracting, and moves to `Contracts` once contracting completes. The view's filters are in §4.1.
+Where it lives: an Offer appears under `Offers` from the moment it's issued, when the application leaves `Applications` (§2). It stays there through acceptance and contracting, and moves to `Contracts` once contracting completes. The view's filters are in §4.1. The card that shows an Offer, on Home and in this view, is specified in [`offer-card.md`](offer-card.md).
 
 > ℹ️ Depending on Verita's operating model, the offer may technically come from Verita on behalf of the client rather than directly from the company — hence the generic definition above rather than one naming a specific issuing party.
 >
@@ -268,20 +284,46 @@ An offer must become a distinct, high-priority state rather than being buried in
 
 The `Offers` view uses the same search button and filter row as `Applications` (§3.1) and `Contracts` (§5.2), with two filters:
 
-| Filter       | Meaning                                                                              |
-| ------------ | ------------------------------------------------------------------------------------ |
-| **Open**     | Offers awaiting the professional's response, and accepted offers still in contracting. |
-| **Declined** | Offers the professional declined.                                                    |
+| Filter     | Meaning                                                                                                          |
+| ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Open**   | Offers awaiting the professional's response, and accepted offers whose Contract doesn't exist yet.               |
+| **Closed** | Offers that ended without becoming a Contract, for any reason. Each row shows the specific outcome (below).     |
+
+Like `Not moving forward` in `Applications` (§3.1), the filter groups outcomes and the row shows which one:
+
+| Filter     | Row statuses (proposed)                                                                                                               |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Open**   | `Offer received` (awaiting the professional's response), `Accepted · Contract pending` (accepted, Contract not created yet)           |
+| **Closed** | `Declined` (by the professional, before the expiration date), `Expired` (the expiration date passed, whether or not the professional declined first), `Withdrawn` (by the partner)         |
+
+An accepted offer never goes to `Closed`. It stays in `Open` as `Accepted · Contract pending` until the Contract exists, then leaves `Offers` for `Contracts` (§2's "progressive destinations" note). It must not disappear during that handoff.
 
 Search and counter behavior follow §3.1: the search button sits before the filters, `Open` shows no counter, and a filter with zero offers keeps its tab but hides its counter. The `Offers` view-tab count is `Open` only, so it reflects the offers that still need attention.
 
-✅ **Resolved (2026-09-24) — offers are declined from the row's `···` menu:** an open offer's row, on the Home "New offer for you" module and in `Offers` → `Open`, reveals a `···` actions menu on hover, the same pattern as application rows ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Its items are **View details** and a destructive **Decline**, with no separator between them. Decline moves the offer to `Declined`; on Home the card fades out and the module closes. A declined offer's menu has only View details, and its row no longer shows the expiration date, since a declined offer doesn't expire. This replaces the earlier hover X, which declined the offer while reading as "hide".
+**Sections (`Closed`):** `Closed` is split into two labeled sections, the same way `Open` applications are (§3.1 "Sections"), without `Action needed`:
+
+| Section          | What it holds                                                                  |
+| ---------------- | ------------------------------------------------------------------------------ |
+| **Last 15 days** | Offers that closed 15 days ago or less.                                        |
+| **Older**        | Offers that closed more than 15 days ago.                                      |
+
+An offer's closing date is the day the professional declined it (even if its expiration date passed later), the day the partner withdrew it, or its expiration date if it expired with no response. Each section is its own list, most recent closing first. A section with no offers is hidden, and the headings only show when both sections have offers (§3.1). `Open` has no sections.
+
+✅ **Resolved (2026-09-25) — `Closed` offers grouped by recency:** nothing under `Closed` needs the professional's action, so there is no `Action needed` section. Recency is the only useful grouping: what just closed versus older history. The labels and the 15-day window match `Open` applications, so both views group time the same way.
+
+✅ **Resolved (2026-09-24) — offers are declined from the row's `···` menu:** an open offer's row, on the Home "New offer for you" module and in `Offers` → `Open`, reveals a `···` actions menu on hover, the same pattern as application rows ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Its items are **View details** and a destructive **Decline**, with no separator between them. Decline moves the offer to `Closed`, with the row status `Declined`; on Home the card fades out and the module closes. A closed offer has no `···` menu, since View details would be its only item and the row itself opens the detail ([DESIGN.md](../DESIGN.md) "Hide a `···` menu with only one item"). Its row no longer shows the expiration date, since a closed offer doesn't expire. This replaces the earlier hover X, which declined the offer while reading as "hide".
 
 ⚠️ **Gap:** Decline runs immediately, with no confirmation or undo, like Withdraw on applications ([`applications-card.md` §4.1](applications-card.md#41-actions-menu)). Declining an offer is irreversible, so the product likely needs the same confirmation step once UCL has a dialog component.
 
-✅ **Resolved (2026-09-23) — `Declined` is the Offers history:** it works the same way as `Not moving forward` in `Applications` (§3.1) and `Completed` in `Contracts` (§5.2). Declined offers stay visible under this filter and aren't counted in the view-tab total.
+✅ **Resolved (2026-09-25) — `Closed` replaces `Declined` as the Offers history filter:** "Declined" describes only one way an offer ends: the professional said no. An offer can also expire or be withdrawn by the partner or Verita, and naming the filter after one of those outcomes would misfile the others. `Closed` is the neutral umbrella, and each row carries its precise outcome (`Declined`, `Expired`, `Withdrawn`), the same pattern as `Not moving forward` in `Applications` (§3.1). New termination states can be added as row statuses later without renaming the filter. `Closed` offers work like the other history filters (`Not moving forward`, `Completed` in `Contracts`, §5.2): they stay visible and aren't counted in the view-tab total. This supersedes the 2026-09-23 `Declined` filter and settles the open decision on where expired and withdrawn offers go.
 
-⚠️ **Decision needed:** whether expired offers (and any offer withdrawn by the partner or Verita) also go under `Declined`. "Declined" describes the professional's choice, so using it as the umbrella for an expired offer would blur two different outcomes, the same reason `Closed` wasn't made the umbrella for `Not moving forward` (§3.1). Options: rename the filter to a neutral umbrella and show `Declined` / `Expired` as row-level reasons, or keep `Declined` and give expired offers their own treatment.
+⚠️ **Constraint:** `Closed` now means two things in Engagements. In `Offers` it is the filter for every ended offer. In `Applications` it is one specific row outcome under `Not moving forward`: the opportunity closed before the application advanced (§3.1). The two never appear in the same view, but copy and analytics should not treat them as the same state.
+
+✅ **Resolved (2026-09-25) — a closed offer row shows its outcome like a closed application:** when an offer moves to `Closed`, its row changes the same way a withdrawn application's does ([`applications-card.md` §2.4.1](applications-card.md#241-status-matrix)). The status badge shows the outcome, and the supporting text before it gives the details. The expiration date and the "View offer" button are removed, because there is nothing left to act on. A declined offer shows `Declined` with "Declined by you on {date}" until its expiration date passes, then `Expired`. A withdrawn offer shows `Withdrawn` with "Withdrawn by partner". Expired rows don't open the offer detail for now. The full outcome table, including click behavior, is in [`offer-card.md` §3.2](offer-card.md#32-closed-row-treatment).
+
+⚠️ **Gap:** there is no Figma design for the closed offer row yet. The prototype reuses the Applications card's badge and supporting-text styles. An `Open` offer shown as `Accepted · Contract pending` also needs a design: it probably keeps the "View offer" button and adds the badge.
+
+⚠️ **Decision needed:** whether `Canceled` is a separate outcome from `Withdrawn` (for example, the opportunity was canceled rather than the offer being pulled), and whether an offer "under review" (the professional has requested changes to the terms, §4) needs its own `Open` status.
 
 ## 5. Active engagement
 
@@ -446,5 +488,5 @@ User
 - 🙋 Can a professional belong to more than one Talent Network pool at once (§2, §10)?
 - 🙋 Where do terminated contracts go in the `Contracts` filters, and does the view-tab count include completed contracts (§5.2)?
 - 🙋 What is the default sort for `Not moving forward`, and can the professional change the sort in either Applications filter (§3.1)?
-- 🙋 Applications search (§3.1): which fields does it match, does it search only the selected filter or all applications, and does the query persist when the filter changes?
+- 🙋 Search (§3.1): should it match more than the opportunity title and partner name, and should filter counts reflect an active query?
 - 🙋 Which events count as a "last meaningful update" when placing an open application in `Last 15 days` or `Older` (§3.1 "Sections")?

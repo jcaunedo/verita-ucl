@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 24, 2026
+Last updated: Sep 25, 2026
 Scope: Verita AI Dashboard — the Contracts module's card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Active engagement definition in product-specs/engagements.md [§5](engagements.md#5-active-engagement).
 Purpose: Define the Contract card's engagement-terms/contract-status/action-state component architecture, its content (tiered by Essential/Contextual/Actionable, compensation-model-aware), and its priority behavior as a Home-module surface over the underlying Contract object.
 -->
@@ -379,6 +379,7 @@ Required behaviors:
 - 🙋 Confirm supported session/work destinations, authoritative permission checks, and progress counting bases (§5–§6). The deadline warning threshold itself is resolved — 24 hours (§6.4).
 - 🙋 Confirm which of Compensation model and Duration (§3.2.1, §3.2.2) are launch requirements vs. future extensions, now that the `Project-based`/`One-time`/`Retainer`/`Full-time`/`Part-time`/`Flexible` categorical taxonomy and Work location have been retired in favor of Engagement terms.
 - 🙋 Consolidate §3.1.2's named behavioral states (`default`, `awaiting start`, `action required`, `paused`, `completed`, `loading`, `error`) against the existing §6.1/§6.2/§6.4 rules — confirm the named-state list is complete and reconcile naming (e.g. `default` vs. `Ready to work`/`In progress`) before treating it as implementation-ready.
+- 🙋 Does a Contract always show its Opportunity's title, or can it have its own name (e.g. one of several scoped projects from one Opportunity, or work from a Talent Network pool)? If it always uses the Opportunity's title, rename `contract-title` to `opportunity-title` to match the Match, Applications, and Offer cards ([`offer-card.md` §2.1](offer-card.md#21-card-anatomy)). (§3.1)
 
 ## 9. Related docs
 

@@ -56,6 +56,14 @@ export const PartnerLogo: Story = {
   },
 };
 
+/** More than 5 days left: the date, in the muted supporting-text color (`offer-card.md` §2.3). */
+export const ExpirationMoreThanFiveDays: Story = {
+  args: {
+    expirationDate: "Expires on Oct 9",
+    expirationTone: "muted",
+  },
+};
+
 export const NoExpirationDate: Story = {
   args: {
     expirationDate: undefined,
@@ -77,6 +85,21 @@ export const WithDiscipline: Story = {
 export const CustomCtaLabel: Story = {
   args: {
     ctaLabel: "Review offer",
+  },
+};
+
+/**
+ * A closed offer (`engagements.md` §4.1): the outcome as a neutral badge with its details before it, no expiration
+ * date and no CTA. Its menu would hold only View details, so no `···` shows; the row itself opens the detail.
+ */
+export const Closed: Story = {
+  args: {
+    expirationDate: undefined,
+    statusLabel: "Declined",
+    statusTone: "neutral",
+    supportingText: "Declined by you on Sep 25",
+    showCta: false,
+    actionsMenu: <MenuItem icon={AlignLeft}>View details</MenuItem>,
   },
 };
 
@@ -125,6 +148,19 @@ export const AllVariants: Story = {
         onCtaPress={() => {}}
         actionsMenuLabel="More actions"
         actionsMenu={OFFER_ACTIONS}
+      />
+      <OfferCard
+        title="Strategic Finance Expert"
+        compensation="$56/hour"
+        engagementTerms="Up to 30 hrs/week"
+        duration="3 months"
+        company="verita"
+        partnerName="Verita partner"
+        statusLabel="Declined"
+        supportingText="Declined by you on Sep 25"
+        showCta={false}
+        actionsMenuLabel="More actions"
+        actionsMenu={<MenuItem icon={AlignLeft}>View details</MenuItem>}
       />
     </div>
   ),

@@ -10,7 +10,7 @@ import {
 } from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
 import { Typography } from "@/components/typography";
-import { MenuContent, MenuTrigger } from "@/components/overlays/menu";
+import { MenuContent, MenuTrigger, countMenuItems } from "@/components/overlays/menu";
 
 /**
  * A single application row — identity, engagement terms, status, and an
@@ -90,7 +90,7 @@ interface ApplicationCardProps
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /**
    * The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View Details, Share, Withdraw — PRD §4.1).
-   * When set, the hover-revealed `···` becomes a real menu trigger that opens it (bottom-end aligned) —
+   * When it holds 2 or more items, the hover-revealed `···` becomes a real menu trigger that opens it (bottom-end aligned) —
    * takes precedence over `onActionsPress`. While open, the trigger stays revealed and the row keeps its hover tint.
    */
   actionsMenu?: React.ReactNode;
@@ -253,7 +253,10 @@ function ApplicationCard({
     { value: engagementTerms },
     { value: duration },
   ].filter((part) => Boolean(part.value));
-  const hasActions = Boolean(actionsMenu || onActionsPress);
+  // A menu with one item isn't worth a trigger (DESIGN.md "Hide a `···` menu with only one item"). A consumer-owned
+  // menu (`onActionsPress`) can't be counted, so it keeps its trigger.
+  const showActionsMenu = countMenuItems(actionsMenu) > 1;
+  const hasActions = showActionsMenu || Boolean(onActionsPress);
   const { placement, cardRef, textColumnRef, badgeRef, measureLinesRef, measureTextRef } =
     useSupportingTextPlacement(Boolean(supportingText), hasActions);
 
@@ -336,7 +339,7 @@ function ApplicationCard({
         <div ref={badgeRef} className="flex shrink-0">
           <Badge tone={statusTone} label={statusLabel} size="md" />
         </div>
-        {(actionsMenu || onActionsPress) && (
+        {hasActions && (
           // Hover/focus-within reveal: the slot grows 0 → 48px (Figma's 16px gap + 32px button), pushing the badge left, while the button dissolves in.
           // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out` = cubic-bezier(0.4,0,0.2,1)); exit is shorter per CLAUDE.md "Dismiss".
           // Kept mounted (clipped, not unmounted) so keyboard users can still tab to it — keyboard focus (on the row, or `data-focus-visible` on the trigger) expands the slot. Not `group-focus-within`: after a menu closes, focus returns to the trigger programmatically and would keep the slot open after mouse use.
@@ -346,7 +349,7 @@ function ApplicationCard({
             data-slot="application-card-actions"
             className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-visible:w-[52px] group-focus-visible:opacity-100 group-focus-visible:duration-300 group-has-[[data-focus-visible]]:w-[52px] group-has-[[data-focus-visible]]:opacity-100 group-has-[[data-focus-visible]]:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
           >
-            {actionsMenu ? (
+            {showActionsMenu ? (
               <MenuTrigger>
                 <Button
                   color="tertiary"

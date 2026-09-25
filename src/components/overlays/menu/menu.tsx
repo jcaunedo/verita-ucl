@@ -106,12 +106,31 @@ function MenuItem({ size = "sm", tone = "default", children, icon, className, te
   );
 }
 
+/**
+ * How many items a menu's children hold: every element except separators, looking inside fragments and skipping
+ * `false`/`null` from conditional items. Row cards use it to hide a `···` actions menu with only one item
+ * (DESIGN.md "Hide a `···` menu with only one item").
+ */
+function countMenuItems(children: React.ReactNode): number {
+  let count = 0;
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    if (child.type === React.Fragment) {
+      count += countMenuItems((child.props as { children?: React.ReactNode }).children);
+    } else if (child.type !== SelectSeparator) {
+      count += 1;
+    }
+  });
+  return count;
+}
+
 export {
   AriaMenuTrigger as MenuTrigger,
   MenuContent,
   MenuItem,
   SelectSeparator as MenuSeparator,
   menuItemVariants,
+  countMenuItems,
   type MenuContentProps,
   type MenuItemProps,
 };

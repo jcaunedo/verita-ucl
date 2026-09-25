@@ -44,6 +44,23 @@ const cardDismissVariants: Variants = {
 };
 
 /**
+ * One row leaving a table-style list (stacked rows inside one bordered
+ * container) while other rows stay: fade out and collapse to zero height, so
+ * the container shrinks with it and the rows below close the gap.
+ *
+ * Documented exception to "prefer `layout` over animating height": a `layout`
+ * size animation scales the whole container, distorting its border, radius,
+ * and shadow. The wrapper carrying these variants needs `overflow-hidden`.
+ * When the last row goes, remove the whole container with
+ * `cardDismissVariants` instead, so an empty bordered box never shows.
+ */
+const rowDismissVariants: Variants = {
+  initial: { opacity: 1, height: "auto" },
+  animate: { opacity: 1, height: "auto" },
+  exit: { opacity: 0, height: 0, transition: exitTransition },
+};
+
+/**
  * Same exit as `cardDismissVariants` (fade + soft scale-down), but enters
  * with a fade + slide in from the right (CLAUDE.md "Glide") instead of
  * appearing in place — for a card that's newly revealed by a queue shifting
@@ -165,6 +182,7 @@ export {
   revealVariants,
   dismissVariants,
   cardDismissVariants,
+  rowDismissVariants,
   cardEnterFromRightVariants,
   overlayVariants,
   popoverVariants,

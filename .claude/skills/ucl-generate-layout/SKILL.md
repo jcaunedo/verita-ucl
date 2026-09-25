@@ -27,6 +27,7 @@ Both workflows share the same two governing rules with [[ucl-generate-component]
 
 ## Prerequisites (both workflows)
 
+- **Read [DESIGN.md](../../../DESIGN.md) in full first** (mandatory). Most of its rules govern how components behave on a page, beyond the components themselves: rows in one table list, section headings only when two sections have rows, no search or filters over an empty view, no `···` menu with a single item, primary CTAs only for high-value actions, the page shell. Note which rules apply to the page before decoding Figma, and follow them even where the Figma design differs (flag the difference instead of copying it).
 - **Load the `figma-use` skill before any `use_figma` call** (mandatory) — layouts rarely need `use_figma` (no writing to Figma), but load it anyway if any write/inspection beyond `get_metadata`/`get_design_context` is needed.
 - Batch-load Figma MCP tool schemas in one `ToolSearch`: `select:get_metadata,get_design_context,get_variable_defs,get_screenshot`.
 - Read [references/ucl-conventions.md](../ucl-generate-component/references/ucl-conventions.md) (shared with `ucl-generate-component`) for the token/prop vocabulary.
@@ -133,6 +134,8 @@ For each node section in the existing `<name>.tsx`, compare against the freshly 
 - Follow the same "Always verify" and preview steps as Workflow A (lint, build, Storybook fullscreen preview) and compare the new screenshot against the updated Figma screenshot to confirm the drift is resolved.
 
 ## Always verify
+
+- Every [DESIGN.md](../../../DESIGN.md) rule that applies to the page holds: list layout, section headings, empty views, actions menus, CTAs, hover treatments, page shell.
 
 From `verita-ai/`:
 

@@ -118,6 +118,10 @@ The Dashboard may draw from these modules. Visibility and order are state-depend
 
 > ✅ **Resolved — "Contracts"/"Applications"/"Offers" name both a Home module and an Engagements view:** this follows the same pattern already established for Matches (§6.3): each Home module is a filtered, top-of-list surface over the same underlying objects as the full Engagements view ([`engagements.md` §2](engagements.md#2-engagement-views)), not a competing or differently-scoped concept. The Home module shows only what's active/upcoming/awaiting response; the Engagements view shows the full history. For Contracts specifically: when a contract is active it must outrank job discovery ([`engagements.md` §5](engagements.md#5-active-engagement)) — so unlike other Home modules, Contracts is not merely present, it is the most prominent content on the page whenever at least one exists. This supersedes the earlier "Current work" module name.
 >
+> ✅ **Resolved (2026-09-25) — priority follows closeness to secured work:** the action and status modules rank in this order: **Offer → required Next steps → current work (Contracts) → Applications.** An offer is the professional's closest step to securing work, which is why "New offer for you" (Opportunity alert, §7.1) sits above Next steps. Required next steps come next because they block progress. Current contracts are work already secured. Applications are tracking objects whose next step usually belongs to Verita or the partner. The same principle decides which cards get a primary CTA ([`offer-card.md` §4.1](offer-card.md#41-row-and-view-offer)).
+>
+> ⚠️ **Decision needed:** where Matching opportunities (module 4) sits in this hierarchy. It is discovery, not an action or status module, and the list above places it between Contracts and Applications. Also confirm whether module 6 (Offers) is still needed while the Opportunity alert shows the offer (see the §6.1 decision below).
+>
 > ✅ **Resolved:** "Next steps" supersedes what this list previously called "Complete your profile" — it is the final, deliberately generic module name, not scoped to profile-completion tasks alone. See [`product-specs/next-steps-card.md` §1](next-steps-card.md#1-what-next-steps-is) for the full naming rationale.
 
 ### 6.1 Main navigation
@@ -220,7 +224,7 @@ The count is the number of offers rendered in the module, not the professional's
 
 > ✅ **Copy fix (2026-09-25):** "You have a new offer" → "New offer for you". The new heading leads with what arrived and reads as a section title, matching the Dashboard's other module headings.
 
-> ℹ️ Today the module shows a single offer (single-emphasis, above), so only the singular heading appears. The plural form applies only if the multi-offer decision below lands on showing several offers together.
+> ℹ️ Today the module shows a single offer (single-emphasis, above), so only the singular heading appears. The plural form applies only if the multi-offer decision below lands on showing several offers together. The prototype's **"2 offers"** Dashboard view (account menu → page links) previews that option: two offers in one table list under "2 new offers for you" (a bordered container with one row per offer, the same as "Open applications" and "Top matches for you"), soonest expiration first, one expiring within 5 days and one after ([`offer-card.md` §2.3](offer-card.md#23-expiration)). Declining one drops the heading back to "New offer for you".
 
 If no qualifying event exists, the module does not render — it must not be replaced with a placeholder or generic empty state; the Dashboard falls through to its next-highest content (Contracts, Applications, Matches — see §7.6's resolved default-empty-state note for what renders when none of those have content either).
 

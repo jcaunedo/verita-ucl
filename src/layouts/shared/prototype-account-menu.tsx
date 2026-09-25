@@ -3,20 +3,28 @@ import { ArrowUpRight, LogOut01, ReverseLeft, Settings02, Translate01, UserCircl
 import type { SidebarProps } from "@/components/navigation/sidebar";
 import { AccountMenuItem } from "@/components/overlays/account-menu";
 import { MenuSeparator } from "@/components/overlays/menu";
-import { restartPrototype } from "@/layouts/shared/demo-state";
+import { openWithOffersRestored, restartPrototype } from "@/layouts/shared/demo-state";
 
 /**
  * Pages the prototype can jump straight to from the account menu (Figma's
  * "Link to page" item, `arrow-up-right`) — states you can't reach by
  * clicking through, like an empty state. One entry per page; the label is
  * the menu item's text. Relative `iframe.html` URLs so they work on any
- * Storybook host (local or Netlify).
+ * Storybook host (local or Netlify). `restoresOffers` pages open with every
+ * declined offer brought back, so they always show the offers they exist to
+ * demo.
  */
-const PROTOTYPE_PAGE_LINKS = [
+const PROTOTYPE_PAGE_LINKS: { id: string; label: string; href: string; restoresOffers?: boolean }[] = [
   {
     id: "page-dashboard-empty-state",
     label: "Dashboard empty state",
     href: "iframe.html?id=layouts-dashboardemptystate--default&viewMode=story",
+  },
+  {
+    id: "page-dashboard-two-offers",
+    label: "2 offers",
+    href: "iframe.html?id=layouts-dashboard--two-offers&viewMode=story",
+    restoresOffers: true,
   },
 ];
 
@@ -45,11 +53,17 @@ const prototypeAccountMenu: NonNullable<SidebarProps["accountMenu"]> = {
       </AccountMenuItem>
       {/* Figma's 16px divider (1px `border` line, centered) — the shared menu separator is the same geometry. */}
       <MenuSeparator />
-      {PROTOTYPE_PAGE_LINKS.map(({ id, label, href }) => (
-        <AccountMenuItem key={id} id={id} icon={ArrowUpRight} href={href}>
-          {label}
-        </AccountMenuItem>
-      ))}
+      {PROTOTYPE_PAGE_LINKS.map(({ id, label, href, restoresOffers }) =>
+        restoresOffers ? (
+          <AccountMenuItem key={id} id={id} icon={ArrowUpRight} onAction={() => openWithOffersRestored(href)}>
+            {label}
+          </AccountMenuItem>
+        ) : (
+          <AccountMenuItem key={id} id={id} icon={ArrowUpRight} href={href}>
+            {label}
+          </AccountMenuItem>
+        ),
+      )}
       <AccountMenuItem id="restart-prototype" icon={ReverseLeft} onAction={restartPrototype}>
         Restart prototype
       </AccountMenuItem>

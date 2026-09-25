@@ -33,3 +33,20 @@ export const Default: Story = {
     viewAllContractsHref: "iframe.html?id=layouts-engagements--contracts&viewMode=story",
   },
 };
+
+/**
+ * Two open offers under "2 new offers for you": one expiring within 5 days (red countdown) and one after (muted
+ * date), per `offer-card.md` §2.3. Opened from the account menu's "2 offers" page link. Home and Engagements stay in
+ * this scenario: Engagements opens its "2 offers" story (Offers view, with every closed-offer outcome under `Closed`).
+ */
+export const TwoOffers: Story = {
+  name: "2 offers",
+  args: {
+    ...Default.args,
+    navHrefOverrides: {
+      home: "iframe.html?id=layouts-dashboard--two-offers&viewMode=story",
+      engagements: "iframe.html?id=layouts-engagements--two-offers&viewMode=story",
+    },
+    offerLimit: 2,
+  },
+};

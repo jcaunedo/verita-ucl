@@ -29,9 +29,9 @@ export const Default: Story = {};
 /** With a CTA — Engagements → Talent Network → Active (Figma: Verita `Talent Network`, `node-id=5702-7522`). */
 export const WithAction: Story = {
   args: {
-    title: "No talent network applied yet",
-    description: "Apply to roles that match your expertise and get considered for future projects.",
-    buttonLabel: "Browse roles",
+    title: "You haven’t joined a talent network yet",
+    description: "Apply to a talent network that matches your expertise to be considered for future opportunities.",
+    buttonLabel: "Discover talent networks",
     buttonProps: { onPress: () => {} },
   },
 };
@@ -55,7 +55,7 @@ export const AllVariants: Story = {
       <EmptyState {...args} />
       <EmptyState {...args} description={undefined} />
       <EmptyState {...args} icon={<FileCheck02 className="size-8 text-icon-muted" />} />
-      <EmptyState {...args} buttonLabel="Browse roles" buttonProps={{ onPress: () => {} }} />
+      <EmptyState {...args} buttonLabel="Discover talent networks" buttonProps={{ onPress: () => {} }} />
     </>
   ),
 };

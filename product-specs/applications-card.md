@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 24, 2026
+Last updated: Sep 25, 2026
 Scope: Verita AI Dashboard — the Applications module's row/card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Applications view definition in product-specs/engagements.md [§3](engagements.md#3-applications).
 Purpose: Define the Applications card's stage/status model, content fields, row-interaction behavior, and priority behavior as a Home-module surface over the underlying Application object.
 -->
@@ -59,20 +59,22 @@ The following per-element behaviors are settled for the base Applications card c
 
 **Two-zone layout (revised):** the card is laid out as two horizontal zones, not a single flat row — a left identity zone and a right status/metadata zone, distinct from every other card family in this library (Contract card, Match card) which keep a single-column stack. This intentionally departs from the more common single-column "everything stacked under the title" pattern seen in comparable competitor listings, in favor of a layout distinct to Verita:
 
-- **Left zone (identity):** `partner-logo`, then a stacked text block of `partner-name` (small eyebrow, above the title — moved out of the details line), `application-title`, the `terms-row` line (`compensation · engagement-terms · duration` only — `partner-name` no longer appears here, since it now lives in the eyebrow), and, when present, `supporting-text` as the last row (§2.4.2).
+- **Left zone (identity):** `partner-logo`, then a stacked text block of `partner-name` (small eyebrow, above the title — moved out of the details line), `opportunity-title`, the `terms-row` line (`compensation · engagement-terms · duration` only — `partner-name` no longer appears here, since it now lives in the eyebrow), and, when present, `supporting-text` as the last row (§2.4.2).
 - **Right zone (status/metadata):** the `application-status` badge, right-aligned; `actions-menu` appears here too on hover (§4.1).
 
 | Element              | Behavior                                                                                                                                                            |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `partner-logo`       | Optional, with fallback. Left zone.                                                                                                                                            |
-| `partner-name`       | Approved name or fallback. Rendered as a small eyebrow line above `application-title`, in the left zone — no longer part of the `terms-row` line (revised from the earlier single-line anatomy). |
-| `application-title`  | Required, supports multiline. Left zone, below `partner-name`.                                                                                                                                       |
+| `partner-name`       | Approved name or fallback. Rendered as a small eyebrow line above `opportunity-title`, in the left zone — no longer part of the `terms-row` line (revised from the earlier single-line anatomy). |
+| `opportunity-title`  | Required, supports multiline. Left zone, below `partner-name`.                                                                                                                                       |
 | `compensation`       | Conditional; preserve amount, currency, and payment unit — never collapse to a bare number. May render as a range (e.g. `$95–115k/yr`), not only a single value — see §2.3.1. Left zone, in the `terms-row` line. |
 | `engagement-terms`   | Conditional; per [`contract-card.md` §3.2](contract-card.md#32-engagement-terms)'s Engagement terms model — the actual time commitment (e.g. "Up to 30 hrs/week"), never a categorical type label (`Project-based`/`One-time`/`Retainer`, retired) and never a location value (`Remote`/`Hybrid`/`On-site`, not a modeled dimension for Verita's marketplace). Since `compensation` (above) already has its own dedicated field on this card, `engagement-terms` here shows only time commitment — not compensation or duration, unlike [`contract-card.md` §3.2](contract-card.md#32-engagement-terms)'s combined example string. Left zone, in the `terms-row` line. |
 | `duration`           | Optional; the opportunity's expected duration (e.g. "3 months," "2 weeks," "Ongoing") — its own separate field from `engagement-terms`, shown only when a confirmed timeframe exists (§2.3.2). Left zone, in the `terms-row` line. |
 | `supporting-text`    | Conditional on content, not an independent toggle — renders whenever it has confirmed content for the current application state, omitted entirely otherwise (§2.4). Left zone, last row, below the `terms-row` line (§2.4.2). |
 | `application-status` | Required; always represents the actual application status (§3), never omitted or approximated. Right zone, trailing edge (§2.4's "status positioning" rule still holds under the new layout).                                                                      |
 | `actions-menu`       | Optional, revealed on hover/focus; never permanently visible. Item set is status-gated, not fixed (§4). Right zone.                                                             |
+
+✅ **Resolved (2026-09-25) — the title element is `opportunity-title`:** the card shows the Opportunity's own title, which stays the same from Match to Application to Offer. Naming it after the Opportunity, not the card, makes clear the Match, Applications, and Offer cards all show the same field ([`offer-card.md` §2.1](offer-card.md#21-card-anatomy)). This replaces `application-title`. **Confirmed in Figma (2026-09-25):** the `Title` layer's placeholder reads `opportunity-title` in both the `application-card` and `offer-card` components.
 
 > ⚠️ **Out of scope for now:** Figma's current component also exposes a `Discipline` field (default hidden, `showDiscipline`) in the right zone. This is intentionally **not specified here** — it needs a team discussion on what it represents and where it should surface (possibly the application/opportunity detail page rather than this card) before it's added to this anatomy. Do not implement it against this card until that's resolved.
 
@@ -177,7 +179,7 @@ All dates, deadlines, and progress values above are illustrative copy examples, 
 
 #### 2.4.2 `supporting-text` is a single optional line, not two separate fields
 
-`supporting-text` is one element, not a `supporting-text` + `supporting-detail` pair. Per the base `application-card` component in Figma ([Application Card](https://www.figma.com/design/Q2IVVTNZQaWHDkUiWztX3C/verita.ds?node-id=5914-1764&t=4kYL66ITNMr5u2AL-11)), the left zone has three fixed text rows — `partner-name` (eyebrow), `application-title`, and the `terms-row` line (`compensation` · `engagement-terms` · `duration`, §2.3/§2.3.2) — plus `supporting-text` as an optional fourth and last row below `terms-row` (§2.3). It is a single line, not a nested sub-field for progress/detail, and when it's omitted the left zone collapses to its three fixed rows rather than leaving an empty line.
+`supporting-text` is one element, not a `supporting-text` + `supporting-detail` pair. Per the base `application-card` component in Figma ([Application Card](https://www.figma.com/design/Q2IVVTNZQaWHDkUiWztX3C/verita.ds?node-id=5914-1764&t=4kYL66ITNMr5u2AL-11)), the left zone has three fixed text rows — `partner-name` (eyebrow), `opportunity-title`, and the `terms-row` line (`compensation` · `engagement-terms` · `duration`, §2.3/§2.3.2) — plus `supporting-text` as an optional fourth and last row below `terms-row` (§2.3). It is a single line, not a nested sub-field for progress/detail, and when it's omitted the left zone collapses to its three fixed rows rather than leaving an empty line.
 
 ✅ **Confirmed in Figma (2026-09-23):** `supporting-text` moved back to the left zone as its last row, below the `terms-row` line — superseding the earlier right-zone placement. The right zone now holds only `application-status` (plus the hover-revealed `actions-menu`, §4.1). This also resolves the previous mismatch between §2.3's right-zone placement and §2.4.1's "Supporting text (left)" column header, which now agree.
 
@@ -269,6 +271,8 @@ This is a proposed lifecycle rule for [`engagements.md`](engagements.md) to adop
 ## 4. Row interaction
 
 The entire application row is a single click target routing to the application detail, where the full next-action and owner state live — there is no separate primary CTA button on the row itself, unlike the Contract card's dedicated primary-action button ([`contract-card.md` §3.1](contract-card.md#31-contract-card-anatomy)). On hover, the row shows its hover background and reveals the `···` more-actions button (§4.1). There is no trailing arrow. Hover feedback has no delay to interactivity, matching this repo's [Motion System](../CLAUDE.md#motion-system) guidance to keep hover/press feedback in the 120–180 ms range and avoid decorative or delayed feedback on direct interactions.
+
+✅ **Resolved (2026-09-25) — why an application has no primary CTA:** a primary CTA reflects the value and immediacy of the next action, not whether the row can be opened ([`offer-card.md` §4.1](offer-card.md#41-row-and-view-offer)). An application is a tracking object: the professional has shown interest, the outcome is uncertain, and the next step usually belongs to Verita or the partner. When the professional does owe something, it surfaces through the status and supporting text (`Action required`, "Complete your assessment", §2.4.1), the same way next-action ownership decides whether progress is shown (§2.2). An Offer, by contrast, is a decision the professional owns right before securing work, so its card keeps a persistent "View offer" button.
 
 Both the row-as-click-target and the actions menu below must remain keyboard accessible with a clear, distinct accessible name — the row is a link/button semantically, not a generic clickable `div`.
 

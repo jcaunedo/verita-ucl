@@ -15,6 +15,7 @@ export {
   revealVariants,
   dismissVariants,
   cardDismissVariants,
+  rowDismissVariants,
   cardEnterFromRightVariants,
   overlayVariants,
   popoverVariants,

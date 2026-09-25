@@ -5,7 +5,7 @@ import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 import { cn } from "@/lib/utils";
 import { partnerLogos } from "@/assets/logos";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { cardDismissVariants, reflowTransition, useMotionPreference } from "@/lib/motion";
+import { cardDismissVariants, reflowTransition, rowDismissVariants, useMotionPreference } from "@/lib/motion";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
@@ -19,7 +19,7 @@ import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/applic
 import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
 import { MenuItem } from "@/components/overlays/menu";
-import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
+import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS, offerExpiration } from "@/layouts/shared/demo-engagements";
 import {
   applyWithdrawnApplications,
   readSidebarCollapsed,
@@ -159,6 +159,11 @@ interface DashboardProps {
    * filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllContractsHref?: string;
+  /**
+   * How many open offers the offer alert shows, soonest expiration first. Defaults to 1, the single-emphasis module
+   * `dashboard.md` §7.1 describes. The "2 offers" story passes 2 to preview the plural heading.
+   */
+  offerLimit?: number;
 }
 
 /**
@@ -188,6 +193,7 @@ function Dashboard({
   navHrefOverrides,
   viewAllApplicationsHref = "#",
   viewAllContractsHref = "#",
+  offerLimit = 1,
 }: DashboardProps = {}) {
   // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
@@ -231,16 +237,18 @@ function Dashboard({
   }, [isLgUp]);
 
   /**
-   * The offer's `···` → Decline declines it: the offer moves to Engagements → Offers →
-   * `Declined` (`engagements.md` §4.1), via the prototype's shared
+   * An offer's `···` → Decline declines it: the offer moves to Engagements → Offers →
+   * `Closed` (`engagements.md` §4.1), via the prototype's shared
    * `useDeclinedOffers` state, so it's there after clicking through to
    * Engagements and stays gone from Home. The card leaves with the same exit
    * as a dismissed Next Steps card — `cardDismissVariants` (fade + soft
-   * scale-down) inside `AnimatePresence`, opacity-only under reduced motion.
-   * The section (heading + card) stays mounted until that exit finishes, then
-   * unmounts via `onExitComplete` — same pattern as `NextStepsSection`'s last
-   * card. `newOffer` is read once on mount so declining doesn't unmount the
-   * section before its exit animation runs.
+   * scale-down) inside `AnimatePresence`, opacity-only under reduced motion —
+   * and any offer below it glides up. The heading counts the offers still
+   * shown ("2 new offers for you" → "New offer for you", `dashboard.md` §7.1).
+   * After the last one leaves, the section (heading + cards) unmounts via
+   * `onExitComplete` — same pattern as `NextStepsSection`'s last card.
+   * `shownOffers` is read once on mount, so declining doesn't unmount a card
+   * before its exit animation runs.
    */
   const { prefersReducedMotion } = useMotionPreference();
   const { declined, decline } = useDeclinedOffers();
@@ -251,15 +259,16 @@ function Dashboard({
     (application) => application.filter === "open",
   );
   const activeApplications = openApplications.slice(0, ACTIVE_APPLICATIONS_LIMIT);
-  const [newOffer] = React.useState(() =>
-    DEMO_OFFERS.find((offer) => offer.filter === "open" && !declined.has(offer.key)),
+  const [shownOffers] = React.useState(() =>
+    DEMO_OFFERS.filter((offer) => offer.filter === "open" && !declined[offer.key]).slice(0, offerLimit),
   );
-  const [offerDismissed, setOfferDismissed] = React.useState(false);
+  const [dismissedOfferKeys, setDismissedOfferKeys] = React.useState<ReadonlySet<string>>(() => new Set());
+  const visibleOffers = shownOffers.filter((offer) => !dismissedOfferKeys.has(offer.key));
   const [offerSectionVisible, setOfferSectionVisible] = React.useState(true);
 
-  const handleDeclineOffer = () => {
-    if (newOffer) decline(newOffer.key);
-    setOfferDismissed(true);
+  const handleDeclineOffer = (key: string) => {
+    decline(key);
+    setDismissedOfferKeys((current) => new Set(current).add(key));
   };
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
@@ -292,57 +301,84 @@ function Dashboard({
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
-            {newOffer && offerSectionVisible && (
+            {shownOffers.length > 0 && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-3">
                 <Typography size="xl" weight="semibold">
-                  New offer for you
+                  {/* Counts the offers shown, never "1 new offer" (`dashboard.md` §7.1). Kept singular while the last card exits. */}
+                  {visibleOffers.length > 1 ? `${visibleOffers.length} new offers for you` : "New offer for you"}
                 </Typography>
-                <AnimatePresence onExitComplete={() => setOfferSectionVisible(false)}>
-                  {!offerDismissed && (
+                {/* Same table list as "Open applications" and "Top matches for you": one bordered container, one row per
+                    offer. Declining a row collapses it while others remain; declining the last one removes the whole
+                    table (card-dismiss exit), then the section closes. */}
+                <AnimatePresence
+                  initial={false}
+                  onExitComplete={() => {
+                    if (visibleOffers.length === 0) setOfferSectionVisible(false);
+                  }}
+                >
+                  {visibleOffers.length > 0 && (
                     <motion.div
-                      key="offer"
-                      className="w-full"
+                      key="offers"
+                      className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
                       variants={cardDismissVariants}
                       initial={false}
                       animate="animate"
                       exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
                     >
-                      <OfferCard
-                        company={newOffer.company}
-                        title={newOffer.title}
-                        partnerName={newOffer.partnerName}
-                        compensation={newOffer.compensation}
-                        engagementTerms={newOffer.engagementTerms}
-                        duration={newOffer.duration}
-                        expirationDate={newOffer.expirationDate}
-                        onCtaPress={() => {}}
-                        rowProps={{ onClick: () => {} }}
-                        actionsMenuLabel={`More actions for ${newOffer.title}`}
-                        actionsMenu={
-                          <>
-                            <MenuItem icon={AlignLeft} onAction={() => {}}>
-                              View details
-                            </MenuItem>
-                            {/* Declines the offer: it leaves Home and moves to Engagements → Offers → Declined. */}
-                            <MenuItem icon={XCircle} tone="destructive" onAction={handleDeclineOffer}>
-                              Decline
-                            </MenuItem>
-                          </>
-                        }
-                        className="w-full rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
-                      />
+                      <AnimatePresence initial={false}>
+                        {visibleOffers.map((offer) => (
+                          <motion.div
+                            key={offer.key}
+                            className="w-full overflow-hidden border-b border-border last:border-b-0"
+                            variants={rowDismissVariants}
+                            initial={false}
+                            animate="animate"
+                            exit={prefersReducedMotion ? { opacity: 0, height: 0, transition: { duration: 0.01 } } : "exit"}
+                          >
+                            <OfferCard
+                              company={offer.company}
+                              logoSrc={offer.logoSrc}
+                              logoAlt={offer.logoAlt}
+                              title={offer.title}
+                              partnerName={offer.partnerName}
+                              compensation={offer.compensation}
+                              engagementTerms={offer.engagementTerms}
+                              duration={offer.duration}
+                              {...offerExpiration(offer.expiresAt)}
+                              onCtaPress={() => {}}
+                              rowProps={{ onClick: () => {} }}
+                              actionsMenuLabel={`More actions for ${offer.title}`}
+                              actionsMenu={
+                                <>
+                                  <MenuItem icon={AlignLeft} onAction={() => {}}>
+                                    View details
+                                  </MenuItem>
+                                  {/* Declines the offer: it leaves Home and moves to Engagements → Offers → Closed. */}
+                                  <MenuItem
+                                    icon={XCircle}
+                                    tone="destructive"
+                                    onAction={() => handleDeclineOffer(offer.key)}
+                                  >
+                                    Decline
+                                  </MenuItem>
+                                </>
+                              }
+                            />
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             )}
 
-            {/* Everything below the offer glides up into the space its section frees, instead of snapping —
-                `layout="position"` gated by `layoutDependency` so it only runs when the offer section unmounts
-                (not on sidebar toggles), on the slow `reflowTransition`. Reduced motion: no glide. */}
+            {/* Everything below the offers glides up into the space a declined offer (or the whole section) frees,
+                instead of snapping — `layout="position"` gated by `layoutDependency` so it only runs when the offer
+                list changes (not on sidebar toggles), on the slow `reflowTransition`. Reduced motion: no glide. */}
             <motion.div
               layout={prefersReducedMotion ? false : "position"}
-              layoutDependency={offerSectionVisible}
+              layoutDependency={`${offerSectionVisible}-${visibleOffers.length}`}
               transition={reflowTransition}
               className="flex w-full flex-col items-start gap-12"
             >

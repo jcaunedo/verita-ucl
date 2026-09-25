@@ -11,7 +11,7 @@ import { Typography } from "@/components/typography";
  * text group in the empty filter panel: `lg -semibold` title (18/26,
  * `foreground/foreground`), `base` description (16/24, `foreground/muted`),
  * 8px apart. Optional CTA (Figma: Verita → `Talent Network`,
- * `node-id=5702-7522`, "Browse roles"): a primary `sm` `Button`, 16px below
+ * `node-id=5702-7522`): a primary `sm` `Button`, 16px below
  * the text. The same layout is used for every empty view; only the copy
  * (and whether there's an action) changes.
  *
@@ -29,7 +29,7 @@ interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "ti
   description?: string;
   /** Optional icon or illustration above the title. */
   icon?: React.ReactNode;
-  /** Call-to-action text, e.g. "Browse roles". Omit for no button. Same naming as `SectionEmptyState`. */
+  /** Call-to-action text, e.g. "Discover talent networks". Omit for no button. Same naming as `SectionEmptyState`. */
   buttonLabel?: string;
   /** Forwarded to the CTA button (e.g. `onPress`, or `href` for a link). */
   buttonProps?: Omit<ButtonProps, "size" | "color" | "children">;

@@ -57,7 +57,7 @@ type DemoApplication = Pick<
  *
  * Activity dates spread the `Open` rows across Engagements' sections (§3.1
  * "Sections"). The `Action required` row is 22 days old on purpose: it still
- * sits in `Need action`, because Need action overrides recency.
+ * sits in `Action needed`, because Action needed overrides recency.
  */
 const DEMO_APPLICATIONS: DemoApplication[] = [
   {
@@ -180,14 +180,115 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
   },
 ];
 
-type OfferFilter = "open" | "declined";
+type OfferFilter = "open" | "closed";
 
 type DemoOffer = Pick<
   OfferCardProps,
-  "company" | "title" | "partnerName" | "compensation" | "engagementTerms" | "duration" | "expirationDate"
-> & { key: string; filter: OfferFilter };
+  | "company"
+  | "logoSrc"
+  | "logoAlt"
+  | "title"
+  | "partnerName"
+  | "compensation"
+  | "engagementTerms"
+  | "duration"
+  | "statusLabel"
+  | "statusTone"
+  | "supportingText"
+> & {
+  key: string;
+  filter: OfferFilter;
+  /** Last day to respond, ISO date. Formatted for the card by `offerExpiration`. */
+  expiresAt: string;
+  /** When the professional declined it (ISO date or timestamp). Set by `applyDeclinedOffers`, or on a seeded closed offer. */
+  declinedAt?: string;
+  /** Set when the partner withdrew the offer. */
+  withdrawnBy?: "partner";
+  /** When the partner withdrew it, ISO date. */
+  withdrawnAt?: string;
+};
 
-/** Offers (`engagements.md` §4.1). Home's "New offer for you" alert shows the first `Open` one. */
+/** Days left before an offer's expiration turns urgent (`offer-card.md` §2.3). */
+const OFFER_URGENT_DAYS = 5;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * The card's expiration label and tone for an offer expiring on `expiresAt`, counted in calendar days from
+ * `DEMO_TODAY`: more than 5 days → "Expires on Oct 9" (muted); 5 days or fewer → "Expires in 3 days", "Expires
+ * tomorrow", or "Expires today" (destructive). The wording changes with the color, so color is never the only signal.
+ */
+function offerExpiration(expiresAt: string): {
+  expirationDate: string;
+  expirationTone: "muted" | "destructive";
+} {
+  const daysLeft = Math.round((Date.parse(expiresAt) - Date.parse(DEMO_TODAY)) / DAY_MS);
+  if (daysLeft > OFFER_URGENT_DAYS) {
+    // `timeZone: "UTC"`: the ISO date parses as UTC midnight, so format it in UTC to keep the same calendar day.
+    const date = new Date(expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+    return { expirationDate: `Expires on ${date}`, expirationTone: "muted" };
+  }
+  const label = daysLeft <= 0 ? "Expires today" : daysLeft === 1 ? "Expires tomorrow" : `Expires in ${daysLeft} days`;
+  return { expirationDate: label, expirationTone: "destructive" };
+}
+
+/** "Sep 22". A date-only ISO string is formatted in UTC so it keeps its calendar day; a full timestamp in local time. */
+function formatOfferDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    ...(iso.length === 10 ? { timeZone: "UTC" } : {}),
+  });
+}
+
+/**
+ * How a `Closed` offer's row reads (`offer-card.md` §3.2), from what happened to it:
+ *
+ * - Declined by you, before its expiration date: `Declined`, "Declined by you on {date}", opens the detail.
+ * - Declined by you, expiration date since passed: `Expired`, "Declined by you on {date}", doesn't open.
+ * - Withdrawn by the partner: `Withdrawn`, "Withdrawn by partner", opens the detail.
+ * - Expired with no response: `Expired`, "Expired on {date}", doesn't open.
+ *
+ * An offer counts as expired from the day after `expiresAt` (it can still be answered on its last day).
+ */
+function closedOfferOutcome({ expiresAt, declinedAt, withdrawnBy }: DemoOffer): {
+  statusLabel: string;
+  statusTone: "neutral";
+  supportingText: string;
+  opensDetail: boolean;
+} {
+  const expired = Date.parse(expiresAt) < Date.parse(DEMO_TODAY);
+  if (withdrawnBy) {
+    return { statusLabel: "Withdrawn", statusTone: "neutral", supportingText: "Withdrawn by partner", opensDetail: true };
+  }
+  if (declinedAt) {
+    return {
+      statusLabel: expired ? "Expired" : "Declined",
+      statusTone: "neutral",
+      supportingText: `Declined by you on ${formatOfferDate(declinedAt)}`,
+      opensDetail: !expired,
+    };
+  }
+  return {
+    statusLabel: "Expired",
+    statusTone: "neutral",
+    supportingText: `Expired on ${formatOfferDate(expiresAt)}`,
+    opensDetail: false,
+  };
+}
+
+/**
+ * When a `Closed` offer closed: the day it was declined (even if its expiration date passed later), the day it was
+ * withdrawn, or else its expiration date. Places the row in `Last 15 days` or `Older` (`engagements.md` §4.1).
+ */
+function offerClosedAt({ declinedAt, withdrawnAt, expiresAt }: DemoOffer): string {
+  return declinedAt ?? withdrawnAt ?? expiresAt;
+}
+
+/**
+ * Offers (`engagements.md` §4.1), soonest expiration first — the order Home and Engagements show them in. Home's
+ * "New offer for you" shows the first `Open` one (the "2 offers" Dashboard story shows both). One expires within 5
+ * days and one after, so both expiration treatments are on screen.
+ */
 const DEMO_OFFERS: DemoOffer[] = [
   {
     key: "sleep-specialist",
@@ -198,7 +299,80 @@ const DEMO_OFFERS: DemoOffer[] = [
     compensation: "$75–95/hr",
     engagementTerms: "Up to 30 hrs/week",
     duration: "Ongoing",
-    expirationDate: "Expires on Oct 3",
+    expiresAt: "2026-09-28",
+  },
+  {
+    key: "health-content-evaluator",
+    filter: "open",
+    company: "amazon",
+    logoSrc: partnerLogos.amazon,
+    logoAlt: "Amazon Health",
+    title: "Health Content Evaluator",
+    partnerName: "Amazon Health",
+    compensation: "$70/hr",
+    engagementTerms: "Up to 20 hrs/week",
+    duration: "6 months",
+    expiresAt: "2026-10-09",
+  },
+];
+
+/**
+ * Offers already `Closed`, one per outcome `closedOfferOutcome` handles. Only the "2 offers" Engagements story lists
+ * them; the default prototype starts with an empty `Closed` filter. Three closed within the last 15 days and one
+ * earlier, so both `Closed` sections show.
+ */
+const DEMO_CLOSED_OFFERS: DemoOffer[] = [
+  {
+    key: "pharmacy-benefits-analyst",
+    filter: "closed",
+    company: "verita",
+    title: "Pharmacy Benefits Analyst",
+    partnerName: "Verita partner",
+    compensation: "$65/hr",
+    engagementTerms: "Up to 25 hrs/week",
+    duration: "3 months",
+    expiresAt: "2026-10-02",
+    declinedAt: "2026-09-22",
+  },
+  {
+    key: "clinical-guidelines-reviewer",
+    filter: "closed",
+    company: "google",
+    logoSrc: partnerLogos.google,
+    logoAlt: "Google",
+    title: "Clinical Guidelines Reviewer",
+    partnerName: "Google",
+    compensation: "$80/hr",
+    engagementTerms: "Up to 20 hrs/week",
+    duration: "2 months",
+    expiresAt: "2026-10-05",
+    withdrawnBy: "partner",
+    withdrawnAt: "2026-09-18",
+  },
+  {
+    key: "patient-experience-researcher",
+    filter: "closed",
+    company: "verita",
+    title: "Patient Experience Researcher",
+    partnerName: "Verita partner",
+    compensation: "$55/hr",
+    engagementTerms: "15 hrs/week",
+    duration: "6 weeks",
+    expiresAt: "2026-09-19",
+  },
+  {
+    key: "medical-coding-auditor",
+    filter: "closed",
+    company: "amazon",
+    logoSrc: partnerLogos.amazon,
+    logoAlt: "Amazon Health",
+    title: "Medical Coding Auditor",
+    partnerName: "Amazon Health",
+    compensation: "$60/hr",
+    engagementTerms: "Up to 30 hrs/week",
+    duration: "4 months",
+    expiresAt: "2026-09-15",
+    declinedAt: "2026-09-08",
   },
 ];
 
@@ -285,7 +459,11 @@ export {
   DEMO_TODAY,
   DEMO_APPLICATIONS,
   DEMO_OFFERS,
+  DEMO_CLOSED_OFFERS,
   DEMO_CONTRACTS,
+  offerExpiration,
+  closedOfferOutcome,
+  offerClosedAt,
   type ApplicationFilter,
   type NextActionOwner,
   type OfferFilter,
