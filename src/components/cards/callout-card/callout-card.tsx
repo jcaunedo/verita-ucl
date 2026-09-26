@@ -15,16 +15,12 @@ import { Typography } from "@/components/typography";
  * navigation, matching `Button`'s own `LinkButtonProps` pattern — `href` is
  * required.
  *
- * Hover (2026-09-22 Figma revision): the fill switches from
- * `color/tone/brand/subtle` to `background/default` (white) and a 1px
- * `border/neutral/border` outline and the `shadow/hover-card` shadow
- * appear (the shared hovered-card look, DESIGN.md "Row hover"). The border is reserved as
- * `border-transparent` at rest so the card doesn't shift 1px when it shows
- * (both Figma variants are the same 102px height). Figma's stroke is inside
- * the frame, so padding is Figma's 24px vertical / 32px left / 40px right
- * minus the 1px border (`py-[23px] pr-[39px] pl-[31px]`), and the title is
- * `lg -semibold` (18/26) and the description `sm` (14/22) — together keeping
- * the card at exactly 102px.
+ * Hover (2026-09-26 Figma revision): the fill switches from
+ * `color/tone/brand/subtle` to `state/hover` (`bg-hover`), with no border
+ * and no shadow in either state. Padding is Figma's 24px vertical / 32px
+ * left / 40px right (`py-6 pr-10 pl-8`), and the title is `lg -semibold`
+ * (18/26) and the description `sm` (14/22) — together keeping the card at
+ * exactly 102px.
  *
  * Height: the card fills its row's height (the lift wrapper and the link both
  * stretch), with its content vertically centered. Place callouts in an
@@ -33,8 +29,8 @@ import { Typography } from "@/components/typography";
  * Motion: the card uses the shared Lift pattern (CLAUDE.md "Lift" — hoverable
  * cards translate up by `motionDistance.lift` on a `subtleSpring`) via a
  * thin `motion.div` wrapper around the React Aria `Link` (same box), so the
- * link keeps React Aria's hover/focus/press semantics untouched. Fill,
- * border, shadow, and arrow color fade with a CSS transition limited to those
+ * link keeps React Aria's hover/focus/press semantics untouched. Fill and
+ * arrow color fade with a CSS transition limited to those
  * properties (not `transition`, which would also animate `transform` and
  * fight Motion's lift). Under reduced motion the
  * lift is dropped entirely and only the color change remains.
@@ -82,8 +78,8 @@ function CalloutCard({
       <AriaLink
         data-slot="callout-card"
         className={cn(
-          "group flex w-full items-center gap-18 rounded-card border border-transparent bg-tone-brand-subtle py-[23px] pr-[39px] pl-[31px] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
-          "data-[hovered]:border-border data-[hovered]:bg-background data-[hovered]:shadow-hover-card",
+          "group flex w-full items-center gap-18 rounded-card bg-tone-brand-subtle py-6 pr-10 pl-8 transition-[color,background-color] duration-150 ease-out",
+          "data-[hovered]:bg-hover",
           "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2",
           className,
         )}

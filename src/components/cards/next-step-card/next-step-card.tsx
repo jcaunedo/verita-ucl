@@ -47,9 +47,9 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * exact 4px/4px dash) or a background-image trick (which can't carry the
  * dash continuously through the rounded corners at an arbitrary box size) —
  * colored via `currentColor` from `text-next-steps-card-border` on this
- * element. It's only rendered while not hovered (`!isHovered`), since hover
- * switches to a real solid `border` instead (Figma: `background/default`,
- * `border/neutral/border`) rather than a second dashed state.
+ * element. It stays on hover; only the fill changes, from
+ * `next-steps-card/background` to `state/hover` (`bg-hover`), with no
+ * shadow (Figma revision 2026-09-26).
  *
  * `dismissible` shows a hover-revealed dismiss (X) button in the top-right
  * corner, per `product-specs/next-steps-card.md` §2.1: only `Recommended`
@@ -210,9 +210,9 @@ function NextStepCard({
           : "exit"
       }
       className={cn(
-        "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card border border-transparent bg-next-steps-card-background px-5 py-6 text-next-steps-card-border transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
-        // Figma `Property 1=Hover`: solid white card, `border/neutral/border`, and `shadow/hover-card` (DESIGN.md "Row hover").
-        "hover:border-solid hover:border-border hover:bg-background hover:shadow-hover-card",
+        "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card border border-transparent bg-next-steps-card-background px-5 py-6 text-next-steps-card-border transition-[background-color] duration-150 ease-out",
+        // Figma `Property 1=Hover` (2026-09-26): fill → `state/hover`; the dashed border stays; no shadow.
+        "hover:bg-hover",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -222,7 +222,7 @@ function NextStepCard({
       onClick={cardPress.onClick}
       onKeyDown={cardPress.onKeyDown}
     >
-      <DashedBorder radius={12} className="group-hover:hidden" />
+      <DashedBorder radius={12} />
       <div className="flex w-full flex-col items-start gap-4">
         <div className="flex h-[22px] w-full items-center justify-between">
           <Badge tone={badgeTone} label={label} />

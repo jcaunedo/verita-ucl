@@ -132,11 +132,17 @@ tint on hover. It lifts: a white fill, a `border/neutral/border` border, the
 `shadow/hover-card`: 0 4px 12px, ink at 6%), and the Lift motion (up 3px,
 CLAUDE.md "Lift"). Added in Figma on 2026-09-24.
 
+Exceptions (Figma revised on 2026-09-26): `NextStepCard` and `CalloutCard`
+tint instead. On hover their fill switches to `state/hover` (`bg-hover`),
+with no shadow, and they still lift. `NextStepCard` keeps its dashed
+border; `CalloutCard` has no border in either state. `ContractCard` still
+follows the rule above.
+
 | Token          | Figma              | Value            | Use for                                                      |
 | -------------- | ------------------ | ---------------- | ------------------------------------------------------------ |
 | `--hover-row`  | `state/hover-row`  | neutral-700 @ 2% | List and table rows (Application/Match/Offer rows)           |
-| `--shadow-hover-card` | `shadow/hover-card` | 0 4px 12px, ink @ 6% | Standalone card hover (Callout, Next Step, Contract)   |
-| `--hover`      | `state/hover`      | neutral-700 @ 4% | Controls and list items: Button, AccountTrigger, Select/Menu items |
+| `--shadow-hover-card` | `shadow/hover-card` | 0 4px 12px, ink @ 6% | Standalone card hover (Contract)                       |
+| `--hover`      | `state/hover`      | neutral-700 @ 4% | Controls and list items: Button, AccountTrigger, Select/Menu items; NextStepCard and CalloutCard hover fill |
 | `--icon-hover` | raw fill on `button` Type=Icon | neutral-700 @ 8% | Ghost/Neutral icon-only Button                    |
 
 **Why:** Figma deliberately splits row hover (large surfaces, lighter) from
