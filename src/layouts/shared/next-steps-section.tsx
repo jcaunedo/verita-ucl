@@ -102,7 +102,7 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
           Complete these to unlock more opportunities and improve your matches.
         </Typography>
       </div>
-      <div className="grid h-[248px] w-full grid-cols-2 gap-5 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid h-[248px] w-full grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
         <AnimatePresence
           onExitComplete={() => {
             if (eligibleNextSteps.length === 0) {

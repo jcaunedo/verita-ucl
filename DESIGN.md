@@ -181,8 +181,8 @@ breakpoint (see "Breakpoints include their own width").
 | ------------------------- | -------------- | ------------------------------------------------------------------- | ----------------------- |
 | `lg` (1024) and below     | auto-collapsed | `px-12` (48 / 48)                                                   | 2-up                    |
 | 1025 to `xl` (1280)       | user's choice  | `px-12` (48 / 48)                                                   | 2-up (Next Steps: 3-up) |
-| 1281 to `2xl` (1536)      | user's choice  | expanded: `xl:pl-16 xl:pr-40` (64 / 160); collapsed: `xl:pl-40 xl:pr-40` (160 / 160) | 3-up (Next Steps: 4-up) |
-| 1537 and up               | user's choice  | same as the row above                                               | 3-up (Next Steps: 4-up) |
+| 1281 to `2xl` (1536)      | user's choice  | expanded: `pl-12 xl:pr-22` (48 / 88); collapsed: `xl:pl-22 xl:pr-22` (88 / 88) | 3-up (Next Steps: 4-up) |
+| 1537 and up               | user's choice  | expanded: `2xl:pl-16 2xl:pr-40` (64 / 160); collapsed: `2xl:pl-40 2xl:pr-40` (160 / 160) | 3-up (Next Steps: 4-up) |
 
 - **Canvas padding** comes from `layoutCanvasPaddingClassName(sidebarCollapsed)`
   in `src/layouts/shared/layout-canvas.ts`. From `xl` up, collapsing the
@@ -220,7 +220,9 @@ left gutter that grew when the sidebar collapsed, while Engagements used
 them. The Engagements gutters were chosen as the standard (2026-09-23) and
 moved into one shared helper, so a change there reaches every page. On
 2026-09-24 the collapsed state got equal left and right gutters (design
-direction), replacing the fixed 64px left gutter in that state.
+direction), replacing the fixed 64px left gutter in that state. On
+2026-09-29 the `2xl` frame (1281–1536) got tighter gutters, 48 left / 88
+right (design direction). 1537 and up keeps 64 / 160.
 
 **How to apply:**
 
