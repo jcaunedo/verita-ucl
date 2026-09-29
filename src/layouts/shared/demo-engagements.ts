@@ -451,7 +451,7 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 3 days/week",
     duration: "4 months",
     progress: { metricLabel: "6 of 12 days completed", percentageLabel: "50%", percentage: 50 },
-    instructions: "Paused until the partner confirms the next study phase",
+    instructions: "Paused pending partner confirmation.",
   },
 ];
 
