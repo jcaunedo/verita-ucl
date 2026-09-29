@@ -99,7 +99,7 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
           Next steps
         </Typography>
         <Typography size="sm" className="text-foreground-muted">
-          Complete these to unlock more opportunities and improve your matches.
+          Complete important tasks and stay ahead of what’s next.
         </Typography>
       </div>
       <div className="grid h-[248px] w-full grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
