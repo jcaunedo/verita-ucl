@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 25, 2026
+Last updated: Sep 29, 2026
 Scope: Verita AI Dashboard — the Applications module's row/card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Applications view definition in product-specs/engagements.md [§3](engagements.md#3-applications).
 Purpose: Define the Applications card's stage/status model, content fields, row-interaction behavior, and priority behavior as a Home-module surface over the underlying Application object.
 -->
@@ -36,11 +36,11 @@ Required data does not mean every field must be displayed in every state. Progre
 
 ### 2.1 Progress display
 
-Progress appears on the row only when both are true: the next action belongs to the professional (§2.2), and it maps to a countable set of completed requirements — for example, "2 of 4 steps completed." An application with no defined step set, one whose stage doesn't carry meaningful sub-steps (e.g. `Applied`, awaiting a decision), or one currently owned by Verita or the partner, shows no numeric progress indicator — the last case shows a plain status instead (§2.2), never an empty bar or an invented percentage. This follows the same principle as [`contract-card.md` §3.1.2](contract-card.md#312-finalized-element-behaviors)'s work-insights rule: an optional metric group is fully omitted, not rendered empty, when no reliable or user-relevant data backs it.
+Progress appears on the row only when both are true: the next action belongs to the professional (§2.2), and it maps to a countable set of completed requirements — for example, "Complete your assessment (2/4)." An application with no defined step set, one whose stage doesn't carry meaningful sub-steps (e.g. `Applied`, awaiting a decision), or one currently owned by Verita or the partner, shows no numeric progress indicator — the last case shows a plain status instead (§2.2), never an empty bar or an invented percentage. This follows the same principle as [`contract-card.md` §3.1.2](contract-card.md#312-finalized-element-behaviors)'s work-insights rule: an optional metric group is fully omitted, not rendered empty, when no reliable or user-relevant data backs it.
 
 ### 2.2 Next-action owner
 
-Numeric step progress is professional-only by design, not a temporary gap. A step _count_ (e.g. "2 of 4 steps completed") is only meaningful when the professional is the one clearing those steps — it's their checklist, and the number reflects their own measurable progress. Once the next action belongs to Verita or the partner, there is no user-meaningful step count to expose: a partner's internal review process might have 1 stage or 20, but that's the partner's own process, not something the professional needs — or is entitled to — visibility into. Surfacing a partner-side count (e.g. "3 of 7 partner steps") would show real information with no action attached to it, which is noise, not a next action.
+Numeric step progress is professional-only by design, not a temporary gap. A step _count_ (e.g. "2/4") is only meaningful when the professional is the one clearing those steps — it's their checklist, and the number reflects their own measurable progress. Once the next action belongs to Verita or the partner, there is no user-meaningful step count to expose: a partner's internal review process might have 1 stage or 20, but that's the partner's own process, not something the professional needs — or is entitled to — visibility into. Surfacing a partner-side count (e.g. "3/7" for partner steps) would show real information with no action attached to it, which is noise, not a next action.
 
 This produces a concrete display rule, not just a data-scoping note:
 
@@ -123,7 +123,7 @@ This is the canonical scenario table for the two elements together — it supers
 | Application scenario                                    | Status (right)              | Supporting text (left)                              |
 | ------------------------------------------------------- | --------------------------- | --------------------------------------------------- |
 | Submitted, waiting for a decision                       | Applied                     | *(omitted — "Applied" the status already says this; a bare submission timestamp adds no guidance)* |
-| Submitted, additional requirements                      | Action required             | "Complete your assessment (2 of 4 steps completed)" |
+| Submitted, additional requirements                      | Action required             | "Complete your assessment (2/4)" |
 | Interview requested                                     | Interview · Action required | "Schedule your interview by Sep 22"                 |
 | Interview scheduled                                     | Interview scheduled         | "Sep 24 at 10 AM EDT"                               |
 | Interview completed, review owner unconfirmed           | In review                   | *(omitted — "Interview completed" alone is a bare event, not guidance, once no owner can be named)* |
@@ -145,7 +145,7 @@ This is the canonical scenario table for the two elements together — it supers
 >
 > The card must not infer that the interview is completed from its scheduled time having passed; it waits for the authoritative system to confirm it. Whether the review-owner detail is shown at all (vs. always omitted) is still open — see §8.
 
-> ✅ **Resolved (2026-09-23) — no `Not submitted` status:** applying submits the application immediately ([`engagements.md` §3](engagements.md#3-applications)), so there is no draft state and the two `Not submitted` rows are removed from the matrix. `Applied` is the first status a card can show. Step progress ("2 of 4 steps completed") only appears on post-submission requirements, e.g. `Action required`.
+> ✅ **Resolved (2026-09-23) — no `Not submitted` status:** applying submits the application immediately ([`engagements.md` §3](engagements.md#3-applications)), so there is no draft state and the two `Not submitted` rows are removed from the matrix. `Applied` is the first status a card can show. Step progress ("2/4") only appears on post-submission requirements, e.g. `Action required`.
 
 > `On hold`'s `supporting-text` is omitted: unlike the post-interview `In review` rows (§2.4.1), no reason or owner (partner vs. Verita) is currently captured for why an application goes `ON_HOLD` — it's presently just a flag, per [`engagements.md` §8](engagements.md#8-application-status-enum)'s "parked for later" definition. With no reason or owner to name, the only remaining candidate is the hold date, which per §2.4's value rule is a timestamp, not guidance — so `supporting-text` is omitted rather than falling back to "Placed on hold [date]." If the underlying data model later captures a specific reason (e.g. "role requirements changed") or owner (e.g. "paused by [Partner]"), `supporting-text` should show that instead, following the same confirmed-data-only pattern already established for the post-interview `In review` rows above — but that data does not exist today, so there's nothing to render.
 
@@ -155,7 +155,7 @@ This is the canonical scenario table for the two elements together — it supers
 
 - "Complete your assessment"
 - "Complete your assessment by Sep 28"
-- "Complete your assessment (2 of 4 steps completed)"
+- "Complete your assessment (2/4)"
 - "Upload your portfolio"
 - "Upload your certification"
 - "Verify your work authorization"
@@ -183,9 +183,11 @@ All dates, deadlines, and progress values above are illustrative copy examples, 
 
 ✅ **Confirmed in Figma (2026-09-23):** `supporting-text` moved back to the left zone as its last row, below the `terms-row` line — superseding the earlier right-zone placement. The right zone now holds only `application-status` (plus the hover-revealed `actions-menu`, §4.1). This also resolves the previous mismatch between §2.3's right-zone placement and §2.4.1's "Supporting text (left)" column header, which now agree.
 
-For the "Submitted, additional requirements" scenario (§2.4.1), where the card needs to communicate both the requested step and the professional's progress against it, that's still just one `supporting-text` line — its _content_ combines both pieces into a single string (e.g. "Complete your assessment (2 of 4 steps completed)"). This is a content/copy concern, not a second component element.
+For the "Submitted, additional requirements" scenario (§2.4.1), where the card needs to communicate both the requested step and the professional's progress against it, that's still just one `supporting-text` line — its _content_ combines both pieces into a single string (e.g. "Complete your assessment (2/4)"). This is a content/copy concern, not a second component element.
 
-✅ **Copy fix (2026-09-23):** the step count is wrapped in brackets after the requested action — "Complete your assessment (2 of 4 steps completed)" — matching the latest Figma design, replacing the earlier `·`-separated form.
+✅ **Copy fix (2026-09-23):** the step count is wrapped in brackets after the requested action, matching the latest Figma design, replacing the earlier `·`-separated form.
+
+✅ **Copy fix (2026-09-29):** the bracketed count is shortened to a completed/total fraction — "Complete your assessment (2/4)" — replacing "(2 of 4 steps completed)". The requested action already names what the steps are, so the fraction alone is enough and keeps the line short.
 
 `supporting-text` as a whole remains fully optional per §2.3's anatomy row: it renders only when it has confirmed content for the application's current state, and is omitted entirely (not shown empty) otherwise — consistent with §6.2's fallback rules. The Figma component's `showSupportingText` prop must be derived from that same content-presence check, never set independently of the data and never used to hide content that does exist.
 
@@ -340,7 +342,7 @@ The component receives a summary of one authoritative Application. This is a pre
 - Present identity first, then status, then next action/deadline, then progress when applicable — following §2's field order.
 - Collapse an absent optional field without a blank row or placeholder text. A missing deadline is omitted, not shown as "No deadline."
 - If required identity or status cannot be established, show an unavailable state with recovery rather than a normal actionable row.
-- Label progress precisely, e.g. "2 of 4 steps completed" — never a bare percentage divorced from the underlying count.
+- Label progress precisely as a completed/total count after the requested action, e.g. "(2/4)" — never a bare percentage divorced from the underlying count.
 - The row itself is the only interactive target (§4); no nested interactive control should compete with it for the same click.
 
 ## 7. Multiple applications

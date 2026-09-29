@@ -73,7 +73,7 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
     duration: "1 year",
     statusLabel: "Action required",
     statusTone: "warning",
-    supportingText: "Complete your assessment (2 of 4 steps completed)",
+    supportingText: "Complete your assessment (2/4)",
   },
   {
     key: "amazon-clinical-data-coordinator",

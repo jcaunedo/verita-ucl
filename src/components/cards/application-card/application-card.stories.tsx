@@ -55,7 +55,7 @@ export const ActionRequired: Story = {
   args: {
     statusLabel: "Action required",
     statusTone: "warning",
-    supportingText: "Complete your assessment (2 of 4 steps completed)",
+    supportingText: "Complete your assessment (2/4)",
   },
 };
 
@@ -160,7 +160,7 @@ export const SupportingTextPlacement: Story = {
   args: {
     statusLabel: "Action required",
     statusTone: "warning",
-    supportingText: "Complete your assessment (2 of 4 steps completed)",
+    supportingText: "Complete your assessment (2/4)",
     actionsMenuLabel: "More actions",
     onActionsPress: () => {},
   },
@@ -198,7 +198,7 @@ export const GroupedList: Story = {
           partnerName="Verita partner"
           statusLabel="Action required"
           statusTone="warning"
-          supportingText="Complete your assessment (2 of 4 steps completed)"
+          supportingText="Complete your assessment (2/4)"
         />
         <ApplicationCard
           title="Clinical Data Coordinator"
@@ -249,7 +249,7 @@ export const AllVariants: Story = {
         partnerName="Verita partner"
         statusLabel="Action required"
         statusTone="warning"
-        supportingText="Complete your assessment (2 of 4 steps completed)"
+        supportingText="Complete your assessment (2/4)"
       />
       <ApplicationCard
         title="Strategic Finance Expert"
