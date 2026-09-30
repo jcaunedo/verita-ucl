@@ -10,6 +10,7 @@ import { cardDismissVariants, reflowTransition, rowDismissVariants, useMotionPre
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
+import { Alert } from "@/components/feedback/alert";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
@@ -76,15 +77,15 @@ const NEXT_STEPS = [
 ] as const;
 
 /**
- * Current contracts, Open applications, and the offer alert come from the shared
+ * Current contracts, Applications, and the offer alert come from the shared
  * demo data (`src/layouts/shared/demo-engagements.ts`), so they match what
  * the `Engagements` layout lists: "Current contracts" is the `Open` contracts, and
- * "Open applications" is the top of Engagements → Applications → `Open`,
+ * "Applications" is the top of Engagements → Applications → `In progress`,
  * in that filter's default sort (`engagements.md` §3.1).
  */
 const ACTIVE_WORK = DEMO_CONTRACTS.filter((contract) => contract.filter === "open");
 
-/** Max rows in "Open applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
+/** Max rows in "Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
 const ACTIVE_APPLICATIONS_LIMIT = 3;
 
 
@@ -151,8 +152,8 @@ interface DashboardProps {
    */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
   /**
-   * Target for "Open applications" → "View All": Engagements → Applications,
-   * `Open` filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
+   * Target for "Applications" → "View All": Engagements → Applications,
+   * `In progress` filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllApplicationsHref?: string;
   /**
@@ -165,6 +166,14 @@ interface DashboardProps {
    * `dashboard.md` §7.1 describes. The "2 offers" story passes 2 to preview the plural heading.
    */
   offerLimit?: number;
+  /**
+   * How the open offers are shown. `list` (default): the "New offer for you" module of `OfferCard` rows
+   * (`dashboard.md` §7.1). `banner`: one info `Alert` counting them, which opens Engagements → Offers — Figma:
+   * Verita → `Dashboard` (`node-id=6095-2350`). The "Offer alert banner" story (account menu) previews it.
+   */
+  offerDisplay?: "list" | "banner";
+  /** Target for the offer alert banner: Engagements → Offers. Same no-router reason as `navHrefOverrides`; defaults to `#`. */
+  viewOffersHref?: string;
 }
 
 /**
@@ -183,7 +192,7 @@ interface DashboardProps {
  * offer alert, active-work grid, active-applications list, and
  * recent-matches list Figma shows once the professional has real activity.
  *
- * The "Open applications"/"Matches" sections are plain bordered containers
+ * The "Applications"/"Matches" sections are plain bordered containers
  * of stacked `ApplicationCard`/`MatchCard` rows (`divide-y`-style borders
  * already built into each card) — Figma's `table-application-listing`/
  * `table-match-listing` instances are not real data-table components, just
@@ -195,6 +204,8 @@ function Dashboard({
   viewAllApplicationsHref = "#",
   viewAllContractsHref = "#",
   offerLimit = 1,
+  offerDisplay = "list",
+  viewOffersHref = "#",
 }: DashboardProps = {}) {
   // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
@@ -254,7 +265,7 @@ function Dashboard({
   const { prefersReducedMotion } = useMotionPreference();
   const { declined, decline } = useDeclinedOffers();
   // Withdraw (row `···` menu) moves the application to Engagements → `Not moving forward`, so it drops off
-  // "Open applications" and the next open one takes its place — see `useWithdrawnApplications`.
+  // "Applications" and the next open one takes its place — see `useWithdrawnApplications`.
   const { withdrawn, withdraw } = useWithdrawnApplications();
   const openApplications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn).filter(
     (application) => application.filter === "open",
@@ -266,6 +277,7 @@ function Dashboard({
   const [dismissedOfferKeys, setDismissedOfferKeys] = React.useState<ReadonlySet<string>>(() => new Set());
   const visibleOffers = shownOffers.filter((offer) => !dismissedOfferKeys.has(offer.key));
   const [offerSectionVisible, setOfferSectionVisible] = React.useState(true);
+  const [offerBannerDismissed, setOfferBannerDismissed] = React.useState(false);
 
   const handleDeclineOffer = (key: string) => {
     decline(key);
@@ -302,13 +314,43 @@ function Dashboard({
           </div>
 
           <div className="flex w-full flex-col items-start gap-12">
-            {shownOffers.length > 0 && offerSectionVisible && (
+            {/* Banner option: one alert for every shown offer, 48px above Next steps like the list. The × hides it
+                for this visit (it doesn't decline anything), with the same exit as the list's last card; the page
+                below glides up via the `layoutDependency` below, once the exit completes. */}
+            <AnimatePresence initial={false} onExitComplete={() => setOfferSectionVisible(false)}>
+              {offerDisplay === "banner" && shownOffers.length > 0 && !offerBannerDismissed && (
+                <motion.div
+                  key="offer-banner"
+                  className="w-full"
+                  variants={cardDismissVariants}
+                  initial={false}
+                  animate="animate"
+                  exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
+                >
+                  <Alert
+                    tone="info"
+                    title={
+                      // Figma's copy, with a singular form for one offer (never "1 new offers", `dashboard.md` §7.1).
+                      shownOffers.length > 1
+                        ? `You have ${shownOffers.length} new offers waiting for your response.`
+                        : "You have a new offer waiting for your response."
+                    }
+                    description="Review the details and decide how you’d like to move forward."
+                    onClick={() => window.location.assign(viewOffersHref)}
+                    dismissible
+                    onDismiss={() => setOfferBannerDismissed(true)}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {offerDisplay === "list" && shownOffers.length > 0 && offerSectionVisible && (
               <div className="flex w-full flex-col items-start gap-3">
                 <Typography size="xl" weight="semibold">
                   {/* Counts the offers shown, never "1 new offer" (`dashboard.md` §7.1). Kept singular while the last card exits. */}
                   {visibleOffers.length > 1 ? `${visibleOffers.length} new offers for you` : "New offer for you"}
                 </Typography>
-                {/* Same table list as "Open applications" and "Top matches for you": one bordered container, one row per
+                {/* Same table list as "Applications" and "Top matches for you": one bordered container, one row per
                     offer. Declining a row collapses it while others remain; declining the last one removes the whole
                     table (card-dismiss exit), then the section closes. */}
                 <AnimatePresence
@@ -415,7 +457,7 @@ function Dashboard({
                 {/* Figma: title + `sm` muted subtitle, 2px apart — same header as `NextStepsSection`. */}
                 <div className="flex w-full flex-col items-start gap-0.5">
                   <Typography size="xl" weight="semibold">
-                    Open applications
+                    Applications
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
                     Showing {activeApplications.length} of {openApplications.length}

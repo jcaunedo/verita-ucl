@@ -102,6 +102,8 @@ export { Badge, badgeVariants, type BadgeProps } from "./components/data-display
 /* Feedback                                                                   */
 /* -------------------------------------------------------------------------- */
 
+export { Alert, alertVariants, type AlertProps, type AlertTone } from "./components/feedback/alert";
+
 export {
   InlineAlert,
   inlineAlertVariants,

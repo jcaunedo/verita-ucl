@@ -67,22 +67,24 @@ const CONTRACT_FILTERS: { id: ContractFilter; label: string }[] = [
 ];
 
 /**
- * Offers view filters (`engagements.md` §4.1): `Open` (awaiting a response or
- * still in contracting) / `Closed` (the Offers history: declined, expired, or
- * withdrawn).
+ * Offers view filters (`engagements.md` §4.1): `Awaiting response` (the spec's
+ * `Open`: awaiting a response or still in contracting; the id stays `open`) /
+ * `Closed` (the Offers history: declined, expired, or withdrawn).
  */
 const OFFER_FILTERS: { id: OfferFilter; label: string }[] = [
-  { id: "open", label: "Open" },
+  { id: "open", label: "Awaiting response" },
   { id: "closed", label: "Closed" },
 ];
 
+// `In progress` (the spec's `Open`, `engagements.md` §3.1). The id stays `open` so the shared filter-row rules (no
+// counter on the default filter) apply as in Offers and Contracts.
 const FILTERS: { id: ApplicationFilter; label: string }[] = [
-  { id: "open", label: "Open" },
+  { id: "open", label: "In progress" },
   { id: "not-moving-forward", label: "Not moving forward" },
 ];
 
 /**
- * `Open` is split into sections that answer "what deserves my attention first?" (`engagements.md` §3.1 "Sections").
+ * `In progress` is split into sections that answer "what deserves my attention first?" (`engagements.md` §3.1 "Sections").
  * Figma: `Engagements` (`node-id=5672-4301`). The row's status label still says where each application stands.
  */
 type OpenSection = "action-needed" | "recent" | "older";
@@ -299,7 +301,7 @@ function GroupedList<T>({
   );
 }
 
-/** Application rows stacked in one bordered list — the same container as `Dashboard`'s Open applications. */
+/** Application rows stacked in one bordered list — the same container as `Dashboard`'s Applications. */
 function ApplicationList({
   rows,
   onWithdraw,
@@ -363,7 +365,7 @@ interface EngagementsProps {
  *   its own query across filter switches.
  * - Rows: `ApplicationCard` with the hover-revealed `···` menu (§3 "Row
  *   interaction", `applications-card.md` §4.1), stacked in the same bordered
- *   container as `Dashboard`'s Open applications list.
+ *   container as `Dashboard`'s Applications list.
  * - `Open` sections (§3.1 "Sections"): `Action needed` → `Last 15 days` →
  *   `Older`, each its own list under a label. Empty sections are hidden.
  *
@@ -433,7 +435,7 @@ function Engagements({
   });
 
   /**
-   * One offer row. Open: the expiration countdown and "View offer". Closed: no countdown, no CTA; the badge and
+   * One offer row. Awaiting response: the expiration countdown and "View offer". Closed: no countdown, no CTA; the badge and
    * supporting text say how it closed, and an expired offer opens nothing (`closedOfferOutcome`).
    */
   const renderOfferCard = (demoOffer: (typeof offers)[number], className?: string) => {
@@ -495,7 +497,7 @@ function Engagements({
           <MetricTabs defaultSelectedKey={defaultView} className="flex w-full flex-1 flex-col gap-8">
             <MetricTabList aria-label="Engagement views">
               <MetricTab id="applications" label="Applications" value={applicationsTotal} />
-              {/* Offers total = `Open` only (§4.1). */}
+              {/* Offers total = `Awaiting response` only (§4.1). */}
               <MetricTab id="offers" label="Offers" value={offerCountFor("open")} />
               <MetricTab id="contracts" label="Contracts" value={CONTRACTS.length} />
               <MetricTab id="assessments" label="Assessments" value={0} />
@@ -513,7 +515,7 @@ function Engagements({
                     searchLabel="Search applications"
                     {...searchProps("applications")}
                     filtersLabel="Application filters"
-                    // No counters on Applications filters: `Open` repeats the view-tab count, and `Not moving forward` has
+                    // No counters on Applications filters: `In progress` repeats the view-tab count, and `Not moving forward` has
                     // none by design direction (`engagements.md` §3.1 "Counts").
                     filters={FILTERS.map(({ id, label }) => ({ id, label }))}
                   />
@@ -528,7 +530,7 @@ function Engagements({
                           <EmptyState {...noSearchResults(searchQueries.applications)} className="flex-1" />
                         )}
                         {/* One supporting-text position for the whole filter, across sections (`ApplicationCardGroup`).
-                            Open: Action needed → Last 15 days → Older. Not moving forward: Last 15 days → Older, by when
+                            In progress: Action needed → Last 15 days → Older. Not moving forward: Last 15 days → Older, by when
                             each application ended (`lastActivityAt`). */}
                         {rows.length > 0 && (
                           <ApplicationCardGroup>
@@ -565,7 +567,7 @@ function Engagements({
                     filtersLabel="Offer filters"
                     filters={OFFER_FILTERS.map(({ id, label }) => ({ id, label, count: offerCountFor(id) }))}
                   />
-                  {/* Open: one table list (DESIGN.md "Lists of rows are one table list"). Declining a row collapses it while
+                  {/* Awaiting response: one table list (DESIGN.md "Lists of rows are one table list"). Declining a row collapses it while
                       others remain; declining the last one removes the whole table, and the empty state fades in once that
                       exit finishes (`mode="wait"`), so the two never overlap. */}
                   <TabButtonPanel id="open" className="flex w-full flex-1 flex-col outline-none">

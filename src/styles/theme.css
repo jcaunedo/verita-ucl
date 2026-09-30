@@ -91,6 +91,7 @@
 	--color-foreground-muted: var(--foreground-muted);
 	--color-card: var(--card);
 	--color-card-foreground: var(--card-foreground);
+	--color-card-subtle: var(--card-subtle);
 	--color-next-steps-card-background: var(--next-steps-card-background);
 	--color-next-steps-card-border: var(--next-steps-card-border);
 	--color-badge-warning-background: var(--badge-warning-background);

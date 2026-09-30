@@ -411,7 +411,7 @@ is an extra click that hides an action instead of offering a choice.
 `Last 15 days` / `Older`) shows its section headings only when at least two
 sections have rows. With one section, the list renders on its own, with no
 heading. Sections with no rows are always hidden. This applies to
-Engagements → Applications (`Open`, `Not moving forward`), Engagements →
+Engagements → Applications (`In progress`, `Not moving forward`), Engagements →
 Offers → `Closed`, and any future list with the same layout.
 
 **Why:** design direction (2026-09-25): a single heading above the only

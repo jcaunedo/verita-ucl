@@ -1,7 +1,7 @@
 <!--
 Created: Sep 25, 2026
 Created by: Julio Caunedo
-Last updated: Sep 25, 2026
+Last updated: Sep 30, 2026
 Scope: The Offer card — the row that represents one Offer on Home's Opportunity alert ("New offer for you", product-specs/dashboard.md §7.1) and in Engagements → Offers (product-specs/engagements.md §4.1).
 Purpose: Collect the Offer card's content, status model, row interaction, and closed-state treatment in one place, alongside the sibling Applications, Contract, and Match card specs.
 -->
@@ -100,12 +100,12 @@ Figma's `offer-card` has an optional `Discipline` label in the right zone, and t
 
 ## 3. Status model
 
-The card follows the Offers filters in [`engagements.md` §4.1](engagements.md#41-offer-filters): **Open** while the offer awaits a response or its Contract doesn't exist yet, **Closed** once it has ended without becoming a Contract. The filter groups outcomes, and the card shows which one applies, the same pattern as `Not moving forward` in Applications.
+The card follows the Offers filters in [`engagements.md` §4.1](engagements.md#41-offer-filters): **Awaiting response** while the offer awaits a response or its Contract doesn't exist yet, **Closed** once it has ended without becoming a Contract. The filter groups outcomes, and the card shows which one applies, the same pattern as `Not moving forward` in Applications.
 
 | Filter     | Status                        | Badge (tone)                   | Supporting text (proposed)              | Expiration | "View offer" | Menu                   |
 | ---------- | ----------------------------- | ------------------------------ | --------------------------------------- | ---------- | ------------ | ---------------------- |
-| **Open**   | Offer received                | None                           | None                                    | Yes        | Yes          | View details, Decline  |
-| **Open**   | Accepted · Contract pending   | `Accepted · Contract pending`  | To be defined                           | No         | Yes          | None (one item)        |
+| **Awaiting response** | Offer received     | None                           | None                                    | Yes        | Yes          | View details, Decline  |
+| **Awaiting response** | Accepted · Contract pending | `Accepted · Contract pending`  | To be defined                           | No         | Yes          | None (one item)        |
 | **Closed** | Declined, before expiration   | `Declined` (neutral)           | "Declined by you on {date}"             | No         | No           | None (one item)        |
 | **Closed** | Declined, since expired       | `Expired` (neutral)            | "Declined by you on {date}"             | No         | No           | None (row opens nothing) |
 | **Closed** | Withdrawn by partner          | `Withdrawn` (neutral)          | "Withdrawn by partner"                  | No         | No           | None (one item)        |
@@ -115,7 +115,7 @@ The card follows the Offers filters in [`engagements.md` §4.1](engagements.md#4
 
 ### 3.1 Accepted offers stay open
 
-An accepted offer never goes to `Closed`. It stays under `Open` as `Accepted · Contract pending` until the Contract exists, then leaves `Offers` for `Contracts`. It must not disappear during that handoff. Its history belongs to the Contract from then on ([`engagements.md` §4.1](engagements.md#41-offer-filters)).
+An accepted offer never goes to `Closed`. It stays under `Awaiting response` as `Accepted · Contract pending` until the Contract exists, then leaves `Offers` for `Contracts`. It must not disappear during that handoff. Its history belongs to the Contract from then on ([`engagements.md` §4.1](engagements.md#41-offer-filters)).
 
 ⚠️ **Gap:** no design exists for an accepted offer's row. It probably keeps the "View offer" button and adds the badge, and its supporting text needs defining.
 
@@ -211,8 +211,8 @@ When an offer is declined:
 
 | Surface                        | What it shows                                                                                                                                                                                      |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Home → Opportunity alert       | One open offer under "New offer for you" ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)), or several under "{n} new offers for you", soonest expiration first. Offers sit in one table list, a single bordered container with one row per offer, the same as Home's "Open applications" and "Top matches for you". The module doesn't render when there is no open offer. It never shows an empty placeholder. |
-| Engagements → Offers → Open    | Every open offer, in one table list like Engagements → Applications ([DESIGN.md](../DESIGN.md) "Lists of rows are one table list"). The `Offers` view-tab count is the `Open` count, so the `Open` filter shows no counter of its own ([`engagements.md` §4.1](engagements.md#41-offer-filters)). |
+| Home → Opportunity alert       | One open offer under "New offer for you" ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)), or several under "{n} new offers for you", soonest expiration first. Offers sit in one table list, a single bordered container with one row per offer, the same as Home's "Applications" and "Top matches for you". The module doesn't render when there is no open offer. It never shows an empty placeholder. |
+| Engagements → Offers → Awaiting response | Every open offer, in one table list like Engagements → Applications ([DESIGN.md](../DESIGN.md) "Lists of rows are one table list"). The `Offers` view-tab count is the `Awaiting response` count, so the `Awaiting response` filter shows no counter of its own ([`engagements.md` §4.1](engagements.md#41-offer-filters)). |
 | Engagements → Offers → Closed  | Every closed offer, each showing its outcome (§3.2). Not counted in the view-tab total.                                                                                                             |
 
 Both surfaces show the same Offer. Declining it on Home moves it to `Closed` in Engagements, and it stays gone from Home.
@@ -223,7 +223,7 @@ Each Offers filter has its own empty state, using the shared `EmptyState` compon
 
 | Filter     | Title              | Description                                                           |
 | ---------- | ------------------ | --------------------------------------------------------------------- |
-| **Open**   | No open offers     | Offers you receive will appear here for you to review.                |
+| **Awaiting response** | No open offers | Offers you receive will appear here for you to review.                |
 | **Closed** | No closed offers   | Offers you decline, or that expire or are withdrawn, will appear here. |
 
 ℹ️ Both are draft copy written in the voice of the other Engagements empty states, pending product and design review.
@@ -252,7 +252,7 @@ The `OfferCard` component (`src/components/cards/offer-card/`) maps to the anato
 - 🙋 Does the expiration show a time and timezone on the last day (§2.3)?
 - 🙋 What does `Discipline` represent on an offer, and should it appear on the card (§2.4)?
 - 🙋 How does an accepted offer look before its Contract exists, and what does its supporting text say (§3.1)?
-- 🙋 Is `Canceled` a separate outcome from `Withdrawn`, and does an offer where the professional requested changes need its own `Open` status ([`engagements.md` §4.1](engagements.md#41-offer-filters))?
+- 🙋 Is `Canceled` a separate outcome from `Withdrawn`, and does an offer where the professional requested changes need its own `Awaiting response` status ([`engagements.md` §4.1](engagements.md#41-offer-filters))?
 - 🙋 What is the default sort for `Closed` (§3.2)?
 - 🙋 Should an expired offer's row open the detail (§3.2)?
 - 🙋 When a declined offer later expires, does its badge change to `Expired` or stay `Declined` (§3.2)?
@@ -261,7 +261,7 @@ The `OfferCard` component (`src/components/cards/offer-card/`) maps to the anato
 
 ## 8. Related docs
 
-- [`engagements.md`](engagements.md) — the Engagements PRD. [§4](engagements.md#4-offers-and-contracting) defines the Offer object; [§4.1](engagements.md#41-offer-filters) defines the `Open` / `Closed` filters, counts, and closed-row outcomes this card renders.
+- [`engagements.md`](engagements.md) — the Engagements PRD. [§4](engagements.md#4-offers-and-contracting) defines the Offer object; [§4.1](engagements.md#41-offer-filters) defines the `Awaiting response` / `Closed` filters, counts, and closed-row outcomes this card renders.
 - [`dashboard.md`](dashboard.md) — the Home PRD. [§7.1](dashboard.md#71-opportunity-alert) defines the Opportunity alert module and its "New offer for you" heading.
 - [`applications-card.md`](applications-card.md) — the sibling card for Applications. It shares this card's identity block, two-zone layout, actions-menu pattern, and closed-state treatment.
 - [`contract-card.md`](contract-card.md) — the card an offer becomes once contracting completes. The source of the compensation formats (§3.3.1) and the duration model (§3.2.1) this card uses.

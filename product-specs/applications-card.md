@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 29, 2026
+Last updated: Sep 30, 2026
 Scope: Verita AI Dashboard — the Applications module's row/card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Applications view definition in product-specs/engagements.md [§3](engagements.md#3-applications).
 Purpose: Define the Applications card's stage/status model, content fields, row-interaction behavior, and priority behavior as a Home-module surface over the underlying Application object.
 -->
@@ -135,7 +135,7 @@ This is the canonical scenario table for the two elements together — it supers
 | Withdrawn                                               | Withdrawn                   | "Withdrawn by you on Sep 24"                        |
 | Opportunity closed before the application advanced      | Closed                      | *(omitted — terminal, nothing actionable; see the detail page for the closed date)* |
 
-> ✅ **Resolved (2026-09-24) — withdrawn rows name who and when:** a withdrawn application shows the neutral `Withdrawn` badge with "Withdrawn by you on {date}" (month and day). This supersedes the earlier rule that omitted supporting text for `Withdrawn`. `Not selected` and `Closed` keep omitting it. Withdrawing moves the application from `Open` to `Not moving forward` at once, both in Engagements and on the Home preview, where the next open application takes its place ([`engagements.md` §3.1](engagements.md#31-application-filters)).
+> ✅ **Resolved (2026-09-24) — withdrawn rows name who and when:** a withdrawn application shows the neutral `Withdrawn` badge with "Withdrawn by you on {date}" (month and day). This supersedes the earlier rule that omitted supporting text for `Withdrawn`. `Not selected` and `Closed` keep omitting it. Withdrawing moves the application from `In progress` to `Not moving forward` at once, both in Engagements and on the Home preview, where the next open application takes its place ([`engagements.md` §3.1](engagements.md#31-application-filters)).
 >
 > ✅ **Resolved (2026-09-23) — `In review` after the interview:** once an interview is completed, `application-status` reads **`In review`** until there's an outcome (`Offer received`, `Not selected`, and so on). This is the one place `In review` is used: the professional has done their part and is waiting for an answer. Before any interview, the status stays `Applied` (§3). `supporting-text` carries who is reviewing and when the interview happened, when it clears the value bar in §2.4's rule above:
 >
@@ -216,7 +216,7 @@ For the "Submitted, additional requirements" scenario (§2.4.1), where the card 
 | `WITHDRAWN`         | Withdrawn         |
 | *(none yet)*        | Closed            |
 
-ℹ️ `Closed` is a proposed terminal outcome with no backing system status yet. It means the opportunity closed before the application advanced, so it must never be mapped from `REJECTED` (a decision about the applicant). The Engagements → Applications view groups these labels under two filters (`Open`, `Not moving forward`; see [`engagements.md` §3.1](engagements.md#31-application-filters)). The card shows only the specific status label, never the filter name. The Home preview (§5) shows `Open` applications only.
+ℹ️ `Closed` is a proposed terminal outcome with no backing system status yet. It means the opportunity closed before the application advanced, so it must never be mapped from `REJECTED` (a decision about the applicant). The Engagements → Applications view groups these labels under two filters (`In progress`, `Not moving forward`; see [`engagements.md` §3.1](engagements.md#31-application-filters)). The card shows only the specific status label, never the filter name. The Home preview (§5) shows `In progress` applications only.
 
 The card must never render the raw system value (`SCORING_PENDING`, `SELECTED`, etc.) — only the mapped user-facing label. `APPLIED`, `SCORING_PENDING`, and `UNDER_REVIEW` all show `Applied` for now: the card does not distinguish submission, AI scoring, and ops review for the professional.
 
@@ -306,11 +306,11 @@ Selecting any menu item must not also trigger the row's own click-through to app
 
 > The Home module renders even with zero applications, as the Dashboard's default empty state: the Applications module is not hidden when the professional has no applications — per [Empty State — A](https://www.figma.com/design/hdxBo3xOg3uMSovZwidJF5/Verita?node-id=5642-2215), it is the module that carries the pre-Contract, pre-application default empty condition for the whole Dashboard (see [`dashboard.md` §7.6](dashboard.md#76-applications-offers-active-engagement-training-payments)'s resolved note for the full Dashboard-level fallback logic). This supersedes the earlier assumption that Home "drops the module entirely when no application exists" (§5.1's older wording, now corrected). Once at least one application exists, the module switches from its empty state to the row list (§5's other resolved note below); once an application progresses to an active Contract, the Contracts module (`dashboard.md` §6 item 3) takes over as dominant per its own resolution, but the Applications module keeps rendering its row list — it does not hide once a Contract exists, since the professional can still have other in-flight applications.
 
-> ✅ **Resolved (2026-09-24) — Home preview mirrors Engagements → Applications → `Open`:** the Home "Your applications" preview (§6 module 5 of [`dashboard.md`](dashboard.md#6-information-architecture), titled "Open applications", formerly "Active Applications") shows the first 3 applications of the `Open` filter, in that filter's default sort: action needed first ([`engagements.md` §3.1](engagements.md#31-application-filters)). Home and Engagements therefore never disagree about which applications are active or which comes first. `Not moving forward` applications don't appear on Home, and neither do applications that produced an offer (they've moved to `Offers`). Under the section title, a subtitle reads `Showing {shown} of {total}` (e.g. "Showing 3 of 8"), where `total` is the `Open` count, the same number as the Engagements `Applications` view tab. Below the list, `View All` routes to Engagements → Applications with the `Open` filter selected; past applications are one click away under `Not moving forward`.
+> ✅ **Resolved (2026-09-24) — Home preview mirrors Engagements → Applications → `In progress`:** the Home "Your applications" preview (§6 module 5 of [`dashboard.md`](dashboard.md#6-information-architecture), titled "Applications", formerly "Open applications" and before that "Active Applications") shows the first 3 applications of the `In progress` filter, in that filter's default sort: action needed first ([`engagements.md` §3.1](engagements.md#31-application-filters)). Home and Engagements therefore never disagree about which applications are active or which comes first. `Not moving forward` applications don't appear on Home, and neither do applications that produced an offer (they've moved to `Offers`). Under the section title, a subtitle reads `Showing {shown} of {total}` (e.g. "Showing 3 of 8"), where `total` is the `In progress` count, the same number as the Engagements `Applications` view tab. Below the list, `View All` routes to Engagements → Applications with the `In progress` filter selected; past applications are one click away under `Not moving forward`.
 >
 > ⚠️ **Decision needed:** whether the subtitle still shows when every open application fits ("Showing 2 of 2"), or is hidden because nothing is cut off. This supersedes the earlier rule (most recently applied first, any status, including `Withdrawn` and `Not selected`), which put closed applications under an "Active" heading.
 
-Per [`engagements.md` §2](engagements.md#2-engagement-views), an application that ends without an offer stays in the `Applications` view under `Not moving forward`, with its outcome shown. An application that produces an offer leaves `Applications` for `Offers`. The Home preview shows neither: it's limited to `Open` (above).
+Per [`engagements.md` §2](engagements.md#2-engagement-views), an application that ends without an offer stays in the `Applications` view under `Not moving forward`, with its outcome shown. An application that produces an offer leaves `Applications` for `Offers`. The Home preview shows neither: it's limited to `In progress` (above).
 
 ### 5.1 Zero-state on Engagements → Applications
 
@@ -354,7 +354,7 @@ Required behaviors:
 - Each row opens its corresponding application detail independently.
 - An error loading one application's data must not affect other rows.
 - A status change on one application must not affect another.
-- Row order should be deterministic. Home's preview is the first 3 rows of the Engagements → Applications `Open` filter, which sorts by action needed ([`engagements.md` §3.1](engagements.md#31-application-filters); §5). The `Not moving forward` order is still open (§8).
+- Row order should be deterministic. Home's preview is the first 3 rows of the Engagements → Applications `In progress` filter, which sorts by action needed ([`engagements.md` §3.1](engagements.md#31-application-filters); §5). The `Not moving forward` order is still open (§8).
 
 ## 8. Open questions
 
@@ -363,11 +363,11 @@ Required behaviors:
 - 🙋 Whether the owner label itself (e.g. "Waiting on you" vs. "Waiting on [partner]") should surface inline on the row, or only after clicking through to the application detail — the step-count-vs-status rendering rule is resolved (§2.2), but this labeling-placement question is not.
 - 🙋 Reconcile the suggested pre-offer lifecycle in [`engagements.md` §3](engagements.md#3-applications) against the canonical status enum in [`engagements.md` §8`](engagements.md#8-application-status-enum) before building any stage-progress UI (e.g. a stepper) on this card. (§3)
 - 🙋 Confirm and adopt into [`engagements.md`](engagements.md) the rule that `Interview` is a conditional lifecycle stage (opportunity-dependent), not a fixed step every application passes through — `engagements.md` §3's suggested lifecycle currently lists it as a fixed position in one linear sequence. (§3.2)
-- 🙋 Confirm `ON_HOLD`'s placement in the lifecycle relative to the other statuses. Its Engagements filter is settled: `Open` ([`engagements.md` §3.1](engagements.md#31-application-filters)). (§3, [`engagements.md` §8](engagements.md#8-application-status-enum))
+- 🙋 Confirm `ON_HOLD`'s placement in the lifecycle relative to the other statuses. Its Engagements filter is settled: `In progress` ([`engagements.md` §3.1](engagements.md#31-application-filters)). (§3, [`engagements.md` §8](engagements.md#8-application-status-enum))
 - 🙋 Define a system status backing `Closed` — the user-facing label and tone are set (§3), but no enum value exists yet ([`engagements.md` §8](engagements.md#8-application-status-enum)).
 - 🙋 Confirm whether `· Action required` should be formalized as a display-only suffix composable onto any mapped status label (proposed in §3), and which statuses besides `Interview` it applies to, and whether standalone `Action required` should replace `Interview · Action required` too.
 - 🙋 Whether `supporting-text` should name the review owner after an interview completes ("Awaiting partner review" / "Awaiting Verita review") or should always stay owner-agnostic ("Interview completed" alone) — to discuss with the team. (§2.4.1)
-- 🙋 What is the default sort for Engagements → Applications → `Not moving forward`? `Open` is resolved (action needed first, [`engagements.md` §3.1](engagements.md#31-application-filters)), and Home follows it (first 3 `Open` rows; §5, §7).
+- 🙋 What is the default sort for Engagements → Applications → `Not moving forward`? `In progress` is resolved (action needed first, [`engagements.md` §3.1](engagements.md#31-application-filters)), and Home follows it (first 3 `In progress` rows; §5, §7).
 - 🙋 Whether the Engagements → Applications destination zero-state should reuse the confirmed Home copy ("No applications yet" / "Find opportunities that fit your expertise and interests." / "Discover opportunities") verbatim, or use its own variant suited to a full-page destination rather than an inline module. (§5.1)
 - 🙋 Confirm the full actions-menu status→availability mapping with design/product. (§4.1)
 - 🙋 Confirm the exact `Share` mechanism (link copy, native share sheet, or something else). (§4.1)

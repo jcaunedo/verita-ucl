@@ -26,6 +26,12 @@ const PROTOTYPE_PAGE_LINKS: { id: string; label: string; href: string; restoresO
     href: "iframe.html?id=layouts-dashboard--two-offers&viewMode=story",
     restoresOffers: true,
   },
+  {
+    id: "page-dashboard-offer-alert-banner",
+    label: "Offer alert banner",
+    href: "iframe.html?id=layouts-dashboard--offer-alert-banner&viewMode=story",
+    restoresOffers: true,
+  },
 ];
 
 /**

@@ -7,6 +7,12 @@ import { cn } from "@/lib/utils";
  * tokens) plus the font assignment: sizes up to `lg` use the body font,
  * `xl` and larger use the display/headline font. `weight` is an independent
  * axis.
+ *
+ * Heading levels, as used in Figma (pair with `as` for semantics):
+ * - h1: `size="3xl" weight="semibold"`
+ * - h2: `size="2xl" weight="semibold"`
+ * - h3: `size="xl" weight="semibold"`
+ * - h4: `size="lg" weight="semibold"`
  */
 const typographyVariants = cva("", {
   variants: {
