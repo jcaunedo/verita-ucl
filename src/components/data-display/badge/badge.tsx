@@ -25,11 +25,13 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
 /**
  * Status and metadata labels, following the Untitled UI badge pattern.
  *
- * Figma `badge` COMPONENT_SET — `tone` (12 values: Neutral, Brand,
+ * Figma `badge` COMPONENT_SET — `tone` (13 values: Neutral, Brand,
  * Destructive, Warning, Success, Info, Gray blue, Blue light, Indigo,
- * Purple, Pink, Orange), each resolving to a subtle fill and a strong text
- * color from the semantic `color/tone/<name>/*` layer (`theme.css`'s
- * `--tone-*` tokens) — except `warning`'s fill, which binds a dedicated
+ * Purple, Pink, Orange, Offer), each resolving to a subtle fill and a strong
+ * text color from the semantic `color/tone/<name>/*` layer (`theme.css`'s
+ * `--tone-*` tokens) — except `offer` (added 2026-09-30 for the next-step
+ * offer card), a white `background/default` fill with the success green text,
+ * and `warning`'s fill, which binds a dedicated
  * `badge/warning/background` variable (`--badge-warning-background`,
  * `#fff8d6`) instead of the shared `--tone-warning-subtle` (`#fef4ec`);
  * text color still uses `text-tone-warning`. Figma previously also offered a
@@ -74,6 +76,8 @@ const badgeVariants = cva(
         purple: "bg-tone-purple-subtle text-tone-purple",
         pink: "bg-tone-pink-subtle text-tone-pink",
         orange: "bg-tone-orange-subtle text-tone-orange",
+        // Figma `Offer` — `background/default` (white) + `color-tone-success-success` (#018638).
+        offer: "bg-background text-tone-success",
       },
       size: {
         // `*:data-[slot=badge-label]:px-*` = Figma's `Label Container` padding, on top of the outer `px-*`.

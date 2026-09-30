@@ -2,7 +2,7 @@
 Created: Sep 25, 2026
 Created by: Julio Caunedo
 Last updated: Sep 30, 2026
-Scope: The Offer card — the row that represents one Offer on Home's Opportunity alert ("New offer for you", product-specs/dashboard.md §7.1) and in Engagements → Offers (product-specs/engagements.md §4.1).
+Scope: The Offer card — the row that represents one Offer in Engagements → Offers (product-specs/engagements.md §4.1). Home summarizes offers with the Next steps Offer card instead (product-specs/next-steps-card.md §2.4).
 Purpose: Collect the Offer card's content, status model, row interaction, and closed-state treatment in one place, alongside the sibling Applications, Contract, and Match card specs.
 -->
 
@@ -204,18 +204,19 @@ The `···` reveal matches the Applications card. At rest it takes no space. On
 
 When an offer is declined:
 
-- **Home:** when other offers remain, the declined row fades and collapses, so the list shrinks and the rows and modules below close the gap. When it's the last offer, the whole list leaves with the shared card-dismiss exit (fade and a soft scale-down), then the module closes ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)). Under reduced motion both are opacity only.
-- **Engagements → Offers:** the same as Home: the declined row collapses while others remain, and the whole list leaves with the last one. The empty state then fades in after that exit finishes, so the two never overlap.
+- **Engagements → Offers:** the declined row fades and collapses while others remain, and the whole list leaves with the last one (the shared card-dismiss exit: fade and a soft scale-down; opacity only under reduced motion). The empty state then fades in after that exit finishes, so the two never overlap.
 
 ## 5. Where the card appears
 
 | Surface                        | What it shows                                                                                                                                                                                      |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Home → Opportunity alert       | One open offer under "New offer for you" ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)), or several under "{n} new offers for you", soonest expiration first. Offers sit in one table list, a single bordered container with one row per offer, the same as Home's "Applications" and "Top matches for you". The module doesn't render when there is no open offer. It never shows an empty placeholder. |
+| Home → Next steps              | No offer rows. The Offer card, first in Next steps, counts the open offers and names the soonest expiration, and opens Engagements → Offers → `Awaiting response` ([`next-steps-card.md` §2.4](next-steps-card.md#24-offer-card)). It doesn't render when there is no open offer. |
 | Engagements → Offers → Awaiting response | Every open offer, in one table list like Engagements → Applications ([DESIGN.md](../DESIGN.md) "Lists of rows are one table list"). The `Offers` view-tab count is the `Awaiting response` count, so the `Awaiting response` filter shows no counter of its own ([`engagements.md` §4.1](engagements.md#41-offer-filters)). |
 | Engagements → Offers → Closed  | Every closed offer, each showing its outcome (§3.2). Not counted in the view-tab total.                                                                                                             |
 
-Both surfaces show the same Offer. Declining it on Home moves it to `Closed` in Engagements, and it stays gone from Home.
+Home and Engagements count the same offers. Declining one in Engagements moves it to `Closed` and removes it from the Home Offer card's count.
+
+✅ **Resolved (2026-09-30) — no offer rows on Home:** Home's "New offer for you" rows were replaced by the Next steps Offer card ([`next-steps-card.md` §2.4](next-steps-card.md#24-offer-card)). The Offer card described in this doc now appears only in Engagements → Offers, where Decline also lives.
 
 ### 5.1 Empty states
 
@@ -262,7 +263,7 @@ The `OfferCard` component (`src/components/cards/offer-card/`) maps to the anato
 ## 8. Related docs
 
 - [`engagements.md`](engagements.md) — the Engagements PRD. [§4](engagements.md#4-offers-and-contracting) defines the Offer object; [§4.1](engagements.md#41-offer-filters) defines the `Awaiting response` / `Closed` filters, counts, and closed-row outcomes this card renders.
-- [`dashboard.md`](dashboard.md) — the Home PRD. [§7.1](dashboard.md#71-opportunity-alert) defines the Opportunity alert module and its "New offer for you" heading.
+- [`next-steps-card.md`](next-steps-card.md) — [§2.4](next-steps-card.md#24-offer-card) defines the Next steps Offer card that summarizes open offers on Home.
 - [`applications-card.md`](applications-card.md) — the sibling card for Applications. It shares this card's identity block, two-zone layout, actions-menu pattern, and closed-state treatment.
 - [`contract-card.md`](contract-card.md) — the card an offer becomes once contracting completes. The source of the compensation formats (§3.3.1) and the duration model (§3.2.1) this card uses.
 - [`match-card.md`](match-card.md) — the pre-Apply card. Its fit-tier vocabulary must never appear on an Offer card (§1).

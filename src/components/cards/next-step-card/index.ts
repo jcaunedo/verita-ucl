@@ -1,1 +1,1 @@
-export { NextStepCard, type NextStepCardProps } from "./next-step-card";
+export { NextStepCard, nextStepCardVariants, type NextStepCardProps } from "./next-step-card";

@@ -6,23 +6,22 @@ import { cn } from "@/lib/utils";
 import { partnerLogos } from "@/assets/logos";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { mediaAbove } from "@/lib/breakpoints";
-import { cardDismissVariants, reflowTransition, rowDismissVariants, useMotionPreference } from "@/lib/motion";
+import { cardDismissVariants, reflowTransition, useMotionPreference } from "@/lib/motion";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
 import { Alert } from "@/components/feedback/alert";
-import { NextStepsSection } from "@/layouts/shared/next-steps-section";
+import { NextStepsSection, type NextStep } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { navigatePrototype } from "@/layouts/shared/prototype-navigation";
-import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
 import { MatchCard } from "@/components/cards/match-card";
 import { CalloutCard } from "@/components/cards/callout-card";
 import { MenuItem } from "@/components/overlays/menu";
-import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS, offerExpiration } from "@/layouts/shared/demo-engagements";
+import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS, offerDaysLeft } from "@/layouts/shared/demo-engagements";
 import {
   applyWithdrawnApplications,
   readSidebarCollapsed,
@@ -77,8 +76,38 @@ const NEXT_STEPS = [
   },
 ] as const;
 
+/** "in 3 days" / "tomorrow" / "today", for the offer card's expiration line. */
+function expiresIn(daysLeft: number) {
+  if (daysLeft <= 0) return "today";
+  if (daysLeft === 1) return "tomorrow";
+  return `in ${daysLeft} days`;
+}
+
 /**
- * Current contracts, Applications, and the offer alert come from the shared
+ * The Next steps Offer card (`next-steps-card.md` §2.4): one card for every open offer awaiting a response, first in
+ * the section. Counts the offers ("1 new offer", "2 new offers") and names the soonest expiration. Card and CTA open
+ * Engagements → Offers → `Awaiting response`. Dismissible: it only leaves Home for this visit, nothing is declined.
+ */
+function offerNextStep(offers: readonly { expiresAt: string }[], viewOffersHref: string): NextStep {
+  const count = offers.length;
+  const plural = count > 1;
+  const nextExpiry = expiresIn(Math.min(...offers.map((offer) => offerDaysLeft(offer.expiresAt))));
+  return {
+    key: "offers",
+    variant: "offer",
+    label: `${count} new ${plural ? "offers" : "offer"}`,
+    title: `You have ${count} new ${plural ? "offers" : "offer"} waiting for your response.`,
+    description: plural
+      ? `Review your offers before they expire. Next offer expires ${nextExpiry}`
+      : `Review your offer before it expires. It expires ${nextExpiry}`,
+    buttonLabel: "View offers",
+    buttonProps: { href: viewOffersHref },
+    dismissible: true,
+  };
+}
+
+/**
+ * Current contracts, Applications, and the offer card come from the shared
  * demo data (`src/layouts/shared/demo-engagements.ts`), so they match what
  * the `Engagements` layout lists: "Current contracts" is the `Open` contracts, and
  * "Applications" is the top of Engagements → Applications → `In progress`,
@@ -163,23 +192,23 @@ interface DashboardProps {
    */
   viewAllContractsHref?: string;
   /**
-   * How many open offers the offer alert shows, soonest expiration first. Defaults to 1, the single-emphasis module
-   * `dashboard.md` §7.1 describes. The "2 offers" story passes 2 to preview the plural heading.
+   * How many of the demo's open offers this scenario has, soonest expiration first. Defaults to 1; the "2 offers"
+   * story passes 2 to preview the plural copy.
    */
   offerLimit?: number;
   /**
-   * How the open offers are shown. `list` (default): the "New offer for you" module of `OfferCard` rows
-   * (`dashboard.md` §7.1). `banner`: one info `Alert` counting them, which opens Engagements → Offers — Figma:
-   * Verita → `Dashboard` (`node-id=6095-2350`). The "Offer alert banner" story (account menu) previews it.
+   * How the open offers are shown. `next-step` (default): the Offer card, first in Next steps
+   * (`next-steps-card.md` §2.4). `banner`: one info `Alert` above Next steps instead — an exploration, Figma:
+   * Verita → `Dashboard` (`node-id=6095-2350`), previewed by the "Offer alert banner" story (account menu).
    */
-  offerDisplay?: "list" | "banner";
-  /** Target for the offer alert banner: Engagements → Offers. Same no-router reason as `navHrefOverrides`; defaults to `#`. */
+  offerDisplay?: "next-step" | "banner";
+  /** Target for the offer card / banner: Engagements → Offers → `Awaiting response`. Same no-router reason as `navHrefOverrides`; defaults to `#`. */
   viewOffersHref?: string;
 }
 
 /**
  * Full-page reference layout — the provider portal's home dashboard fully
- * populated with real work-in-progress content (an offer alert, next steps,
+ * populated with real work-in-progress content (next steps led by the offer card,
  * active work, active applications, recent matches, and callout cards).
  * Figma: Verita → `Dashboard` (`node-id=5642-2263`). A separate layout from
  * `dashboard-empty-state` (which covers the same page with no active work
@@ -190,7 +219,7 @@ interface DashboardProps {
  * shell verbatim (same `Sidebar` auto-collapse-below-`lg` behavior, same
  * Next Steps grid column-capping/queueing pattern) — only the section
  * content below the header differs: `SectionEmptyState` is replaced with the
- * offer alert, active-work grid, active-applications list, and
+ * active-work grid, active-applications list, and
  * recent-matches list Figma shows once the professional has real activity.
  *
  * The "Applications"/"Matches" sections are plain bordered containers
@@ -205,7 +234,7 @@ function Dashboard({
   viewAllApplicationsHref = "#",
   viewAllContractsHref = "#",
   offerLimit = 1,
-  offerDisplay = "list",
+  offerDisplay = "next-step",
   viewOffersHref = "#",
 }: DashboardProps = {}) {
   // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
@@ -250,21 +279,12 @@ function Dashboard({
   }, [isLgUp]);
 
   /**
-   * An offer's `···` → Decline declines it: the offer moves to Engagements → Offers →
-   * `Closed` (`engagements.md` §4.1), via the prototype's shared
-   * `useDeclinedOffers` state, so it's there after clicking through to
-   * Engagements and stays gone from Home. The card leaves with the same exit
-   * as a dismissed Next Steps card — `cardDismissVariants` (fade + soft
-   * scale-down) inside `AnimatePresence`, opacity-only under reduced motion —
-   * and any offer below it glides up. The heading counts the offers still
-   * shown ("2 new offers for you" → "New offer for you", `dashboard.md` §7.1).
-   * After the last one leaves, the section (heading + cards) unmounts via
-   * `onExitComplete` — same pattern as `NextStepsSection`'s last card.
-   * `shownOffers` is read once on mount, so declining doesn't unmount a card
-   * before its exit animation runs.
+   * Open offers the professional hasn't declined (declining happens in Engagements → Offers, `engagements.md` §4.1;
+   * the prototype's shared `useDeclinedOffers` state carries it back here). Read once on mount, so the Next steps
+   * array stays stable for `NextStepsSection`'s memo.
    */
   const { prefersReducedMotion } = useMotionPreference();
-  const { declined, decline } = useDeclinedOffers();
+  const { declined } = useDeclinedOffers();
   // Withdraw (row `···` menu) moves the application to Engagements → `Not moving forward`, so it drops off
   // "Applications" and the next open one takes its place — see `useWithdrawnApplications`.
   const { withdrawn, withdraw } = useWithdrawnApplications();
@@ -275,15 +295,15 @@ function Dashboard({
   const [shownOffers] = React.useState(() =>
     DEMO_OFFERS.filter((offer) => offer.filter === "open" && !declined[offer.key]).slice(0, offerLimit),
   );
-  const [dismissedOfferKeys, setDismissedOfferKeys] = React.useState<ReadonlySet<string>>(() => new Set());
-  const visibleOffers = shownOffers.filter((offer) => !dismissedOfferKeys.has(offer.key));
+  const nextSteps = React.useMemo(
+    () =>
+      offerDisplay === "next-step" && shownOffers.length > 0
+        ? [offerNextStep(shownOffers, viewOffersHref), ...NEXT_STEPS]
+        : NEXT_STEPS,
+    [offerDisplay, shownOffers, viewOffersHref],
+  );
   const [offerSectionVisible, setOfferSectionVisible] = React.useState(true);
   const [offerBannerDismissed, setOfferBannerDismissed] = React.useState(false);
-
-  const handleDeclineOffer = (key: string) => {
-    decline(key);
-    setDismissedOfferKeys((current) => new Set(current).add(key));
-  };
 
   const handleSidebarCollapsedChange = (collapsed: boolean) => {
     // A manual toggle always promotes the current state to user-owned —
@@ -345,88 +365,16 @@ function Dashboard({
               )}
             </AnimatePresence>
 
-            {offerDisplay === "list" && shownOffers.length > 0 && offerSectionVisible && (
-              <div className="flex w-full flex-col items-start gap-3">
-                <Typography size="xl" weight="semibold">
-                  {/* Counts the offers shown, never "1 new offer" (`dashboard.md` §7.1). Kept singular while the last card exits. */}
-                  {visibleOffers.length > 1 ? `${visibleOffers.length} new offers for you` : "New offer for you"}
-                </Typography>
-                {/* Same table list as "Applications" and "Top matches for you": one bordered container, one row per
-                    offer. Declining a row collapses it while others remain; declining the last one removes the whole
-                    table (card-dismiss exit), then the section closes. */}
-                <AnimatePresence
-                  initial={false}
-                  onExitComplete={() => {
-                    if (visibleOffers.length === 0) setOfferSectionVisible(false);
-                  }}
-                >
-                  {visibleOffers.length > 0 && (
-                    <motion.div
-                      key="offers"
-                      className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
-                      variants={cardDismissVariants}
-                      initial={false}
-                      animate="animate"
-                      exit={prefersReducedMotion ? { opacity: 0, transition: { duration: 0.01 } } : "exit"}
-                    >
-                      <AnimatePresence initial={false}>
-                        {visibleOffers.map((offer) => (
-                          <motion.div
-                            key={offer.key}
-                            className="w-full overflow-hidden border-b border-border last:border-b-0"
-                            variants={rowDismissVariants}
-                            initial={false}
-                            animate="animate"
-                            exit={prefersReducedMotion ? { opacity: 0, height: 0, transition: { duration: 0.01 } } : "exit"}
-                          >
-                            <OfferCard
-                              company={offer.company}
-                              logoSrc={offer.logoSrc}
-                              logoAlt={offer.logoAlt}
-                              title={offer.title}
-                              partnerName={offer.partnerName}
-                              compensation={offer.compensation}
-                              engagementTerms={offer.engagementTerms}
-                              duration={offer.duration}
-                              {...offerExpiration(offer.expiresAt)}
-                              onCtaPress={() => {}}
-                              rowProps={{ onClick: () => {} }}
-                              actionsMenuLabel={`More actions for ${offer.title}`}
-                              actionsMenu={
-                                <>
-                                  <MenuItem icon={AlignLeft} onAction={() => {}}>
-                                    View details
-                                  </MenuItem>
-                                  {/* Declines the offer: it leaves Home and moves to Engagements → Offers → Closed. */}
-                                  <MenuItem
-                                    icon={XCircle}
-                                    tone="destructive"
-                                    onAction={() => handleDeclineOffer(offer.key)}
-                                  >
-                                    Decline
-                                  </MenuItem>
-                                </>
-                              }
-                            />
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
-
-            {/* Everything below the offers glides up into the space a declined offer (or the whole section) frees,
-                instead of snapping — `layout="position"` gated by `layoutDependency` so it only runs when the offer
-                list changes (not on sidebar toggles), on the slow `reflowTransition`. Reduced motion: no glide. */}
+            {/* Everything below the banner glides up into the space it frees when dismissed, instead of snapping —
+                `layout="position"` gated by `layoutDependency` so it only runs then (not on sidebar toggles), on the
+                slow `reflowTransition`. Reduced motion: no glide. */}
             <motion.div
               layout={prefersReducedMotion ? false : "position"}
-              layoutDependency={`${offerSectionVisible}-${visibleOffers.length}`}
+              layoutDependency={offerSectionVisible}
               transition={reflowTransition}
               className="flex w-full flex-col items-start gap-12"
             >
-              <NextStepsSection steps={NEXT_STEPS} />
+              <NextStepsSection steps={nextSteps} />
 
               <div className="flex w-full flex-col items-start gap-3">
                 <div className="flex w-full flex-col items-start gap-0.5">

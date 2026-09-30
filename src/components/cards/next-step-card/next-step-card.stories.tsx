@@ -41,6 +41,23 @@ export const Dismissible: Story = {
   ),
 };
 
+/** Figma `Property 1=Offer`: green fill, no dashed border, Offer badge. Hover lifts it and reveals the X; the fill stays. */
+export const Offer: Story = {
+  args: {
+    variant: "offer",
+    label: "Offer",
+    title: "Review your offer",
+    description: "Senior Financial Analyst · $95–115k/yr. Expires in 3 days.",
+    buttonLabel: "View offer",
+    dismissible: true,
+  },
+  render: (args) => (
+    <div className="w-[270px]">
+      <NextStepCard {...args} />
+    </div>
+  ),
+};
+
 export const RealisticCopy: Story = {
   args: {
     label: "Step 1",
@@ -68,6 +85,7 @@ export const AllVariants: Story = {
         className="w-[270px]"
       />
       <NextStepCard {...args} dismissible label="Recommended" className="w-[270px]" />
+      <NextStepCard {...args} variant="offer" className="w-[270px]" />
     </div>
   ),
 };

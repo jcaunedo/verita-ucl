@@ -181,7 +181,7 @@ breakpoint (see "Breakpoints include their own width").
 | ------------------------- | -------------- | ------------------------------------------------------------------- | ----------------------- |
 | `lg` (1024) and below     | auto-collapsed | `px-12` (48 / 48)                                                   | 2-up                    |
 | 1025 to `xl` (1280)       | user's choice  | `px-12` (48 / 48)                                                   | 2-up (Next Steps: 3-up) |
-| 1281 to `2xl` (1536)      | user's choice  | expanded: `pl-12 xl:pr-22` (48 / 88); collapsed: `xl:pl-22 xl:pr-22` (88 / 88) | 3-up (Next Steps: 4-up) |
+| 1281 to `2xl` (1536)      | user's choice  | expanded: `xl:pl-6` + `pr-12` (24 / 48); collapsed: `xl:px-24` (96 / 96) | 3-up (Next Steps: 4-up) |
 | 1537 and up               | user's choice  | expanded: `2xl:pl-16 2xl:pr-40` (64 / 160); collapsed: `2xl:pl-40 2xl:pr-40` (160 / 160) | 3-up (Next Steps: 4-up) |
 
 - **Canvas padding** comes from `layoutCanvasPaddingClassName(sidebarCollapsed)`
@@ -222,7 +222,9 @@ moved into one shared helper, so a change there reaches every page. On
 2026-09-24 the collapsed state got equal left and right gutters (design
 direction), replacing the fixed 64px left gutter in that state. On
 2026-09-29 the `2xl` frame (1281–1536) got tighter gutters, 48 left / 88
-right (design direction). 1537 and up keeps 64 / 160.
+right (design direction). On 2026-09-30 that frame tightened again to 24
+left / 48 right beside the expanded sidebar, 96 / 96 collapsed (design
+direction). 1537 and up keeps 64 / 160.
 
 **How to apply:**
 

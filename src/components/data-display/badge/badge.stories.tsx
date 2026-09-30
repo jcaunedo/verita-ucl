@@ -29,6 +29,18 @@ export const Tones: Story = {
       <Badge tone="purple" label="Purple" />
       <Badge tone="pink" label="Pink" />
       <Badge tone="orange" label="Orange" />
+      <Badge tone="offer" label="Offer" />
+    </div>
+  ),
+};
+
+/** Figma `Tone=Offer` (next-step offer card): a white fill with green text, shown here on a tinted surface so the fill reads. */
+export const Offer: Story = {
+  render: () => (
+    <div className="flex items-center gap-2 rounded-card bg-card-subtle p-4">
+      <Badge tone="offer" size="sm" label="Offer" />
+      <Badge tone="offer" size="md" label="Offer" />
+      <Badge tone="offer" size="lg" label="Offer" />
     </div>
   ),
 };
@@ -79,6 +91,7 @@ export const AllVariants: Story = {
         <Badge tone="purple" label="Purple" />
         <Badge tone="pink" label="Pink" />
         <Badge tone="orange" label="Orange" />
+        <Badge tone="offer" label="Offer" />
       </div>
       <div className="flex items-center gap-2">
         <Badge size="sm" label="sm · 22" />

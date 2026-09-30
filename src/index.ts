@@ -133,7 +133,7 @@ export {
 
 export { MatchCard, type MatchCardProps } from "./components/cards/match-card";
 
-export { NextStepCard, type NextStepCardProps } from "./components/cards/next-step-card";
+export { NextStepCard, nextStepCardVariants, type NextStepCardProps } from "./components/cards/next-step-card";
 
 export { OfferCard, type OfferCardProps } from "./components/cards/offer-card";
 

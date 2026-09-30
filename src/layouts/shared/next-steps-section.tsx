@@ -10,7 +10,7 @@ import { NextStepCard, type NextStepCardProps } from "@/components/cards/next-st
 interface NextStep
   extends Pick<
     NextStepCardProps,
-    "badgeTone" | "label" | "title" | "description" | "buttonLabel" | "buttonProps" | "dismissible"
+    "variant" | "badgeTone" | "label" | "title" | "description" | "buttonLabel" | "buttonProps" | "dismissible"
   > {
   key: string;
 }
@@ -56,7 +56,7 @@ const NextStepsSection = React.memo(function NextStepsSection({ steps }: NextSte
    */
   const isLgUp = useMediaQuery(mediaAbove("lg"));
   const isXlUp = useMediaQuery(mediaAbove("xl"));
-  const maxVisible = isXlUp ? Infinity : isLgUp ? 3 : 2;
+  const maxVisible = isXlUp ? 4 : isLgUp ? 3 : 2;
   const visibleNextSteps = eligibleNextSteps.slice(0, maxVisible);
   /**
    * Tracks each card's `key` the first time it appears in `visibleNextSteps`

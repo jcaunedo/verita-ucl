@@ -1,7 +1,7 @@
 <!--
 Created: Sep 16, 2026
 Created by: Julio Caunedo
-Last updated: Sep 16, 2026
+Last updated: Sep 30, 2026
 Scope: Verita AI Dashboard — the Next steps module (a generic self-directed task-card module; onboarding and profile-improvement tasks are its most common content today, but it is not scoped to those alone).
 Purpose: Define the Next steps module's content, requirement-level badges, dismiss behavior, and visibility rule, split out of the Dashboard PRD (product-specs/dashboard.md) [§7.2](dashboard.md#72-next-steps).
 -->
@@ -20,17 +20,17 @@ Next steps is the task module referenced in [`dashboard.md` §6](dashboard.md#6-
 
 > "Next steps" (not "Complete your profile") is the deliberate, final section title — chosen specifically because it's generic enough to hold any self-directed task, not only profile-completion items. Onboarding and profile-improvement tasks are its most common content today, but the module isn't scoped to those alone; any task that fits the §2.1–§2.3 badge/dismiss model belongs here.
 
-> ℹ️ Next steps and Opportunity alert ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)) are two different modules. Opportunity alert is the single-emphasis slot for an externally-initiated opportunity event (new offer, interview requested, contract ready to sign) — see [`dashboard.md` §7.1](dashboard.md#71-opportunity-alert) for the full distinction. Next steps is a multi-card module that can show several same-weight, self-directed tasks at once.
+> ℹ️ Next steps and Opportunity alert ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)) are two different modules. Opportunity alert is the single-emphasis slot for an externally-initiated opportunity event (interview requested, contract ready to sign) — see [`dashboard.md` §7.1](dashboard.md#71-opportunity-alert) for the full distinction. Next steps is a multi-card module that can show several same-weight, self-directed tasks at once. New offers are the one externally-initiated event that lives here instead: they appear as the Offer card, the first card in Next steps (§2.4).
 
 ## 2. Card content
 
 Each Next steps card must include:
 
-- Requirement-level badge, using the user-facing label for the [`dashboard.md` §5](dashboard.md#5-task-requirement-taxonomy) taxonomy level that applies to that task — not a free-form or two-value label. §2.2 maps each system level to its badge text; §2.3 defines each level's precise behavior.
+- Requirement-level badge, using the user-facing label for the [`dashboard.md` §5](dashboard.md#5-task-requirement-taxonomy) taxonomy level that applies to that task — not a free-form or two-value label. §2.2 maps each system level to its badge text; §2.3 defines each level's precise behavior. The Offer card (§2.4) is the one exception: its badge counts offers.
 - Task title, stated as a specific, destination-named action ([`dashboard.md` §12](dashboard.md#12-ux-content-requirements)).
 - Short explanation of why it matters or what it unlocks.
 - One primary CTA routed to the task.
-- A dismiss (X) affordance on hover, for non-required tasks only (§2.1).
+- A dismiss (X) affordance on hover, for non-required tasks only (§2.1), and on the Offer card (§2.4).
 
 ### 2.1 Dismiss behavior
 
@@ -72,6 +72,35 @@ The distinction that matters: **`Recommended` implies the product has a specific
 
 A task's benefit or dependency must be dynamic and re-evaluated as the professional's applications and matches change — not assigned once at task creation. A task with no current benefit or dependency can still gain one later (e.g. it becomes `Recommended` once it would measurably improve match quality, or `Required later` once a specific application or opportunity depends on it) and enter Next steps at that point.
 
+### 2.4 Offer card
+
+When the professional has at least one open offer awaiting their response (Engagements → Offers → `Awaiting response`, [`engagements.md` §4.1](engagements.md#41-offer-filters)), Next steps leads with the Offer card. It is always the first card in the module, ahead of every task, and there is only ever one: it summarizes every open offer instead of showing a card per offer. With no open offer, it doesn't render.
+
+| Element     | Content                                                                                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Badge       | "{n} new offer" for 1, "{n} new offers" for 2 or more. `n` is the number of open offers. Badge tone `Offer` (white fill, green text).                                      |
+| Title       | "You have {n} new offer waiting for your response." / "You have {n} new offers waiting for your response."                                                                |
+| Description | 2 or more: "Review your offers before they expire. Next offer expires in {d} days". 1: "Review your offer before it expires. It expires in {d} days".                      |
+| CTA         | "View offers"                                                                                                                                                            |
+| Destination | Engagements → Offers → `Awaiting response`. The whole card and the CTA go to the same place.                                                                             |
+| Dismiss     | X on hover, like a `Recommended` task (§2.1).                                                                                                                            |
+
+`{d}` counts calendar days to the soonest-expiring open offer: "in 3 days", "tomorrow" at 1 day, "today" on its last day.
+
+⚠️ **Copy:** the single-offer description ("Review your offer before it expires. It expires in {d} days") adapts the plural copy for one offer; confirm the wording.
+
+Visually it is the `next-step-card` Offer variant (Figma: verita.ds `next-step-card`, `Property 1=Offer`): a light green `color-tone-success-subtle` fill with no dashed border, so it doesn't read as a task or a requirement. Layout, spacing, and the hover lift match the other cards; the green fill stays on hover.
+
+✅ **Resolved (2026-09-30) — offers lead Next steps instead of a separate "New offer for you" module:** an offer is the professional's closest step to securing work, and responding to it is the next thing they should do. Making it the first Next steps card puts it where the professional already looks for what to do next, at the top of that list, without a separate module and heading above Next steps. One summary card works for one offer or many without growing the page; the offer rows, their terms, and Decline stay in Engagements → Offers, one click away. This supersedes Home's "New offer for you" module ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)).
+
+⚠️ **Constraint:** the Offer card's badge is a count, not a requirement level. It is the one exception to §2's requirement-level badge rule, and it is dismissible without being a `Recommended` task. Its "1 new offer" copy also departs from the removed module's rule that the heading never reads "1 new offer" ([`dashboard.md` §7.1](dashboard.md#71-opportunity-alert)); a count badge needs the number.
+
+ℹ️ Dismissing the Offer card only hides it. It never declines an offer: every offer stays under Engagements → Offers → `Awaiting response` until the professional answers it or it expires.
+
+ℹ️ The Offer card takes a slot in the module's single row, so with a full row the last task waits in the queue until a card is completed or dismissed.
+
+⚠️ **Decision needed:** when a dismissed Offer card comes back. The prototype hides it for the current visit only. Options: when a new offer arrives, at the next session, or when the soonest offer is about to expire.
+
 ## 3. Task eligibility rules
 
 A task is eligible to appear in Next steps only when **all** of the following are true:
@@ -112,7 +141,7 @@ How generation type relates to the badge model (§2.3): a **Recommendation** tas
 
 ## 4. Visibility rule
 
-The Next steps module renders only while at least one eligible (§3) task exists for the professional. Once every task in the module is completed, dismissed, or no longer eligible, the module is removed from the Dashboard entirely — it must not remain visible in an empty state. This follows [`dashboard.md` §8](dashboard.md#8-functional-requirements)'s broader empty-state principle (FR-9, "no urgent tasks: confirm that nothing requires attention") but goes further for this specific module: the empty case is no module, not a confirmation message in its place. The dismiss affordance in §2.1 is one of the two paths (alongside completion) to reaching that empty state.
+The Next steps module renders only while at least one eligible (§3) task, or the Offer card (§2.4), exists for the professional. Once every task in the module is completed, dismissed, or no longer eligible, the module is removed from the Dashboard entirely — it must not remain visible in an empty state. This follows [`dashboard.md` §8](dashboard.md#8-functional-requirements)'s broader empty-state principle (FR-9, "no urgent tasks: confirm that nothing requires attention") but goes further for this specific module: the empty case is no module, not a confirmation message in its place. The dismiss affordance in §2.1 is one of the two paths (alongside completion) to reaching that empty state.
 
 ## 5. Open questions
 

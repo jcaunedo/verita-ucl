@@ -212,6 +212,11 @@ type DemoOffer = Pick<
 const OFFER_URGENT_DAYS = 5;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** Calendar days from `DEMO_TODAY` until an offer expires on `expiresAt` (0 on its last day, negative once past). */
+function offerDaysLeft(expiresAt: string) {
+  return Math.round((Date.parse(expiresAt) - Date.parse(DEMO_TODAY)) / DAY_MS);
+}
+
 /**
  * The card's expiration label and tone for an offer expiring on `expiresAt`, counted in calendar days from
  * `DEMO_TODAY`: more than 5 days → "Expires on Oct 9" (muted); 5 days or fewer → "Expires in 3 days", "Expires
@@ -221,7 +226,7 @@ function offerExpiration(expiresAt: string): {
   expirationDate: string;
   expirationTone: "muted" | "destructive";
 } {
-  const daysLeft = Math.round((Date.parse(expiresAt) - Date.parse(DEMO_TODAY)) / DAY_MS);
+  const daysLeft = offerDaysLeft(expiresAt);
   if (daysLeft > OFFER_URGENT_DAYS) {
     // `timeZone: "UTC"`: the ISO date parses as UTC midnight, so format it in UTC to keep the same calendar day.
     const date = new Date(expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
@@ -285,9 +290,9 @@ function offerClosedAt({ declinedAt, withdrawnAt, expiresAt }: DemoOffer): strin
 }
 
 /**
- * Offers (`engagements.md` §4.1), soonest expiration first — the order Home and Engagements show them in. Home's
- * "New offer for you" shows the first `Open` one (the "2 offers" Dashboard story shows both). One expires within 5
- * days and one after, so both expiration treatments are on screen.
+ * Offers (`engagements.md` §4.1), soonest expiration first. Home's Next steps Offer card counts the first `Open` one
+ * (the "2 offers" Dashboard story counts both) and names the soonest expiration. One expires within 5 days and one
+ * after, so Engagements shows both expiration treatments.
  */
 const DEMO_OFFERS: DemoOffer[] = [
   {
@@ -462,6 +467,7 @@ export {
   DEMO_CLOSED_OFFERS,
   DEMO_CONTRACTS,
   offerExpiration,
+  offerDaysLeft,
   closedOfferOutcome,
   offerClosedAt,
   type ApplicationFilter,

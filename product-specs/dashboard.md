@@ -107,12 +107,12 @@ Examples from the source model:
 
 The Dashboard may draw from these modules. Visibility and order are state-dependent.
 
-1. **Opportunity alert** — an externally-initiated opportunity event (new offer, interview requested, contract ready to sign), shown only when one exists (§7.1).
-2. **Next steps** — a row of individual blocking, required-later, and recommended tasks, shown only while at least one is applicable. Filtered top-of-list surface over `product-specs/next-steps-card.md` — full card content, badge model, and visibility rule live there (§7.2).
+1. **Opportunity alert** — an externally-initiated opportunity event (interview requested, contract ready to sign), shown only when one exists (§7.1). New offers appear as the Next steps Offer card instead (module 2).
+2. **Next steps** — a row of individual blocking, required-later, and recommended tasks, led by the Offer card whenever the professional has open offers ([`next-steps-card.md` §2.4](next-steps-card.md#24-offer-card)), shown only while at least one is applicable. Filtered top-of-list surface over `product-specs/next-steps-card.md` — full card content, badge model, and visibility rule live there (§7.2).
 3. **Contracts** — the professional's active and upcoming contracts, when any exist. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Contracts` view/object — full field list, status model, and resolved notes live there. Titled **"Current contracts"** on Home, matching the Engagements `Contracts` → `Current` filter its `View All` opens (formerly "Active work"; renamed 2026-09-24, since `Active` is also a contract status and the module shows paused contracts too).
 4. **Matching opportunities** — AI-selected opportunities with fit explanations and readiness state (§6.3).
 5. **Your applications** — active applications, current stage, and next action. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Applications` view — full row content lives in [`engagements.md` §3](engagements.md#3-applications). Shows the first 3 applications of Engagements → Applications → `In progress`, in that filter's default sort, with `View All` routing there ([`applications-card.md` §5](applications-card.md#5-visibility-rule)). Titled **"Applications"** on Home (formerly "Open applications", renamed 2026-09-24 from "Active Applications"; shortened 2026-09-30 when the filter became `In progress`).
-6. **Offers** — offers awaiting the professional's response, when any exist. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Offers` view — full definition, fields, and resolved notes live in [`engagements.md` §4](engagements.md#4-offers-and-contracting).
+6. **Offers** — offers awaiting the professional's response, when any exist. On Home they appear only as the Next steps Offer card (module 2), which opens Engagements → Offers. Filtered top-of-list surface over [`engagements.md` §2](engagements.md#2-engagement-views)'s `Offers` view — full definition, fields, and resolved notes live in [`engagements.md` §4](engagements.md#4-offers-and-contracting).
 7. **Discover more opportunities** — entry to broader marketplace browsing.
 8. **Referrals** — secondary unless a referral event requires attention.
 
@@ -120,7 +120,9 @@ The Dashboard may draw from these modules. Visibility and order are state-depend
 >
 > ✅ **Resolved (2026-09-25) — priority follows closeness to secured work:** the action and status modules rank in this order: **Offer → required Next steps → current work (Contracts) → Applications.** An offer is the professional's closest step to securing work, which is why "New offer for you" (Opportunity alert, §7.1) sits above Next steps. Required next steps come next because they block progress. Current contracts are work already secured. Applications are tracking objects whose next step usually belongs to Verita or the partner. The same principle decides which cards get a primary CTA ([`offer-card.md` §4.1](offer-card.md#41-row-and-view-offer)).
 >
-> ⚠️ **Decision needed:** where Matching opportunities (module 4) sits in this hierarchy. It is discovery, not an action or status module, and the list above places it between Contracts and Applications. Also confirm whether module 6 (Offers) is still needed while the Opportunity alert shows the offer (see the §6.1 decision below).
+> ✅ **Resolved (2026-09-30) — the offer leads Next steps:** the order above still holds, but the offer is now the first Next steps card (the Offer card, [`next-steps-card.md` §2.4](next-steps-card.md#24-offer-card)) rather than a "New offer for you" module above Next steps. It still comes before every task. This also settles whether module 6 is needed on Home: offers show only through the Offer card.
+>
+> ⚠️ **Decision needed:** where Matching opportunities (module 4) sits in this hierarchy. It is discovery, not an action or status module, and the list above places it between Contracts and Applications.
 >
 > ✅ **Resolved:** "Next steps" supersedes what this list previously called "Complete your profile" — it is the final, deliberately generic module name, not scoped to profile-completion tasks alone. See [`product-specs/next-steps-card.md` §1](next-steps-card.md#1-what-next-steps-is) for the full naming rationale.
 
@@ -168,7 +170,7 @@ Object model:
 | Qualification pending                  | Next steps → Qualification status → Relevant matches                                     | Complete qualification with purpose |
 | Marketplace ready / matches available  | Best match or Next steps → Matches → Applications → Profile improvements                 | Evaluate and apply                  |
 | Application active / interviewing      | Next application action → Applications → New matches → Profile improvements              | Advance active applications         |
-| Offer received                         | Opportunity alert → Offer summary → Applications → New matches                           | Review before expiration            |
+| Offer received                         | Next steps (Offer card first) → Applications → New matches                               | Review before expiration            |
 | Engagement onboarding                  | Contracting/onboarding action → Training/setup → Engagement summary                      | Become ready to work                |
 | Active engagement                      | Current engagement → Required actions → Milestones/training/payments → New opportunities | Deliver current work                |
 | Engagement completed / available again | Completion or payment status → Confirm availability → New matches                        | Close out and re-enter matching     |
@@ -198,22 +200,23 @@ Object model:
 
 > ✅ **Resolved (renamed from "Next best action"):** this module is scoped specifically to **externally-initiated opportunity events** — an offer received, an interview requested, a contract ready to sign — not to onboarding or profile-improvement tasks, and not to a generic "whatever is currently most urgent" slot. The distinction: Next steps (§7.2 / `next-steps-card.md`) holds tasks the professional does *to themselves* — building or completing their profile, self-directed and onboarding-flavored. An Opportunity alert is something that happens *to* the professional — a partner or client (or Verita on their behalf) has taken an action that produces real work, which is the core outcome Verita exists to deliver. That category difference, not urgency alone, is why it gets a dedicated top-of-page module rather than being folded into or ranked alongside Next steps. A Next steps task can still be urgent (`Blocking` per §5) without ever qualifying as an Opportunity alert — urgency and category are independent.
 
+> ✅ **Resolved (2026-09-30) — new offers moved to Next steps:** a new offer no longer uses this module. It appears as the Offer card, the first card in Next steps, which counts every open offer and opens Engagements → Offers → `Awaiting response` ([`next-steps-card.md` §2.4](next-steps-card.md#24-offer-card)). This module keeps the other externally-initiated events. The offer copy rules below ("Offer heading copy") are kept for history and no longer apply.
+
 Opportunity alert is a single-emphasis module: it surfaces exactly one opportunity event at a time, sourced from the Offers or Applications objects ([`engagements.md` §2](engagements.md#2-engagement-views)), never from Next steps.
 
 Qualifying events (non-exhaustive):
 
-- A new offer has been received.
 - An interview has been requested.
 - A contract is ready to sign.
 
 When the module is populated, it must include:
 
-- Event title (e.g. "New offer for you" — see the heading copy rule below).
+- Event title.
 - The opportunity, partner, and key terms (compensation, engagement type) when applicable.
 - Deadline or expiration when material (e.g. an offer's expiration date/time).
 - One primary CTA (e.g. "View offer").
 
-**Offer heading copy.** When the event is a new offer, the module heading reads **"New offer for you"**. If the module ever shows more than one offer at once, the heading counts them with a numeral: **"2 new offers for you"**, **"3 new offers for you"**, and so on. It never reads "1 new offer for you" — a single offer always uses the singular heading with no number.
+**Offer heading copy (superseded 2026-09-30, see the note at the top of this section).** When the event is a new offer, the module heading reads **"New offer for you"**. If the module ever shows more than one offer at once, the heading counts them with a numeral: **"2 new offers for you"**, **"3 new offers for you"**, and so on. It never reads "1 new offer for you" — a single offer always uses the singular heading with no number.
 
 | Offers shown | Heading               |
 | ------------ | --------------------- |
@@ -224,11 +227,11 @@ The count is the number of offers rendered in the module, not the professional's
 
 > ✅ **Copy fix (2026-09-25):** "You have a new offer" → "New offer for you". The new heading leads with what arrived and reads as a section title, matching the Dashboard's other module headings.
 
-> ℹ️ Today the module shows a single offer (single-emphasis, above), so only the singular heading appears. The plural form applies only if the multi-offer decision below lands on showing several offers together. The prototype's **"2 offers"** Dashboard view (account menu → page links) previews that option: two offers in one table list under "2 new offers for you" (a bordered container with one row per offer, the same as "Applications" and "Top matches for you"), soonest expiration first, one expiring within 5 days and one after ([`offer-card.md` §2.3](offer-card.md#23-expiration)). Declining one drops the heading back to "New offer for you".
+> ℹ️ The prototype's **"2 offers"** Dashboard view (account menu → page links) now shows the Offer card with two open offers: "2 new offers", "Next offer expires in 3 days".
 
 If no qualifying event exists, the module does not render — it must not be replaced with a placeholder or generic empty state; the Dashboard falls through to its next-highest content (Contracts, Applications, Matches — see §7.6's resolved default-empty-state note for what renders when none of those have content either).
 
-> ⚠️ **Decision needed:** confirm the full, exhaustive list of qualifying event types (does a returned assessment result or a rejected application ever qualify, or only forward-moving opportunity events?), and confirm behavior when more than one qualifying event exists at once (e.g. two pending offers) — does the module show the single most urgent one, stack multiple, or route to a list?
+> ⚠️ **Decision needed:** confirm the full, exhaustive list of qualifying event types (does a returned assessment result or a rejected application ever qualify, or only forward-moving opportunity events?), and confirm behavior when more than one qualifying event exists at once (e.g. two interview requests) — does the module show the single most urgent one, stack multiple, or route to a list?
 
 ### 7.2 Next steps
 
@@ -622,8 +625,9 @@ Events must include the priority class, lifecycle state, related entity type, an
 
 ### State and hierarchy
 
-- Given a professional with a pending offer, interview request, or contract-ready-to-sign event, the Dashboard displays it as the dominant Opportunity alert (§7.1).
-- Given a time-sensitive interview or offer event and a generic profile recommendation (Next steps), the Opportunity alert ranks above Next steps.
+- Given a professional with a pending interview request or contract-ready-to-sign event, the Dashboard displays it as the dominant Opportunity alert (§7.1).
+- Given a professional with one or more open offers, Next steps shows the Offer card as its first card, counting the offers and opening Engagements → Offers → `Awaiting response` ([`next-steps-card.md` §2.4](next-steps-card.md#24-offer-card)).
+- Given a time-sensitive interview event and a generic profile recommendation (Next steps), the Opportunity alert ranks above Next steps.
 - Given an active engagement, current work appears before new opportunities.
 - Given no applicable content for a module, the module is hidden or replaced by a purposeful state rather than an empty shell.
 

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { motion } from "motion/react";
 import { XClose } from "@untitledui/icons";
+import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { clickableRowProps } from "@/lib/clickable-row";
@@ -24,7 +25,7 @@ import { DashedBorder } from "@/components/cards/dashed-border";
 /**
  * A single onboarding/checklist step — label badge, title, description, and a
  * call-to-action button, on a dashed-border card. Figma: `next-step-card`
- * (`Property 1`: Default, Hover). Composes the existing `Badge` (default
+ * (`Property 1`: Default, Hover, Offer — see `variant` below). Composes the existing `Badge` (default
  * `tone="neutral"`, default `size="sm"`), `Button` (`size="xs"`), and
  * `Typography` (`size="base"`/`"sm"`) rather than reproducing their look inline.
  * `badgeTone` defaults to `"neutral"` (the original Figma component's only
@@ -98,6 +99,13 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * default state, which is what caused the badge to visibly jump on hover
  * (the row had no reserved space for it) before this fix.
  *
+ * `variant="offer"` (Figma `Property 1=Offer`, added 2026-09-30) is the
+ * next-step card for an offer: a `color-tone-success-subtle` fill with no
+ * dashed border, and the badge defaults to `tone="offer"` (white fill, green
+ * text). Layout, spacing, the hover-revealed X, and the Lift are the same as
+ * Default. Figma has no hover state for it, so it keeps its green fill on
+ * hover instead of switching to `state/hover` (confirmed 2026-09-30).
+ *
  * The whole card is clickable and performs the CTA's action (it clicks the
  * CTA itself), with the pointer cursor, focus, and Enter/Space handling from
  * the shared `clickableRowProps` helper (`role="button"` — DESIGN.md's
@@ -109,14 +117,32 @@ import { DashedBorder } from "@/components/cards/dashed-border";
  * implements — this file only covers markup/styling, not the product logic
  * for which badge/props a given task should receive.
  */
+const nextStepCardVariants = cva(
+  // No CSS border: the dashed outline is `DashedBorder`'s SVG, so padding starts at the edge like Figma's (20px × 24px).
+  "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card px-5 py-6 transition-[background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+  {
+    variants: {
+      variant: {
+        // Figma `Default` — `next-steps-card/background` + dashed `next-steps-card/border` (colors `DashedBorder` via
+        // `currentColor`). `Property 1=Hover` (2026-09-26): fill → `state/hover`; the dashed border stays; no shadow.
+        default: "bg-next-steps-card-background text-next-steps-card-border hover:bg-hover",
+        // Figma `Offer` — `color-tone-success-subtle` (#e6f6ec), no border. No hover fill change (no Figma hover state).
+        offer: "bg-tone-success-subtle",
+      },
+    },
+    defaultVariants: { variant: "default" },
+  },
+);
+
 interface NextStepCardProps
   extends Omit<
-    React.HTMLAttributes<HTMLDivElement>,
-    "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
-  > {
+      React.HTMLAttributes<HTMLDivElement>,
+      "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
+    >,
+    VariantProps<typeof nextStepCardVariants> {
   /** Leading label badge text (Figma's `badge` instance, `Label`). */
   label: string;
-  /** Leading label badge tone (Figma's `badge` instance tone binding). Defaults to `"neutral"`. */
+  /** Leading label badge tone (Figma's `badge` instance tone binding). Defaults to `"neutral"`, or `"offer"` for `variant="offer"`. */
   badgeTone?: BadgeProps["tone"];
   /** Step title. */
   title: string;
@@ -155,8 +181,9 @@ const CtaButton = Button as (props: ButtonComponentProps) => React.ReactElement;
 
 /** An onboarding/checklist step card — badge, title, description, and a CTA button. Figma: `next-step-card`. */
 function NextStepCard({
+  variant,
   label,
-  badgeTone = "neutral",
+  badgeTone,
   title,
   description,
   buttonLabel,
@@ -170,6 +197,8 @@ function NextStepCard({
   ...props
 }: NextStepCardProps) {
   const { prefersReducedMotion } = useMotionPreference();
+  const resolvedVariant = variant ?? "default";
+  const resolvedBadgeTone = badgeTone ?? (resolvedVariant === "offer" ? "offer" : "neutral");
   // The whole card is a click target that performs the CTA's own action (PRD: card = CTA), by clicking the CTA itself —
   // React Aria treats a programmatic `.click()` as a press, so `buttonProps.onPress`/`href` stay the single source of the action.
   // `clickableRowProps` ignores clicks from nested controls, so the dismiss (X) and the CTA itself never double-fire.
@@ -199,6 +228,7 @@ function NextStepCard({
   return (
     <motion.div
       data-slot="next-step-card"
+      data-variant={resolvedVariant}
       layout={!prefersReducedMotion && !enterFromRight}
       variants={variants}
       whileHover={prefersReducedMotion ? undefined : { y: -motionDistance.lift, transition: subtleSpring }}
@@ -209,23 +239,17 @@ function NextStepCard({
           ? { opacity: 0, transition: { duration: 0.01 } }
           : "exit"
       }
-      className={cn(
-        "group relative flex h-[248px] w-full flex-col items-start justify-between rounded-card border border-transparent bg-next-steps-card-background px-5 py-6 text-next-steps-card-border transition-[background-color] duration-150 ease-out",
-        // Figma `Property 1=Hover` (2026-09-26): fill → `state/hover`; the dashed border stays; no shadow.
-        "hover:bg-hover",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-        className,
-      )}
+      className={cn(nextStepCardVariants({ variant }), className)}
       {...props}
       role={cardPress.role}
       tabIndex={cardPress.tabIndex}
       onClick={cardPress.onClick}
       onKeyDown={cardPress.onKeyDown}
     >
-      <DashedBorder radius={12} />
+      {resolvedVariant === "default" && <DashedBorder radius={12} />}
       <div className="flex w-full flex-col items-start gap-4">
         <div className="flex h-[22px] w-full items-center justify-between">
-          <Badge tone={badgeTone} label={label} />
+          <Badge tone={resolvedBadgeTone} label={label} />
           {dismissible && (
             // Reveal on a wrapper, not the Button, so the Button keeps its own look + hover transition.
             <div className="flex shrink-0 opacity-0 transition-opacity duration-150 ease-out group-hover:opacity-100 group-focus-visible:opacity-100 has-[[data-focus-visible]]:opacity-100">
@@ -260,4 +284,4 @@ function NextStepCard({
   );
 }
 
-export { NextStepCard, type NextStepCardProps };
+export { NextStepCard, nextStepCardVariants, type NextStepCardProps };
