@@ -15,6 +15,7 @@ import { NextStepsSection, type NextStep } from "@/layouts/shared/next-steps-sec
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
+import { useLayoutSidebar } from "@/layouts/shared/use-layout-sidebar";
 import { navigatePrototype } from "@/layouts/shared/prototype-navigation";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
@@ -24,8 +25,6 @@ import { MenuItem } from "@/components/overlays/menu";
 import { DEMO_APPLICATIONS, DEMO_CONTRACTS, DEMO_OFFERS, offerDaysLeft } from "@/layouts/shared/demo-engagements";
 import {
   applyWithdrawnApplications,
-  readSidebarCollapsed,
-  saveSidebarCollapsed,
   useDeclinedOffers,
   useWithdrawnApplications,
 } from "@/layouts/shared/demo-state";
@@ -237,22 +236,7 @@ function Dashboard({
   offerDisplay = "next-step",
   viewOffersHref = "#",
 }: DashboardProps = {}) {
-  // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
-  /**
-   * At `lg` (1024px) and below the sidebar auto-collapses — including on initial
-   * load at a narrow width, not only when resizing into that range. Crossing
-   * back above `lg` restores whatever state the sidebar was in *before* the
-   * auto-collapse, but only if the current collapse was the automatic one:
-   * if the user manually collapsed it themselves while already at or below `lg`,
-   * that's their own choice and must stick even after crossing back above
-   * `lg` — `wasAutoCollapsedRef` distinguishes the two so the restore only
-   * ever undoes this effect's own action, never a manual one. `Sidebar`'s
-   * own toggle (via `onCollapsedChange` below) clears the flag the moment
-   * the user interacts with it, so any manual toggle — collapse or expand —
-   * immediately "promotes" the current state to user-owned.
-   */
-  const isLgUp = useMediaQuery(mediaAbove("lg"));
+  const { sidebarCollapsed, handleSidebarCollapsedChange } = useLayoutSidebar();
   /**
    * "Current contracts" stays one row: as many contracts as the grid has columns
    * (2 at `xl` and below, 3 above `xl`), with the rest behind "View All". Same
@@ -261,22 +245,6 @@ function Dashboard({
    */
   const isXlUp = useMediaQuery(mediaAbove("xl"));
   const visibleActiveWork = ACTIVE_WORK.slice(0, isXlUp ? 3 : 2);
-  const wasAutoCollapsedRef = React.useRef(false);
-  const preCollapseStateRef = React.useRef(false);
-  React.useEffect(() => {
-    if (!isLgUp) {
-      setSidebarCollapsed((current) => {
-        if (!current) {
-          preCollapseStateRef.current = current;
-          wasAutoCollapsedRef.current = true;
-        }
-        return true;
-      });
-    } else if (wasAutoCollapsedRef.current) {
-      setSidebarCollapsed(preCollapseStateRef.current);
-      wasAutoCollapsedRef.current = false;
-    }
-  }, [isLgUp]);
 
   /**
    * Open offers the professional hasn't declined (declining happens in Engagements → Offers, `engagements.md` §4.1;
@@ -304,16 +272,6 @@ function Dashboard({
   );
   const [offerSectionVisible, setOfferSectionVisible] = React.useState(true);
   const [offerBannerDismissed, setOfferBannerDismissed] = React.useState(false);
-
-  const handleSidebarCollapsedChange = (collapsed: boolean) => {
-    // A manual toggle always promotes the current state to user-owned —
-    // even a manual re-collapse while already at or below `lg` should stick
-    // through a later crossing back above `lg`, per `wasAutoCollapsedRef`'s
-    // own comment above.
-    wasAutoCollapsedRef.current = false;
-    setSidebarCollapsed(collapsed);
-    saveSidebarCollapsed(collapsed);
-  };
 
   return (
     <div className="flex min-h-screen w-full items-start bg-white">

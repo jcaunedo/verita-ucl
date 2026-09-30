@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { PROTOTYPE_NAV_HREFS } from "@/layouts/shared/prototype-nav-hrefs";
 import { Dashboard } from "./dashboard";
 
 const meta: Meta<typeof Dashboard> = {
@@ -26,10 +27,7 @@ type Story = StoryObj<typeof Dashboard>;
  */
 export const Default: Story = {
   args: {
-    navHrefOverrides: {
-      home: "iframe.html?id=layouts-dashboard--default&viewMode=story",
-      engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
-    },
+    navHrefOverrides: PROTOTYPE_NAV_HREFS,
     viewAllApplicationsHref: "iframe.html?id=layouts-engagements--default&viewMode=story",
     viewAllContractsHref: "iframe.html?id=layouts-engagements--contracts&viewMode=story",
     viewOffersHref: "iframe.html?id=layouts-engagements--offers&viewMode=story",
@@ -46,6 +44,7 @@ export const TwoOffers: Story = {
   args: {
     ...Default.args,
     navHrefOverrides: {
+      ...PROTOTYPE_NAV_HREFS,
       home: "iframe.html?id=layouts-dashboard--two-offers&viewMode=story",
       engagements: "iframe.html?id=layouts-engagements--two-offers&viewMode=story",
     },

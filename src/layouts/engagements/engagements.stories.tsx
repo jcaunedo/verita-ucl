@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { PROTOTYPE_NAV_HREFS } from "@/layouts/shared/prototype-nav-hrefs";
 import { DEMO_CLOSED_OFFERS } from "@/layouts/shared/demo-engagements";
 import { Engagements } from "./engagements";
 
@@ -16,10 +17,7 @@ type Story = StoryObj<typeof Engagements>;
 /** "Home" links to the `Dashboard` story and "Engagements" to this story, for clicking between the layouts as one prototype. */
 export const Default: Story = {
   args: {
-    navHrefOverrides: {
-      home: "iframe.html?id=layouts-dashboard--default&viewMode=story",
-      engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
-    },
+    navHrefOverrides: PROTOTYPE_NAV_HREFS,
   },
 };
 
@@ -42,6 +40,7 @@ export const TwoOffers: Story = {
   name: "2 offers",
   args: {
     navHrefOverrides: {
+      ...PROTOTYPE_NAV_HREFS,
       home: "iframe.html?id=layouts-dashboard--two-offers&viewMode=story",
       engagements: "iframe.html?id=layouts-engagements--two-offers&viewMode=story",
     },

@@ -202,7 +202,7 @@ breakpoint (see "Breakpoints include their own width").
   on its own, including on first load at a narrow width. Crossing back above `lg`
   restores the earlier state, but only if the collapse was automatic. Once
   the user toggles the sidebar, their choice sticks. The logic and its full
-  rationale live in `Dashboard` (`wasAutoCollapsedRef`).
+  rationale live in `useLayoutSidebar` (`src/layouts/shared/use-layout-sidebar.ts`).
 - **Callout row** (Dashboards): one column at `lg` (1024px) and below,
   two side by side above it (`flex-col lg:flex-row`), where
   `items-stretch` gives both cards the same height.
@@ -228,17 +228,19 @@ direction). 1537 and up keeps 64 / 160.
 
 **How to apply:**
 
-- **New layout:** copy the shell from an existing layout (sticky `Sidebar`,
-  auto-collapse effect, canvas with `layoutCanvasPaddingClassName`, 1400px
-  content column). Don't hand-write `px-*`/`pr-*`/`pl-*` on the canvas.
+- **New layout:** copy the shell from an existing layout (sticky `Sidebar`
+  driven by `useLayoutSidebar`, canvas with `layoutCanvasPaddingClassName`,
+  1400px content column; `PlaceholderPage` is the smallest example). Don't
+  hand-write `px-*`/`pr-*`/`pl-*` on the canvas or copy the collapse logic.
 - **Changing the gutters:** edit `layoutCanvasPaddingClassName` and update
   the table above in the same change. Don't override it in one layout.
 - **Verify:** check each changed layout in Storybook at exactly 1024, 1280,
   and 1536 and 1px above each, with the sidebar both open and collapsed.
 
-⚠️ **Gap:** the sidebar auto-collapse effect is copied into each layout
-rather than shared. Extract it into a hook (e.g. `useAutoCollapseSidebar`)
-before the next layout lands, so the copies can't drift.
+✅ **Resolved (2026-09-30) — one sidebar hook:** the auto-collapse effect
+used to be copied into each layout. It now lives in `useLayoutSidebar`, and
+every layout (Dashboard, Dashboard empty state, Engagements, the placeholder
+pages) uses it, so the copies can't drift.
 
 ✅ **Resolved (2026-09-24) — top padding:** every layout's content column
 starts 40px from the top (`pt-10`). Engagements used `pt-14` (56px) until

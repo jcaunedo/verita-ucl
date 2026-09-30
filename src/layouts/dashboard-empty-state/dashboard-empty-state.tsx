@@ -1,14 +1,12 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { mediaAbove } from "@/lib/breakpoints";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
-import { readSidebarCollapsed, saveSidebarCollapsed } from "@/layouts/shared/demo-state";
+import { useLayoutSidebar } from "@/layouts/shared/use-layout-sidebar";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { SectionEmptyState } from "@/components/cards/section-empty-state";
 import { CalloutCard } from "@/components/cards/callout-card";
@@ -102,49 +100,7 @@ interface DashboardEmptyStateProps {
  * its own `layouts/dashboard/` layout rather than a variant of this one.
  */
 function DashboardEmptyState({ navHrefOverrides, welcomeHref }: DashboardEmptyStateProps = {}) {
-  // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
-  /**
-   * At `lg` (1024px) and below the sidebar auto-collapses — including on initial
-   * load at a narrow width, not only when resizing into that range. Crossing
-   * back above `lg` restores whatever state the sidebar was in *before* the
-   * auto-collapse, but only if the current collapse was the automatic one:
-   * if the user manually collapsed it themselves while already at or below `lg`,
-   * that's their own choice and must stick even after crossing back above
-   * `lg` — `wasAutoCollapsedRef` distinguishes the two so the restore only
-   * ever undoes this effect's own action, never a manual one. `Sidebar`'s
-   * own toggle (via `onCollapsedChange` below) clears the flag the moment
-   * the user interacts with it, so any manual toggle — collapse or expand —
-   * immediately "promotes" the current state to user-owned.
-   */
-  const isLgUp = useMediaQuery(mediaAbove("lg"));
-  const wasAutoCollapsedRef = React.useRef(false);
-  const preCollapseStateRef = React.useRef(false);
-  React.useEffect(() => {
-    if (!isLgUp) {
-      setSidebarCollapsed((current) => {
-        if (!current) {
-          preCollapseStateRef.current = current;
-          wasAutoCollapsedRef.current = true;
-        }
-        return true;
-      });
-    } else if (wasAutoCollapsedRef.current) {
-      setSidebarCollapsed(preCollapseStateRef.current);
-      wasAutoCollapsedRef.current = false;
-    }
-  }, [isLgUp]);
-
-  const handleSidebarCollapsedChange = (collapsed: boolean) => {
-    // A manual toggle always promotes the current state to user-owned —
-    // even a manual re-collapse while already at or below `lg` should stick
-    // through a later crossing back above `lg`, per `wasAutoCollapsedRef`'s
-    // own comment above.
-    wasAutoCollapsedRef.current = false;
-    setSidebarCollapsed(collapsed);
-    saveSidebarCollapsed(collapsed);
-  };
-
+  const { sidebarCollapsed, handleSidebarCollapsedChange } = useLayoutSidebar();
   return (
     <div className="flex min-h-screen w-full items-start bg-white">
       <div className="sticky top-0 shrink-0">

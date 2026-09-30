@@ -4,8 +4,6 @@ import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { cardDismissVariants, rowDismissVariants, standardTransition, useMotionPreference } from "@/lib/motion";
-import { useMediaQuery } from "@/lib/hooks/use-media-query";
-import { mediaAbove } from "@/lib/breakpoints";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import {
   MetricTab,
@@ -29,6 +27,7 @@ import { EmptyState, type EmptyStateProps } from "@/components/feedback/empty-st
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
+import { useLayoutSidebar } from "@/layouts/shared/use-layout-sidebar";
 import {
   DEMO_APPLICATIONS,
   DEMO_CONTRACTS,
@@ -44,8 +43,6 @@ import {
 import {
   applyDeclinedOffers,
   applyWithdrawnApplications,
-  readSidebarCollapsed,
-  saveSidebarCollapsed,
   useDeclinedOffers,
   useWithdrawnApplications,
 } from "@/layouts/shared/demo-state";
@@ -376,8 +373,7 @@ function Engagements({
   defaultView = "applications",
   closedOffers: seededClosedOffers = [],
 }: EngagementsProps = {}) {
-  // Starts as the professional last left it on another page (prototype pages remount on every sidebar link).
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(readSidebarCollapsed);
+  const { sidebarCollapsed, handleSidebarCollapsedChange } = useLayoutSidebar();
   // An offer declined from its `···` menu, here or on `Dashboard`, shows under `Closed` — see `useDeclinedOffers`.
   const { declined, decline } = useDeclinedOffers();
   const { prefersReducedMotion, resolve } = useMotionPreference();
@@ -393,31 +389,6 @@ function Engagements({
   const applications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn);
   const countFor = (filter: ApplicationFilter) =>
     applications.filter((application) => application.filter === filter).length;
-  // Same auto-collapse-below-`lg` behavior as `Dashboard` — see its comment for the full rationale.
-  const isLgUp = useMediaQuery(mediaAbove("lg"));
-  const wasAutoCollapsedRef = React.useRef(false);
-  const preCollapseStateRef = React.useRef(false);
-  React.useEffect(() => {
-    if (!isLgUp) {
-      setSidebarCollapsed((current) => {
-        if (!current) {
-          preCollapseStateRef.current = current;
-          wasAutoCollapsedRef.current = true;
-        }
-        return true;
-      });
-    } else if (wasAutoCollapsedRef.current) {
-      setSidebarCollapsed(preCollapseStateRef.current);
-      wasAutoCollapsedRef.current = false;
-    }
-  }, [isLgUp]);
-
-  const handleSidebarCollapsedChange = (collapsed: boolean) => {
-    wasAutoCollapsedRef.current = false;
-    setSidebarCollapsed(collapsed);
-    saveSidebarCollapsed(collapsed);
-  };
-
   const applicationsTotal = countFor("open");
 
   const [searchQueries, setSearchQueries] = React.useState<Record<EngagementView, string>>({

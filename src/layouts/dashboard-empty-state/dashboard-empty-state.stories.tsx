@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { PROTOTYPE_NAV_HREFS } from "@/layouts/shared/prototype-nav-hrefs";
 import { DashboardEmptyState } from "./dashboard-empty-state";
 
 const meta: Meta<typeof DashboardEmptyState> = {
@@ -19,10 +20,7 @@ type Story = StoryObj<typeof DashboardEmptyState>;
  */
 export const Default: Story = {
   args: {
-    navHrefOverrides: {
-      home: "iframe.html?id=layouts-dashboard--default&viewMode=story",
-      engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
-    },
+    navHrefOverrides: PROTOTYPE_NAV_HREFS,
     // Clicking "Welcome back, Theresa" jumps to the populated `Dashboard` story (relative URL — works on any Storybook host).
     welcomeHref: "iframe.html?id=layouts-dashboard--default&viewMode=story",
   },
