@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, UsersRight, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { partnerLogos } from "@/assets/logos";
@@ -380,8 +380,8 @@ function Dashboard({
                         actionsMenuLabel={`More actions for ${application.title}`}
                         actionsMenu={
                         <>
-                          <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
-                          <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
+                          <MenuItem icon={ArrowUpRight} onAction={() => {}}>View Details</MenuItem>
+                          <MenuItem icon={UsersRight} onAction={() => {}}>Refer</MenuItem>
                           <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
                             Withdraw
                           </MenuItem>

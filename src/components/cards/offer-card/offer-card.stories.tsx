@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { AlignLeft, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, XCircle } from "@untitledui/icons";
 
 import { partnerLogos } from "@/assets/logos";
 import { MenuItem } from "@/components/overlays/menu";
@@ -8,7 +8,7 @@ import { OfferCard } from "./offer-card";
 /** The offer row's actions: View details and a destructive Decline, no separator. */
 const OFFER_ACTIONS = (
   <>
-    <MenuItem icon={AlignLeft}>View details</MenuItem>
+    <MenuItem icon={ArrowUpRight}>View details</MenuItem>
     <MenuItem icon={XCircle} tone="destructive">
       Decline
     </MenuItem>
@@ -99,7 +99,7 @@ export const Closed: Story = {
     statusTone: "neutral",
     supportingText: "Declined by you on Sep 25",
     showCta: false,
-    actionsMenu: <MenuItem icon={AlignLeft}>View details</MenuItem>,
+    actionsMenu: <MenuItem icon={ArrowUpRight}>View details</MenuItem>,
   },
 };
 
@@ -160,7 +160,7 @@ export const AllVariants: Story = {
         supportingText="Declined by you on Sep 25"
         showCta={false}
         actionsMenuLabel="More actions"
-        actionsMenu={<MenuItem icon={AlignLeft}>View details</MenuItem>}
+        actionsMenu={<MenuItem icon={ArrowUpRight}>View details</MenuItem>}
       />
     </div>
   ),

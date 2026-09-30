@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { AlignLeft, DotsHorizontal, Share06, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, DotsHorizontal, UsersRight, XCircle } from "@untitledui/icons";
 
 import { Button } from "@/components/buttons/button";
 import { MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "./menu";
@@ -19,14 +19,14 @@ const meta: Meta<typeof MenuItem> = {
 export default meta;
 type Story = StoryObj<typeof MenuItem>;
 
-/** An application row's actions (PRD §4.1): View Details, Share, and a destructive Withdraw. No separator by default (DESIGN.md "Actions menus"). */
+/** An application row's actions (PRD §4.1): View Details, Refer, and a destructive Withdraw. No separator by default (DESIGN.md "Actions menus"). */
 export const Default: Story = {
   render: () => (
     <MenuTrigger defaultOpen>
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
-        <MenuItem icon={AlignLeft}>View Details</MenuItem>
-        <MenuItem icon={Share06}>Share</MenuItem>
+        <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
+        <MenuItem icon={UsersRight}>Refer</MenuItem>
         <MenuItem icon={XCircle} tone="destructive">
           Withdraw
         </MenuItem>
@@ -41,8 +41,8 @@ export const WithSeparator: Story = {
     <MenuTrigger defaultOpen>
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
-        <MenuItem icon={AlignLeft}>View Details</MenuItem>
-        <MenuItem icon={Share06}>Share</MenuItem>
+        <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
+        <MenuItem icon={UsersRight}>Refer</MenuItem>
         <MenuSeparator />
         <MenuItem icon={XCircle} tone="destructive">
           Withdraw
@@ -59,7 +59,7 @@ export const TextOnly: Story = {
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
         <MenuItem>View Details</MenuItem>
-        <MenuItem>Share</MenuItem>
+        <MenuItem>Refer</MenuItem>
         <MenuItem tone="destructive">Withdraw</MenuItem>
       </MenuContent>
     </MenuTrigger>
@@ -76,8 +76,8 @@ export const AllVariants: Story = {
             {`Open ${size}`}
           </Button>
           <MenuContent placement="bottom start">
-            <MenuItem size={size} icon={AlignLeft}>View Details</MenuItem>
-            <MenuItem size={size} icon={Share06}>Share</MenuItem>
+            <MenuItem size={size} icon={ArrowUpRight}>View Details</MenuItem>
+            <MenuItem size={size} icon={UsersRight}>Refer</MenuItem>
             <MenuItem size={size} icon={XCircle} tone="destructive">
               Withdraw
             </MenuItem>

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, UsersRight, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { cardDismissVariants, rowDismissVariants, standardTransition, useMotionPreference } from "@/lib/motion";
@@ -315,8 +315,8 @@ function ApplicationList({
           actionsMenuLabel={`More actions for ${application.title}`}
           actionsMenu={
             <>
-              <MenuItem icon={AlignLeft} onAction={() => {}}>View Details</MenuItem>
-              <MenuItem icon={Share06} onAction={() => {}}>Share</MenuItem>
+              <MenuItem icon={ArrowUpRight} onAction={() => {}}>View Details</MenuItem>
+              <MenuItem icon={UsersRight} onAction={() => {}}>Refer</MenuItem>
               {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
               {filter === "open" && (
                 <MenuItem icon={XCircle} tone="destructive" onAction={() => onWithdraw(key)}>
@@ -426,7 +426,7 @@ function Engagements({
         // (DESIGN.md "Hide a `···` menu with only one item"); the row itself opens the detail.
         actionsMenu={
           <>
-            <MenuItem icon={AlignLeft} onAction={() => {}}>
+            <MenuItem icon={ArrowUpRight} onAction={() => {}}>
               View details
             </MenuItem>
             {/* Same Decline as `Dashboard`'s offer: moves it to `Closed`. A closed offer can't be declined. */}

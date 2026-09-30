@@ -15,7 +15,7 @@ import { PopoverSurface, SelectSeparator, selectItemVariants } from "@/component
 
 /**
  * Action-menu parts — the dropdown opened by an overflow (`···`) or similar
- * trigger, e.g. an application row's View Details / Share / Withdraw
+ * trigger, e.g. an application row's View Details / Refer / Withdraw
  * (`product-specs/applications-card.md` §4.1). Visually identical to the
  * Select dropdown (Figma: `Select Content (Popper)` + `Select Item`, reused
  * via `PopoverSurface`/`selectItemVariants`) but built on React Aria's `Menu`

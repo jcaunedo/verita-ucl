@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { partnerLogos } from "@/assets/logos";
-import { AlignLeft, Share06, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, UsersRight, XCircle } from "@untitledui/icons";
 
 import { MenuItem } from "@/components/overlays/menu";
 import { ApplicationCard, ApplicationCardGroup } from "./application-card";
@@ -138,14 +138,14 @@ export const NoDuration: Story = {
   },
 };
 
-/** Hover the row, then open the `···` trigger: View Details, Share, and a destructive Withdraw (PRD §4.1). */
+/** Hover the row, then open the `···` trigger: View Details, Refer, and a destructive Withdraw (PRD §4.1). */
 export const WithActionsMenu: Story = {
   args: {
     actionsMenuLabel: "More actions",
     actionsMenu: (
       <>
-        <MenuItem icon={AlignLeft}>View Details</MenuItem>
-        <MenuItem icon={Share06}>Share</MenuItem>
+        <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
+        <MenuItem icon={UsersRight}>Refer</MenuItem>
         <MenuItem icon={XCircle} tone="destructive">Withdraw</MenuItem>
       </>
     ),

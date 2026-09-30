@@ -32,7 +32,7 @@ import { MenuContent, MenuTrigger, countMenuItems } from "@/components/overlays/
  *
  * `onActionsPress` only renders the hover-revealed `···` overflow trigger
  * (Figma's `button` instance in the Hover variant) — the expanded menu itself
- * (View Details/Share/Withdraw, `product-specs/applications-card.md` §4.1) is
+ * (View Details/Refer/Withdraw, `product-specs/applications-card.md` §4.1) is
  * a separate concern for the consumer to wire up (e.g. an `overlays` menu
  * component), since Figma's Hover variant only shows the trigger, not the
  * open menu state. The trigger takes no space until hover/focus-within: its
@@ -89,7 +89,7 @@ interface ApplicationCardProps
   /** Called when the actions-menu trigger is activated. Opens the consumer-owned menu (View Details/Share/Withdraw) — this component does not render the menu itself. Omit to hide the trigger entirely. */
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /**
-   * The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View Details, Share, Withdraw — PRD §4.1).
+   * The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View Details, Refer, Withdraw — PRD §4.1).
    * When it holds 2 or more items, the hover-revealed `···` becomes a real menu trigger that opens it (bottom-end aligned) —
    * takes precedence over `onActionsPress`. While open, the trigger stays revealed and the row keeps its hover tint.
    */

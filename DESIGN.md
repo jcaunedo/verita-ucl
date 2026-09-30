@@ -306,7 +306,7 @@ kerning and ligatures.
 ## Actions menus — no dividers unless asked (`src/components/overlays/menu/`)
 
 **Rule:** a row's `···` actions menu (`MenuContent` + `MenuItem`s, e.g. an
-application's View Details / Share / Withdraw, an offer's View details /
+application's View Details / Refer / Withdraw, an offer's View details /
 Decline) lists its items with no `MenuSeparator` — including before a
 destructive item. The destructive tone (red label and icon) already sets it
 apart.
