@@ -1,11 +1,12 @@
 import * as React from "react";
 
 import type { DEMO_APPLICATIONS, DEMO_OFFERS } from "@/layouts/shared/demo-engagements";
+import { navigatePrototype } from "@/layouts/shared/prototype-navigation";
 
 /**
  * Prototype-only state shared across layouts. Each layout is its own
- * Storybook story, and moving between them reloads the iframe, so plain
- * React state can't carry an action from one page to the next. The
+ * Storybook story, and moving between them swaps (or reloads) the story, so
+ * plain React state can't carry an action from one page to the next. The
  * professional's choices live in `sessionStorage` instead: they survive
  * clicking between stories in the same tab, and reset when the tab closes.
  * Every storage access is guarded, so a blocked or unavailable storage just
@@ -193,7 +194,7 @@ function openWithOffersRestored(href: string) {
   } catch {
     // Storage unavailable: no decline was persisted, so every offer already shows.
   }
-  window.location.assign(href);
+  navigatePrototype(href);
 }
 
 export {

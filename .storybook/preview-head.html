@@ -1,0 +1,12 @@
+<!--
+  Prototype page changes swap the story in place and hold the current page on screen until the next one renders
+  (`preview.tsx`). When a change still loads the page (a reload, "Restart prototype", a link to the page already
+  showing), Storybook paints a blank page with a spinner while the story prepares. Hiding the spinner leaves nothing to
+  paint until the story renders, so the browser can keep the previous page visible until then instead of flashing it.
+-->
+<style>
+  .sb-preparing-story .sb-loader,
+  .sb-preparing-docs .sb-loader {
+    display: none;
+  }
+</style>

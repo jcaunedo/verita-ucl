@@ -15,6 +15,7 @@ import { NextStepsSection } from "@/layouts/shared/next-steps-section";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
+import { navigatePrototype } from "@/layouts/shared/prototype-navigation";
 import { OfferCard } from "@/components/cards/offer-card";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
@@ -336,7 +337,7 @@ function Dashboard({
                         : "You have a new offer waiting for your response."
                     }
                     description="Review the details and decide how you’d like to move forward."
-                    onClick={() => window.location.assign(viewOffersHref)}
+                    onClick={() => navigatePrototype(viewOffersHref)}
                     dismissible
                     onDismiss={() => setOfferBannerDismissed(true)}
                   />
