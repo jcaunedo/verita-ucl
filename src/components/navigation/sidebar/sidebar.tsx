@@ -12,7 +12,7 @@ import {
   Settings02,
   Translate01,
   UserCircle,
-  UsersPlus,
+  UsersRight,
 } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
@@ -23,31 +23,14 @@ import { SidebarMenuItem } from "@/components/buttons/sidebar-menu-item";
 import { AccountTrigger } from "@/components/buttons/account-trigger";
 import { AccountMenu, AccountMenuItem, type AccountMenuProps } from "@/components/overlays/account-menu";
 
-/**
- * Figma: `briefcase-business` (flat case + top handle + notch, and a
- * lid-seam line) — not in the installed `@untitledui/icons` package (which
- * only ships the plain `Briefcase01`/`Briefcase02`), so defined locally
- * matching that package's icon API (24x24, `currentColor` stroke) until
- * it's added upstream.
- */
-function BriefcaseBusiness({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={24}
-      height={24}
-      stroke="currentColor"
-      strokeWidth="2"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className={className}
-    >
-      <path d="M12 12H12.01M16 6V4C16 3.47 15.789 2.961 15.414 2.586C15.039 2.211 14.53 2 14 2H10C9.47 2 8.961 2.211 8.586 2.586C8.211 2.961 8 3.47 8 4V6M22 13C19.033 14.959 15.556 16.003 12 16.003C8.444 16.003 4.967 14.959 2 13M4 6H20C21.105 6 22 6.895 22 8V18C22 19.105 21.105 20 20 20H4C2.895 20 2 19.105 2 18V8C2 6.895 2.895 6 4 6Z" />
-    </svg>
-  );
-}
+import {
+  BankNote01Solid,
+  BriefcaseBusiness,
+  BriefcaseBusinessSolid,
+  Compass03Solid,
+  HomeLineSolid,
+  UsersRightSolid,
+} from "./sidebar-icons";
 
 /** Measured from Figma: `Sidebar` COMPONENT_SET's Expanded/Collapsed frame widths. */
 const EXPANDED_WIDTH = 280;
@@ -55,17 +38,26 @@ const COLLAPSED_WIDTH = 84;
 
 type NavKey = "home" | "discover" | "engagements" | "earnings" | "referrals";
 
+/** `activeIcon` is the solid version shown while the item is the current page (Figma's Active state). */
 const NAV_ITEMS: {
   key: NavKey;
   icon: React.ComponentType<{ className?: string }>;
+  activeIcon: React.ComponentType<{ className?: string }>;
   label: string;
   href: string;
 }[] = [
-  { key: "home", icon: HomeLine, label: "Home", href: "/home" },
-  { key: "discover", icon: Compass03, label: "Discover", href: "/discover" },
-  { key: "engagements", icon: BriefcaseBusiness, label: "Engagements", href: "/engagements" },
-  { key: "earnings", icon: BankNote01, label: "Earnings", href: "/earnings" },
-  { key: "referrals", icon: UsersPlus, label: "Referrals", href: "/referrals" },
+  { key: "home", icon: HomeLine, activeIcon: HomeLineSolid, label: "Home", href: "/home" },
+  { key: "discover", icon: Compass03, activeIcon: Compass03Solid, label: "Discover", href: "/discover" },
+  {
+    key: "engagements",
+    icon: BriefcaseBusiness,
+    activeIcon: BriefcaseBusinessSolid,
+    label: "Engagements",
+    href: "/engagements",
+  },
+  { key: "earnings", icon: BankNote01, activeIcon: BankNote01Solid, label: "Earnings", href: "/earnings" },
+  // Figma: `users-right` (was `users-plus`).
+  { key: "referrals", icon: UsersRight, activeIcon: UsersRightSolid, label: "Referrals", href: "/referrals" },
 ];
 
 const FOOTER_ITEMS = [
@@ -244,10 +236,10 @@ function Sidebar({
         </div>
 
         <div className="flex w-full cursor-default flex-col items-start gap-4">
-          {NAV_ITEMS.map(({ key, icon: Icon, label, href }) => (
+          {NAV_ITEMS.map(({ key, icon: Icon, activeIcon: ActiveIcon, label, href }) => (
             <SidebarMenuItem
               key={key}
-              icon={<Icon />}
+              icon={activeNavKey === key ? <ActiveIcon /> : <Icon />}
               label={label}
               href={navHrefOverrides?.[key] ?? href}
               collapsed={collapsed}
