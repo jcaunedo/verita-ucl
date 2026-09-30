@@ -421,22 +421,9 @@ function Engagements({
         onCtaPress={() => {}}
         // Opens the offer detail (no page yet in the prototype).
         rowProps={opensDetail ? { onClick: () => {} } : undefined}
-        actionsMenuLabel={`More actions for ${offer.title}`}
-        // A closed offer's menu would hold only View details, so the card shows no `···`
-        // (DESIGN.md "Hide a `···` menu with only one item"); the row itself opens the detail.
-        actionsMenu={
-          <>
-            <MenuItem icon={ArrowUpRight} onAction={() => {}}>
-              View details
-            </MenuItem>
-            {/* Same Decline as `Dashboard`'s offer: moves it to `Closed`. A closed offer can't be declined. */}
-            {filter === "open" && (
-              <MenuItem icon={XCircle} tone="destructive" onAction={() => decline(key)}>
-                Decline
-              </MenuItem>
-            )}
-          </>
-        }
+        // The × dismisses an awaiting offer: it's declined and moves to `Closed`. A closed offer has no ×.
+        onDismiss={filter === "open" ? () => decline(key) : undefined}
+        dismissLabel={`Decline ${offer.title}`}
         className={className}
       />
     );

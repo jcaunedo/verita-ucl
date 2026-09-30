@@ -1,19 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { ArrowUpRight, XCircle } from "@untitledui/icons";
-
 import { partnerLogos } from "@/assets/logos";
-import { MenuItem } from "@/components/overlays/menu";
 import { OfferCard } from "./offer-card";
-
-/** The offer row's actions: View details and a destructive Decline, no separator. */
-const OFFER_ACTIONS = (
-  <>
-    <MenuItem icon={ArrowUpRight}>View details</MenuItem>
-    <MenuItem icon={XCircle} tone="destructive">
-      Decline
-    </MenuItem>
-  </>
-);
 
 const meta: Meta<typeof OfferCard> = {
   title: "Cards/OfferCard",
@@ -29,9 +16,9 @@ const meta: Meta<typeof OfferCard> = {
     partnerName: "Verita partner",
     expirationDate: "Expires in 3 days",
     onCtaPress: () => {},
-    // On by default so every story shows the hover reveal (`···` slides in, pushing the CTA left) — see `WithoutActions` for the no-trigger case.
-    actionsMenuLabel: "More actions",
-    actionsMenu: OFFER_ACTIONS,
+    // On by default: the always-visible × that dismisses (declines) the offer — see `WithoutDismiss` for a row without it.
+    onDismiss: () => {},
+    dismissLabel: "Decline Strategic Finance Expert",
   },
   decorators: [
     (Story) => (
@@ -90,7 +77,7 @@ export const CustomCtaLabel: Story = {
 
 /**
  * A closed offer (`engagements.md` §4.1): the outcome as a neutral badge with its details before it, no expiration
- * date and no CTA. Its menu would hold only View details, so no `···` shows; the row itself opens the detail.
+ * date, no CTA, and no ×; the row itself opens the detail.
  */
 export const Closed: Story = {
   args: {
@@ -99,15 +86,14 @@ export const Closed: Story = {
     statusTone: "neutral",
     supportingText: "Declined by you on Sep 25",
     showCta: false,
-    actionsMenu: <MenuItem icon={ArrowUpRight}>View details</MenuItem>,
+    onDismiss: undefined,
   },
 };
 
-/** No actions menu — hover only tints the row; the CTA stays put. */
-export const WithoutActions: Story = {
+/** No × — the row still opens the detail and tints on hover. */
+export const WithoutDismiss: Story = {
   args: {
-    actionsMenuLabel: undefined,
-    actionsMenu: undefined,
+    onDismiss: undefined,
   },
 };
 
@@ -123,8 +109,8 @@ export const AllVariants: Story = {
         partnerName="Verita partner"
         expirationDate="Expires in 3 days"
         onCtaPress={() => {}}
-        actionsMenuLabel="More actions"
-        actionsMenu={OFFER_ACTIONS}
+        onDismiss={() => {}}
+        dismissLabel="Decline Strategic Finance Expert"
       />
       <OfferCard
         title="Strategic Finance Expert"
@@ -136,8 +122,8 @@ export const AllVariants: Story = {
         discipline="Corporate Finance"
         expirationDate="Expires in 3 days"
         onCtaPress={() => {}}
-        actionsMenuLabel="More actions"
-        actionsMenu={OFFER_ACTIONS}
+        onDismiss={() => {}}
+        dismissLabel="Decline Strategic Finance Expert"
       />
       <OfferCard
         title="Strategic Finance Expert"
@@ -146,8 +132,8 @@ export const AllVariants: Story = {
         company="verita"
         partnerName="Verita partner"
         onCtaPress={() => {}}
-        actionsMenuLabel="More actions"
-        actionsMenu={OFFER_ACTIONS}
+        onDismiss={() => {}}
+        dismissLabel="Decline Strategic Finance Expert"
       />
       <OfferCard
         title="Strategic Finance Expert"
@@ -159,8 +145,6 @@ export const AllVariants: Story = {
         statusLabel="Declined"
         supportingText="Declined by you on Sep 25"
         showCta={false}
-        actionsMenuLabel="More actions"
-        actionsMenu={<MenuItem icon={ArrowUpRight}>View details</MenuItem>}
       />
     </div>
   ),

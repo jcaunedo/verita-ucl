@@ -122,7 +122,8 @@ react-aria tabs (`MetricTab`, `TabButton`) showed the default cursor. Added
 
 **Rule:** The hover fill for a row in a list or table (`ApplicationCard`,
 `MatchCard`, `OfferCard`, table rows) is always `--hover-row`
-(`bg-hover-row`), Figma's `state/hover-row` — `neutral-700` at 2%. It is the
+(`bg-hover-row`), Figma's `state/hover-row` — `neutral-700` at 3% (2% until
+2026-09-30). It is the
 one row-hover token: don't give a row its own tint, and don't reach for
 `--hover`.
 
@@ -140,7 +141,7 @@ follows the rule above.
 
 | Token          | Figma              | Value            | Use for                                                      |
 | -------------- | ------------------ | ---------------- | ------------------------------------------------------------ |
-| `--hover-row`  | `state/hover-row`  | neutral-700 @ 2% | List and table rows (Application/Match/Offer rows)           |
+| `--hover-row`  | `state/hover-row`  | neutral-700 @ 3% | List and table rows (Application/Match/Offer rows)           |
 | `--shadow-hover-card` | `shadow/hover-card` | 0 4px 12px, ink @ 6% | Standalone card hover (Contract)                       |
 | `--hover`      | `state/hover`      | neutral-700 @ 4% | Controls and list items: Button, AccountTrigger, Select/Menu items; NextStepCard and CalloutCard hover fill |
 | `--icon-hover` | raw fill on `button` Type=Icon | neutral-700 @ 8% | Ghost/Neutral icon-only Button                    |
@@ -306,8 +307,7 @@ kerning and ligatures.
 ## Actions menus — no dividers unless asked (`src/components/overlays/menu/`)
 
 **Rule:** a row's `···` actions menu (`MenuContent` + `MenuItem`s, e.g. an
-application's View Details / Refer / Withdraw, an offer's View details /
-Decline) lists its items with no `MenuSeparator` — including before a
+application's View Details / Refer / Withdraw) lists its items with no `MenuSeparator` — including before a
 destructive item. The destructive tone (red label and icon) already sets it
 apart.
 
@@ -397,7 +397,7 @@ is an extra click that hides an action instead of offering a choice.
 
 **How to apply:**
 
-- `ApplicationCard` and `OfferCard` enforce it: they count `actionsMenu`
+- `ApplicationCard` enforces it: it counts `actionsMenu`
   with `countMenuItems` (from `@/components/overlays/menu`) and skip the
   trigger below 2 items. Keep passing the full, status-gated menu from the
   layout; don't add your own "only one item" branch.
@@ -406,8 +406,10 @@ is an extra click that hides an action instead of offering a choice.
 - Any new card or row with a `···` menu must apply the same check. A
   consumer-owned menu opened through `onActionsPress` can't be counted, so
   that consumer applies the rule itself.
-- `OfferCard` also drops its hover tint when a row has no click target and
-  no menu, so a row that does nothing doesn't look clickable.
+- `OfferCard` has no `···` menu (2026-09-30): an always-visible × declines
+  the offer instead, and the row itself opens the detail. It drops its hover
+  tint when a row has no click target and no ×, so a row that does nothing
+  doesn't look clickable.
 
 ## Show section headings only when two sections have rows (`src/layouts/`)
 

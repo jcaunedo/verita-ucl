@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DotsHorizontal } from "@untitledui/icons";
+import { XClose } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { clickableRowProps } from "@/lib/clickable-row";
@@ -10,7 +10,6 @@ import {
   type AvatarCompaniesProps,
 } from "@/components/data-display/avatar-companies";
 import { Typography } from "@/components/typography";
-import { MenuContent, MenuTrigger, countMenuItems } from "@/components/overlays/menu";
 
 /**
  * A single offer row — identity, engagement terms, expiration, and a
@@ -19,22 +18,21 @@ import { MenuContent, MenuTrigger, countMenuItems } from "@/components/overlays/
  * `ApplicationCard`/`MatchCard` — same identity block (avatar,
  * `partner-name` eyebrow, title, `compensation · engagementTerms ·
  * duration` terms row) — but the right zone differs: an optional
- * expiration-date warning, a solid "View offer" `Button`, and the same
- * hover-revealed actions-menu (`···`) trigger as `ApplicationCard`.
+ * expiration-date warning, a solid "View offer" `Button`, and an
+ * always-visible × that dismisses (declines) the offer.
  *
  * The entire row is the primary click target (no separate row-level CTA
  * distinct from the "View offer" button's own action), mirroring
  * `ApplicationCard`'s row-interaction model — `onPress`/`href` land on the
  * outer element via `rowProps`.
  *
- * The hover-revealed `···` opens the consumer's `actionsMenu` (e.g. View
- * details, Decline). It replaced Figma's × dismiss (2026-09-24), which read
- * as "hide" while it actually declined the offer. It reveals exactly like
- * `ApplicationCard`'s trigger: it takes no space at rest, and on
- * hover/focus-within its slot grows to Figma's 16px gap + 32px button,
- * pushing "View offer" and the expiration date left while the `···`
- * dissolves in. While the menu is open, the trigger stays revealed and the
- * row keeps its hover tint.
+ * `onDismiss` shows an × (`Button`, tertiary icon-only `xs`) after "View
+ * offer", 16px apart, always visible (design direction 2026-09-30). It
+ * replaced the hover-revealed `···` menu (View details, Decline): the row
+ * already opens the detail, so Decline was the menu's only real action.
+ * Pressing it dismisses the offer; the consumer declines it (Engagements moves
+ * it to Offers → `Closed`). Closed offers pass no `onDismiss`, so they show
+ * no ×.
  *
  * `expirationDate` renders in `text-destructive` (or `text-foreground-muted`
  * via `expirationTone` when the deadline is more than 5 days out), in Inter like Figma's
@@ -90,11 +88,11 @@ interface OfferCardProps
   ctaLabel?: string;
   /** Called when the "View offer" CTA is activated. */
   onCtaPress?: () => void;
-  /** Accessible label for the hover-revealed actions-menu (`···`) trigger. Required whenever `actionsMenu` is set. */
-  actionsMenuLabel?: string;
-  /** The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View details, Decline). The `···` trigger only shows with 2 or more items: omit it, or pass a single item, and there is no trigger (DESIGN.md "Hide a `···` menu with only one item"). Same contract as `ApplicationCard`'s `actionsMenu`. */
-  actionsMenu?: React.ReactNode;
-  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. Omit `onClick` (and `actionsMenu`) for a row that opens nothing: it then has no hover tint either. */
+  /** Shows the always-visible × and calls back when it's pressed — dismissing the offer declines it. Omit for closed offers. */
+  onDismiss?: () => void;
+  /** Accessible label for the ×. Required whenever `onDismiss` is set, e.g. "Decline Strategic Finance Expert". */
+  dismissLabel?: string;
+  /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls (the CTA, the ×) don't trigger it. Omit `onClick` (and `onDismiss`) for a row that does nothing: it then has no hover tint either. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
@@ -118,14 +116,12 @@ function OfferCard({
   showCta = true,
   ctaLabel = "View offer",
   onCtaPress,
-  actionsMenuLabel,
-  actionsMenu,
+  onDismiss,
+  dismissLabel,
   rowProps,
   className,
   ...props
 }: OfferCardProps) {
-  // A menu with one item isn't worth a trigger: that one action is the row's own click or already on screen.
-  const showActionsMenu = countMenuItems(actionsMenu) > 1;
   // Same terms treatment as `ApplicationCard`: compensation semibold, engagement terms and duration regular.
   const termsParts = [
     { value: compensation, className: "font-semibold" },
@@ -138,9 +134,9 @@ function OfferCard({
       data-slot="offer-card"
       className={cn(
         "group flex w-full items-center gap-10 py-4 pr-6 pl-5 transition-colors duration-150 ease-out",
-        // Hover tint only when the row does something: a row with no click target and no menu (e.g. an expired offer
+        // Hover tint only when the row does something: a row with no click target and no × (e.g. an expired offer
         // with no detail to open) stays flat, so it doesn't look clickable.
-        (rowProps?.onClick || showActionsMenu) && "hover:bg-hover-row has-[[aria-expanded=true]]:bg-hover-row",
+        (rowProps?.onClick || onDismiss) && "hover:bg-hover-row",
         "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
         className,
       )}
@@ -216,8 +212,7 @@ function OfferCard({
             {supportingText}
           </Typography>
         )}
-        {/* Badge, CTA, and `···` slot share one gapless wrapper (the slot's width carries its own 16px gap), so a row
-            without the CTA ends flush with the slot, like `ApplicationCard`. */}
+        {/* Badge, CTA, and × share one gapless wrapper, each later item carrying its own 16px gap. */}
         <div className="flex shrink-0 items-center">
           {statusLabel && <Badge tone={statusTone} label={statusLabel} size="md" />}
           {showCta && (
@@ -227,19 +222,10 @@ function OfferCard({
               </Button>
             </span>
           )}
-          {showActionsMenu && (
-            // Same hover/focus-within reveal as `ApplicationCard`'s `···` slot: grows 0 → 48px (Figma's 16px gap + 32px button), pushing the CTA and expiration date left, while the trigger dissolves in.
-            // Enter mirrors `standardTransition` (`motionDuration.normal`, Tailwind's `ease-in-out`); exit is shorter per CLAUDE.md "Dismiss". Kept mounted (clipped) so it stays keyboard-reachable.
-            // The reveal lives on the slot so the Button keeps its own look + hover transition; `py-1 pr-1` (cancelled by `-my-1 -mr-1`, hence 52px) keeps its focus ring inside the clip.
-            <div
-              data-slot="offer-card-actions"
-              className="-my-1 -mr-1 flex w-0 justify-end overflow-hidden py-1 pr-1 opacity-0 transition-[width,opacity] duration-150 ease-in-out group-focus-visible:w-[52px] group-focus-visible:opacity-100 group-focus-visible:duration-300 group-has-[[data-focus-visible]]:w-[52px] group-has-[[data-focus-visible]]:opacity-100 group-has-[[data-focus-visible]]:duration-300 group-hover:w-[52px] group-hover:opacity-100 group-hover:duration-300 has-[[aria-expanded=true]]:w-[52px] has-[[aria-expanded=true]]:opacity-100 motion-reduce:transition-none"
-            >
-              <MenuTrigger>
-                <Button color="tertiary" size="xs" iconLeading={DotsHorizontal} aria-label={actionsMenuLabel} />
-                <MenuContent placement="bottom end">{actionsMenu}</MenuContent>
-              </MenuTrigger>
-            </div>
+          {onDismiss && (
+            <span className={cn("flex", (statusLabel || showCta) && "ml-4")}>
+              <Button color="tertiary" size="xs" iconLeading={XClose} aria-label={dismissLabel} onPress={onDismiss} />
+            </span>
           )}
         </div>
       </div>

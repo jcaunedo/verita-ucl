@@ -31,9 +31,10 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * - Solid/Brand → primary, Solid/Destructive → primary-destructive.
  *   `primary` re-synced 2026-09-21 — dropped the rosewood scale entirely for
  *   the neutral/brand grayscale used across the rest of the library
- *   (`tone-brand`, `#222a34`/neutral-800): base fill, a 20% white overlay on
- *   hover (`--tone-brand-hover` — Figma stacks white @ 20% over the brand
- *   fill, re-synced 2026-09-23; previously a 20% black darken), and a
+ *   (`tone-brand`, `#222a34`/neutral-800): base fill, a 15% white overlay on
+ *   hover (`--tone-brand-hover` — Figma stacks white @ 15% over the brand
+ *   fill, re-synced 2026-09-30 from 20%; the 20% overlay itself replaced a
+ *   20% black darken on 2026-09-23), and a
  *   `neutral-300`-ish disabled fill
  *   (Figma's literal `#caccce` is a near-exact but not identical match for
  *   `--neutral-300`/`#c6cbd2` — treated as the same token, not a new one).

@@ -632,11 +632,11 @@
 	   use --hover-row (see DESIGN.md "Row hover"). */
 	--hover: color-mix(in srgb, var(--neutral-700) 4%, transparent);
 
-	/* Figma: state/hover-row = foreground/foreground (neutral-700) at 2%
-	   (added 2026-09-23). The one hover fill for every card's hover state and
+	/* Figma: state/hover-row = foreground/foreground (neutral-700) at 3%
+	   (added 2026-09-23 at 2%; re-synced to 3% 2026-09-30). The one hover fill for every card's hover state and
 	   for table rows — see DESIGN.md "Row hover". Lighter than --hover so a
 	   large surface doesn't read heavy. */
-	--hover-row: color-mix(in srgb, var(--neutral-700) 2%, transparent);
+	--hover-row: color-mix(in srgb, var(--neutral-700) 3%, transparent);
 
 	/* Figma: icon-only Ghost/Neutral button hover fill (re-synced
 	   2026-09-23, `button` Type=Icon State=Hover, every size xs–xl) — a raw,
@@ -683,9 +683,11 @@
 	   models them as a separate variable group with its own name. */
 	--tone-brand: var(--neutral-800);
 	/* Figma: `button` Solid/Brand State=Hover — `color/tone/brand/brand` with a
-	   raw white @ 20% fill stacked on top (every size, Text + Icon), i.e. the
-	   brand fill lightened 20% toward white. Not a Figma variable itself. */
-	--tone-brand-hover: color-mix(in srgb, var(--tone-brand) 80%, white);
+	   raw white @ 15% fill stacked on top (re-synced 2026-09-30 from 20%; Figma's
+	   Text variants moved to 15%, and Icon-only follows them by design direction
+	   though its Figma variants still read 20%), i.e. the brand fill lightened
+	   15% toward white. Not a Figma variable itself. */
+	--tone-brand-hover: color-mix(in srgb, var(--tone-brand) 85%, white);
 	--tone-brand-subtle: var(--neutral-50);
 	--tone-brand-muted: var(--neutral-100);
 
