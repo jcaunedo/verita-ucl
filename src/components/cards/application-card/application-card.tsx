@@ -86,7 +86,7 @@ interface ApplicationCardProps
   supportingText?: string;
   /** Accessible label for the hover-revealed actions-menu (`···`) trigger. Required whenever `onActionsPress` is set. */
   actionsMenuLabel?: string;
-  /** Called when the actions-menu trigger is activated. Opens the consumer-owned menu (View Details/Share/Withdraw) — this component does not render the menu itself. Omit to hide the trigger entirely. */
+  /** Called when the actions-menu trigger is activated. Opens the consumer-owned menu (View Details/Refer/Withdraw) — this component does not render the menu itself. Omit to hide the trigger entirely. */
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /**
    * The row's actions menu (`MenuItem`s / `MenuSeparator`s, e.g. View Details, Refer, Withdraw — PRD §4.1).

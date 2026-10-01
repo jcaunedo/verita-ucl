@@ -66,7 +66,14 @@ src/
     typography/              # Typography component (template for new components)
     colors/                 # Color palette stories
   layouts/                  # Full-page reference layouts assembled from components
+product-specs/              # Product specs (PRDs) for Verita AI
 ```
+
+## Product Specs
+
+`product-specs/` holds the product specs for Verita AI. Every doc there follows
+the status-label and creation-header conventions in `CLAUDE.md` →
+"product-specs writing conventions".
 
 ## Design Tokens
 

@@ -103,7 +103,7 @@ Each application summary must include:
 
 ### Row interaction
 
-The entire application row is a single click target routing to the application detail (where the full next-action and owner state live) — there is no separate CTA button on the row itself. On hover or focus, the row reveals a `···` more-actions button (View Details, Share, Withdraw). There is no trailing arrow. The menu's items and behavior are defined in [`applications-card.md` §4.1](applications-card.md#41-actions-menu).
+The entire application row is a single click target routing to the application detail (where the full next-action and owner state live) — there is no separate CTA button on the row itself. On hover or focus, the row reveals a `···` more-actions button (View Details, Refer, Withdraw). There is no trailing arrow. The menu's items and behavior are defined in [`applications-card.md` §4.1](applications-card.md#41-actions-menu).
 
 > ⚠️ **Decision needed — next-action owner scoped to the professional for now:** at this stage, outstanding steps shown on an application (e.g. "Complete your assessment (2/4)") are modeled as always belonging to the professional — not yet distinguishing "waiting on you" from "waiting on Verita" or "waiting on partner" inline on the row. This narrows the "Next-action owner: professional, Verita, or partner" requirement above to professional-only for the row summary; whether owner must still surface inline (vs. only after clicking through to detail) needs confirmation with product before this is treated as final.
 

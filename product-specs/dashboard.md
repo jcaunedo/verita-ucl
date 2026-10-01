@@ -323,7 +323,7 @@ Moved to [`product-specs/engagements.md` §3–7](engagements.md#3-applications)
 
 ### 7.7 Referrals
 
-Referrals remain secondary to the professional's work journey. Promote them when there is a meaningful event, such as an accepted referral or pending reward. Otherwise provide a lower-priority entry point.
+Referrals remain secondary to the professional's work journey. Promote them when there is a meaningful event, such as an accepted referral or pending reward. Otherwise provide a lower-priority entry point. The Referrals destination itself (My referrals and My network) is defined in [`referrals.md`](referrals.md).
 
 ## 8. Functional requirements
 
@@ -406,6 +406,8 @@ Referrals remain secondary to the professional's work journey. Promote them when
 - `Training`
 - `Payment`
 - `TalentNetworkMembership`
+- `Connection`
+- `ReferralCandidate`
 - `Referral`
 - `Notification`
 
@@ -442,6 +444,9 @@ User
 │   └── Payments
 ├── TalentNetworkMemberships
 │   └── Opportunity
+├── Connections
+│   └── ReferralCandidates
+│       └── Opportunity
 ├── Referrals
 └── Notifications
 ```

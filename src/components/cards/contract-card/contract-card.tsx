@@ -10,7 +10,6 @@ import {
   type AvatarCompaniesProps,
 } from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
-import { Button, type ButtonProps } from "@/components/buttons/button";
 import { Typography } from "@/components/typography";
 
 /**
@@ -30,14 +29,14 @@ interface ContractCardProgress {
 
 /**
  * A single active/upcoming work agreement preview. Figma: `contract-card`.
- * Composes the existing `Badge` (contract status), `Button` (primary
- * action), and `Typography` (title) rather than reproducing their look
- * inline — matching `NextStepCard`'s composition pattern.
+ * Composes the existing `Badge` (contract status) and `Typography` (title)
+ * rather than reproducing their look inline — matching `NextStepCard`'s
+ * composition pattern. There is no primary action button (removed in Figma
+ * on 2026-09-30): the card itself is the click target, via `rowProps`.
  *
- * Per `product-specs/contract-card.md` §3.1.2, the status badge,
- * `work-insights` group, and primary action are each independently
- * optional — the card must not render a redundant badge, an empty/zeroed
- * progress region, or a CTA when no action is available (§2, §3.1.2, §6.2).
+ * Per `product-specs/contract-card.md` §3.1.2, the status badge and
+ * `work-insights` group are each independently optional — the card must not
+ * render a redundant badge or an empty/zeroed progress region (§3.1.2).
  * This component only covers presentation; which fields to pass for a given
  * contract's status/action state is the consumer's responsibility, per the
  * PRD's scope boundary (§1).
@@ -118,16 +117,12 @@ interface ContractCardProps
    * pattern used elsewhere in the library rather than a sampled value.
    */
   instructionsUrgent?: boolean;
-  /** Primary action label (Figma's `button` instance, e.g. "Open work"). Omit when no action is available (PRD §6.2's "No action" state). */
-  primaryActionLabel?: string;
-  /** Forwarded to the primary action button (e.g. `onPress`). */
-  primaryActionProps?: Omit<ButtonProps, "size" | "color" | "children">;
-  /** Forwarded to the card's own click target (e.g. `onClick`, which opens the contract detail). Passing `onClick` makes the whole card a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps` — same model as `ApplicationCard`/`MatchCard`/`OfferCard`; clicks on the primary action button don't trigger it. */
+  /** Forwarded to the card's own click target (e.g. `onClick`, which opens the contract detail). Passing `onClick` makes the whole card a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps` — same model as `ApplicationCard`/`MatchCard`/`OfferCard`. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
 
-/** A Contract card — identity, terms, progress, and a primary action for one active/upcoming work agreement. Figma: `contract-card`. */
+/** A Contract card — identity, terms, and progress for one active/upcoming work agreement. Figma: `contract-card`. */
 function ContractCard({
   company = "partner",
   logoSrc,
@@ -142,8 +137,6 @@ function ContractCard({
   progress,
   instructions,
   instructionsUrgent = false,
-  primaryActionLabel,
-  primaryActionProps,
   rowProps,
   className,
   ...props
@@ -158,7 +151,7 @@ function ContractCard({
       <div
         data-slot="contract-card"
         className={cn(
-          "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
+          "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card px-6 pt-6 pb-5 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
           // Figma `Property 1=Hover`: fill and border unchanged, `card-2` shadow → `shadow/hover-card` (DESIGN.md "Row hover").
           "hover:shadow-hover-card",
           "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
@@ -214,9 +207,9 @@ function ContractCard({
             </div>
           </div>
         </div>
-        {/* Figma `Bottom`: instructions, work-insights, and the action share one bottom-aligned 80px-min group with a 10px gap. */}
-        {(instructions || progress || primaryActionLabel) && (
-          <div className="flex min-h-20 w-full flex-col items-start justify-end gap-2.5">
+        {/* Figma `Bottom`: instructions and work-insights share one bottom-aligned group with a 10px gap. Always rendered at
+            Figma's 30px (the work-insights height) so every card keeps the same 298px height, even with neither shown. */}
+        <div className="flex min-h-7.5 w-full flex-col items-start justify-end gap-2.5">
             {instructions && (
               <div className="flex w-full items-center gap-1.5">
                 <AlertCircle
@@ -256,16 +249,7 @@ function ContractCard({
                 </div>
               </div>
             )}
-            {primaryActionLabel && (
-              <Button
-                size="sm"
-                {...primaryActionProps}
-              >
-                {primaryActionLabel}
-              </Button>
-            )}
-          </div>
-        )}
+        </div>
       </div>
     </motion.div>
   );

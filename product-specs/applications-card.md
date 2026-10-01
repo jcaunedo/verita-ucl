@@ -287,13 +287,13 @@ Alongside the row click target, the card exposes a secondary `actions-menu` (`·
 | Item         | Behavior                                                                                                                                                                                                                                                                                       |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | View Details | Routes to the application detail — the same destination as the row click. Kept as an explicit item despite the overlap, since it gives keyboard and screen-reader users an unambiguous, directly-labeled equivalent to the row click, rather than relying solely on activating the row itself. |
-| Share        | Shares the application/opportunity (exact mechanism — link copy, native share sheet, etc. — TBD with design).                                                                                                                                                                                  |
+| Refer        | Refers someone to this application's opportunity, creating a tracked referral ([`referrals.md` §6](referrals.md#6-ways-to-refer)). Replaced the original **Share** action on 2026-09-30.                                                                                                       |
 | Withdraw     | Withdraws the application. Destructive and effectively irreversible — requires a confirmation step before executing (§4.1's confirmation rule below); never fires directly off the menu item itself.                                                                                           |
 
 **Status-gated availability:** the menu's item set is not fixed — it depends on the application's current status (§3), not shown uniformly across every row:
 
 - **Withdraw** only appears while the application is still in an active, withdrawable state (e.g. `Applied`, `Action required`, `Interview scheduled`, `In review`, `On hold`, and `Interview · Action required`). It's hidden once the application has already reached a terminal state — `Withdrawn` (already withdrawn), `Not selected`, `Closed`, or `Offer received` (withdrawing no longer applies once an offer exists; that decision belongs to the Offer flow instead, not this card). This mirrors §2's "required data does not mean every field must be displayed in every state" principle, applied here to actions instead of content fields.
-- **View Details** and **Share** are available regardless of status — both remain meaningful for a terminal application (reviewing history, sharing a past outcome).
+- **View Details** and **Refer** are available regardless of status — both remain meaningful for a terminal application (reviewing history, referring someone else to the opportunity).
 - The exact status→action mapping above is a first pass; confirm the full mapping with design/product before implementation (§8).
 
 ⚠️ **Gap:** the prototype withdraws immediately, because UCL has no dialog component yet. The confirmation rule below still applies to the product.
@@ -370,7 +370,6 @@ Required behaviors:
 - 🙋 What is the default sort for Engagements → Applications → `Not moving forward`? `In progress` is resolved (action needed first, [`engagements.md` §3.1](engagements.md#31-application-filters)), and Home follows it (first 3 `In progress` rows; §5, §7).
 - 🙋 Whether the Engagements → Applications destination zero-state should reuse the confirmed Home copy ("No applications yet" / "Find opportunities that fit your expertise and interests." / "Discover opportunities") verbatim, or use its own variant suited to a full-page destination rather than an inline module. (§5.1)
 - 🙋 Confirm the full actions-menu status→availability mapping with design/product. (§4.1)
-- 🙋 Confirm the exact `Share` mechanism (link copy, native share sheet, or something else). (§4.1)
 - 🙋 Can training be required before an application is selected, so "Complete required training" is a valid `Action required` line? (§2.4.1)
 - 🙋 Are there documents to sign before selection (e.g. an NDA), so "Review and sign your documents" is a valid `Action required` line, or does signing only happen in the Offer flow? (§2.4.1)
 

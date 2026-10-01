@@ -338,10 +338,11 @@ rather than mapping it to `font-black`.
 
 **Rule:** a card gets a persistent primary button only when the professional
 owns the next action and that action is a meaningful step toward secured
-work. `OfferCard` ("View offer"), `ContractCard` ("Open work"), and
-`MatchCard` (its recommended action) have one. `ApplicationCard` has none:
-the whole row opens the detail, and an action the professional owes shows
-through its status and supporting text instead.
+work. `OfferCard` ("View offer") and `MatchCard` (its recommended action)
+have one. `ApplicationCard` has none: the whole row opens the detail, and an
+action the professional owes shows through its status and supporting text
+instead. `ContractCard` has had none since 2026-09-30 (removed in Figma): the
+whole card opens the contract.
 
 **Why:** every row is clickable, so "it can be opened" is not a reason for a
 button (decided 2026-09-25). A button on every application would compete

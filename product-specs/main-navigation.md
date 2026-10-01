@@ -1,7 +1,7 @@
 <!--
 Created: Sep 16, 2026
 Created by: Julio Caunedo
-Last updated: Sep 18, 2026
+Last updated: Sep 30, 2026
 Scope: Verita AI professional-facing main navigation — the primary nav items and their naming rationale, shared across every page-level PRD.
 Purpose: Give a single, high-level reference for the site's top-level destinations and the naming decisions behind them, split out of the Dashboard PRD (product-specs/dashboard.md) [§6.1](dashboard.md#61-main-navigation) once it became clear this content governs more than just Home.
 -->
@@ -10,7 +10,7 @@ Purpose: Give a single, high-level reference for the site's top-level destinatio
 
 **Status:** Draft for product and design alignment
 
-**Related docs:** Every page-level PRD in this folder implements one of the destinations named here. `product-specs/dashboard.md` is Home; `product-specs/engagements.md` is Engagements. Earnings and Referrals do not yet have dedicated PRDs.
+**Related docs:** Every page-level PRD in this folder implements one of the destinations named here. `product-specs/dashboard.md` is Home; `product-specs/engagements.md` is Engagements. [`referrals.md`](referrals.md) is Referrals. Earnings does not yet have a dedicated PRD.
 
 ## 1. Naming strategy
 
@@ -120,6 +120,8 @@ Design rationale:
 
 **Key distinction:** Opportunities focuses on the user's own potential work. Referrals focuses on bringing other professionals into the network.
 
+The destination has two tabs: **My referrals**, the record of people the user actually referred, and **My network**, the pool of people they may refer ([`referrals.md` §2](referrals.md#2-two-concepts-my-referrals-and-my-network)).
+
 ## 3. How the navigation works as a system
 
 | Navigation | Primary user question |
@@ -158,5 +160,5 @@ Other names considered for **Opportunities** along the way:
 
 ## 6. Open questions
 
-- 🙋 Earnings and Referrals have no dedicated page-level PRD yet — should they get one once their scope grows, following the same split pattern as Engagements and Next steps?
+- 🙋 Earnings has no dedicated page-level PRD yet — should it get one once its scope grows, following the same split pattern as Engagements, Next steps, and Referrals ([`referrals.md`](referrals.md), added 2026-09-30)?
   </content>

@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 25, 2026
+Last updated: Sep 30, 2026
 Scope: Verita AI Dashboard — the Contracts module's card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Active engagement definition in product-specs/engagements.md [§5](engagements.md#5-active-engagement).
 Purpose: Define the Contract card's engagement-terms/contract-status/action-state component architecture, its content (tiered by Essential/Contextual/Actionable, compensation-model-aware), and its priority behavior as a Home-module surface over the underlying Contract object.
 -->
@@ -134,7 +134,7 @@ This is the first place a status→tone mapping is established in this component
 
 **Work insights is fully optional as a group, not just its individual fields:** if no verified progress metric exists for a contract, the entire `work-insights` region (metric text, bar, and percentage together) is removed, and Auto Layout closes the resulting gap. The region must never render empty or with placeholder/zero values standing in for missing data — this extends §5.2's "collapse an absent optional field without a blank row" to the group as a whole, not just its individual rows.
 
-**Primary action default:** `Open work` is the default primary-action label for `Ready to work`/`In progress` contracts, routing to the contract's work destination generically. `Start session` is reserved for the specific case where session-based work functionality is confirmed for that destination (§6.2) — it is not the fallback label when session support is unconfirmed or unknown.
+**Primary action default:** `Open work` is the default primary-action label for `Ready to work` contracts, and `Resume work` for `In progress` contracts. §6.2.1 defines when each applies. `Start session` is reserved for the specific case where session-based work functionality is confirmed for that destination (§6.2) — it is not the fallback label when session support is unconfirmed or unknown.
 
 > Next: define the card's behavioral states — `default`, `awaiting start`, `action required`, `paused`, `completed`, `loading`, and `error` — establishing exactly when each element above appears and what the professional can do in each. §6 covers contract-status and action-state rules already; this remaining work is to consolidate them into named, implementation-ready states alongside the loading/error states in §6.4.
 
@@ -313,10 +313,30 @@ These are draft component behavior rules. Each card combines contract status, ac
 | Action state        | Trigger                                                                                                                 | Primary action and supporting content                                                                                                                         |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Ready to work**   | Work is permitted, a supported work destination exists, and no blocking professional requirement remains.               | Default to `Open work`. Use `Start session` only where session functionality is confirmed for that work destination — it is the reserved, not default, label. |
-| **In progress**     | Existing work can be continued, or a supported session is currently running.                                            | Use `Resume work` for resumable work or `Return to session` for an actual running session. Recorded hours alone do not establish a running session.           |
+| **In progress**     | The professional left a specific item unfinished that the work destination can return them to (§6.2.1), or a supported session is currently running. | Use `Resume work` for resumable work or `Return to session` for an actual running session. Recorded hours alone do not establish a running session.           |
 | **Action required** | An outstanding requirement belongs to the professional, including the recurring availability requirement in §2.1.       | Name the action, such as `Submit availability` or `Complete setup`, and show the relevant deadline. State whether it blocks work; not every obligation does.  |
 | **Waiting**         | The next necessary step belongs to Verita or the partner and the professional has no action that can advance that step. | Explain what is pending and identify the owner when known. Do not show an enabled CTA implying the professional can resolve it. Details remain accessible.    |
 | **No action**       | There is no applicable professional action or supported work operation.                                                 | Omit the primary CTA. Preserve details navigation; do not add a disabled generic button merely to fill the action area.                                       |
+
+### 6.2.1 Open work and Resume work
+
+`Open work` and `Resume work` are the two default work CTAs. The label tells the professional where the button takes them.
+
+| Label | Action state | When | Where it goes |
+| --- | --- | --- | --- |
+| `Open work` | Ready to work | Work is permitted and there is no unfinished item to return to. This covers the first visit and repeat work where each sitting starts fresh, such as hourly work logged against a weekly allocation. | The contract's work destination, at its entry point. |
+| `Resume work` | In progress | The professional started a specific item that isn't finished, and the work destination can return them to it: a draft deliverable, a partly completed task, a survey in progress. | That unfinished item, where they left off. |
+
+Rules:
+
+- **The label is a promise about the destination.** `Resume work` must land on the unfinished item. If the destination can't return the professional there, use `Open work`.
+- **Progress doesn't decide the label.** Hours used or deliverables submitted record past work, not a place to resume. A contract at "10 of 40 hours used this week" with nothing left open shows `Open work`; one at "4 of 5 deliverables submitted" with the fifth in progress shows `Resume work`.
+- **Session labels replace both only where sessions are confirmed.** `Start session` replaces `Open work`, and `Return to session` replaces `Resume work`, only for destinations with confirmed session support (§6.2).
+- **Neither label appears when work can't continue.** Paused, Completed, and Terminated contracts (§6.1), and the Waiting and No action states (§6.2), get no work CTA. A blocking professional requirement takes the CTA instead (§6.3).
+
+ℹ️ Why these words: "Open" stays neutral about whether work has begun, so it fits a first visit and the twentieth alike, where "Start" would be wrong after the first. "Resume" tells the professional they left something unfinished and the button returns them to it.
+
+⚠️ **Decision needed:** which work destinations can return a professional to an unfinished item. Until a destination supports it, its contracts show `Open work` only.
 
 ### 6.3 State precedence
 
@@ -376,6 +396,7 @@ Required behaviors:
 - 🙋 Are `Ready to work`, `In progress`, `Action required`, `Waiting`, and `No action` (§2) a complete and final action-state taxonomy, and what determines `Waiting` specifically (waiting on partner vs. Verita, per the professional/Verita/partner ownership model in [`engagements.md` §3](engagements.md#3-applications))?
 - 🙋 What is the ordering policy for multiple Contract cards on Home, and how many cards are displayed at once? (§7)
 - 🙋 Confirm the proposed action precedence in §6.3, the priority of multiple requirements, and which obligations block work.
+- 🙋 Which work destinations can return a professional to an unfinished item, so their contracts can show `Resume work` (§6.2.1)?
 - 🙋 Confirm supported session/work destinations, authoritative permission checks, and progress counting bases (§5–§6). The deadline warning threshold itself is resolved — 24 hours (§6.4).
 - 🙋 Confirm which of Compensation model and Duration (§3.2.1, §3.2.2) are launch requirements vs. future extensions, now that the `Project-based`/`One-time`/`Retainer`/`Full-time`/`Part-time`/`Flexible` categorical taxonomy and Work location have been retired in favor of Engagement terms.
 - 🙋 Consolidate §3.1.2's named behavioral states (`default`, `awaiting start`, `action required`, `paused`, `completed`, `loading`, `error`) against the existing §6.1/§6.2/§6.4 rules — confirm the named-state list is complete and reconcile naming (e.g. `default` vs. `Ready to work`/`In progress`) before treating it as implementation-ready.

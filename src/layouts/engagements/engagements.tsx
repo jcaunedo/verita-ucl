@@ -637,7 +637,6 @@ function Engagements({
                                 {...contract}
                                 className="w-full"
                                 rowProps={{ onClick: () => {} }}
-                                primaryActionProps={{ onPress: () => {} }}
                               />
                             ))}
                           </div>

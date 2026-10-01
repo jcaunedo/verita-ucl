@@ -394,7 +394,6 @@ type DemoContract = Pick<
   | "engagementTerms"
   | "duration"
   | "progress"
-  | "primaryActionLabel"
   | "statusLabel"
   | "statusTone"
   | "instructions"
@@ -416,7 +415,6 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 40 hrs/week",
     duration: "3 months",
     progress: { metricLabel: "10 of 40 hours used this week", percentageLabel: "25%", percentage: 25 },
-    primaryActionLabel: "Open work",
   },
   {
     key: "compensation-benchmarking",
@@ -426,7 +424,6 @@ const DEMO_CONTRACTS: DemoContract[] = [
     compensation: "$4,500/project",
     partnerName: "Verita partner",
     engagementTerms: "6 weeks",
-    primaryActionLabel: "Resume work",
   },
   {
     key: "clinical-expert-survey",
@@ -440,11 +437,10 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 40 hrs/week",
     duration: "3 months",
     progress: { metricLabel: "4 of 5 deliverables submitted", percentageLabel: "80%", percentage: 80 },
-    primaryActionLabel: "Resume work",
   },
   {
-    // `contract-card.md` §6.1 "Paused": warning badge (§3.1.2 tone table), the resume condition, progress
-    // kept as-is, and no primary action — resume-work actions are suppressed while paused.
+    // `contract-card.md` §6.1 "Paused": warning badge (§3.1.2 tone table), the resume condition, and
+    // progress kept as-is.
     key: "clinical-research-advisor",
     filter: "open",
     statusLabel: "Paused",
