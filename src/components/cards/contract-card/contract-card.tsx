@@ -220,9 +220,10 @@ function ContractCard({
           </div>
         </div>
         {/* Figma `Bottom`: instructions, work-insights, and the primary action share one bottom-aligned group with a 10px
-            gap. Kept at a 30px minimum (the work-insights height) so a card with none of them doesn't collapse, and
-            `flex-1` so a card stretched to its grid row's height pins this group (and its CTA) to the bottom. */}
-        <div className="flex min-h-7.5 w-full flex-1 flex-col items-start justify-end gap-2.5">
+            gap. Kept at Figma's 80px minimum (2026-10-01) so cards keep the same height whether they show a CTA alone
+            or a CTA plus work-insights, and `flex-1` so a card stretched to its grid row's height pins this group
+            (and its CTA) to the bottom. */}
+        <div className="flex min-h-20 w-full flex-1 flex-col items-start justify-end gap-2.5">
             {instructions && (
               <div className="flex w-full items-center gap-1.5">
                 {/* Urgent → Figma's `alert-circle` in the destructive tone; otherwise the line is informational, so

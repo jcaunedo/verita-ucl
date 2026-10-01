@@ -146,7 +146,7 @@ interface NextStepCardProps
   badgeTone?: BadgeProps["tone"];
   /** Step title. */
   title: string;
-  /** Step description. */
+  /** Step description. Truncated to 2 lines with an ellipsis so the fixed-height card never squeezes the CTA. */
   description: string;
   /** Call-to-action button text (Figma's `button` instance, `Label`). */
   buttonLabel: string;
@@ -268,7 +268,9 @@ function NextStepCard({
           <Typography size="base" weight="semibold" className="text-foreground">
             {title}
           </Typography>
-          <Typography size="sm" className="text-foreground-muted">
+          {/* At most 2 lines, then an ellipsis (full text stays in the DOM): the card's height is fixed, so a longer
+              description would squeeze the CTA. */}
+          <Typography size="sm" className="line-clamp-2 text-foreground-muted">
             {description}
           </Typography>
         </div>

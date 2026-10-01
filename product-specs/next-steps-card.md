@@ -1,7 +1,7 @@
 <!--
 Created: Sep 16, 2026
 Created by: Julio Caunedo
-Last updated: Sep 30, 2026
+Last updated: Oct 01, 2026
 Scope: Verita AI Dashboard — the Next steps module (a generic self-directed task-card module; onboarding and profile-improvement tasks are its most common content today, but it is not scoped to those alone).
 Purpose: Define the Next steps module's content, requirement-level badges, dismiss behavior, and visibility rule, split out of the Dashboard PRD (product-specs/dashboard.md) [§7.2](dashboard.md#72-next-steps).
 -->
@@ -28,7 +28,7 @@ Each Next steps card must include:
 
 - Requirement-level badge, using the user-facing label for the [`dashboard.md` §5](dashboard.md#5-task-requirement-taxonomy) taxonomy level that applies to that task — not a free-form or two-value label. §2.2 maps each system level to its badge text; §2.3 defines each level's precise behavior. The Offer card (§2.4) is the one exception: its badge counts offers.
 - Task title, stated as a specific, destination-named action ([`dashboard.md` §12](dashboard.md#12-ux-content-requirements)).
-- Short explanation of why it matters or what it unlocks.
+- Short explanation of why it matters or what it unlocks. Shown on at most two lines; longer text is truncated with an ellipsis so the CTA keeps its full size on the fixed-height card.
 - One primary CTA routed to the task.
 - A dismiss (X) affordance on hover, for non-required tasks only (§2.1), and on the Offer card (§2.4).
 
