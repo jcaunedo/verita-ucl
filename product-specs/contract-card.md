@@ -25,15 +25,17 @@ The component supports multiple concurrent contracts independently. Its primary 
 
 ## 2. Component architecture
 
-The card is driven by three independent axes rather than a single status enum. Keeping them separate is what lets one component cover every contract without branching into a different card per scenario — a contract with an ongoing weekly capacity can be `Active` or `Paused`; a contract scoped to a single deliverable can be `Active` with or without measurable completion progress; either can independently need `Action required` for an outstanding document or training. Collapsing these into one status field would force the component to enumerate every combination instead of composing three small ones.
+The card is driven by three independent axes rather than a single status enum. Keeping them separate is what lets one component cover every contract without branching into a different card per scenario — a contract with an ongoing weekly capacity can be `Awaiting start` or `Active`; a contract scoped to a single deliverable can be `Active` with or without measurable completion progress; either can independently need `Action required` for an outstanding document or training. Collapsing these into one status field would force the component to enumerate every combination instead of composing three small ones.
 
 | Axis                  | Determines                                                                   | Values                                                                                                                         |
 | ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | **Engagement terms**   | Which information and progress indicators are relevant (§3).                 | Time commitment, shown as the actual agreed term rather than a categorical type (§3.2), plus the separate, optional Duration field (§3.2.1).                     |
-| **Contract status**    | Whether the contract is operational, and which actions are available at all. | `Awaiting start` · `Active` · `Paused` · `Completed` · `Terminated` ([`engagements.md` §2](engagements.md#2-engagement-views)) |
+| **Contract status**    | Whether the contract is operational, and which actions are available at all. | `Awaiting start` · `Active` · `Completed` · `Terminated` ([`engagements.md` §2](engagements.md#2-engagement-views)) |
 | **Action state**       | The action presented to the professional on the card.                        | `Ready to work` · `In progress` · `Action required` · `Waiting` · `No action`                                                  |
 
-The Home module surfaces only contracts whose **contract status** is `Awaiting start`, `Active`, or `Paused` (§1's "active or upcoming" scope; §4) — `Completed` and `Terminated` drop out of the Home card and remain visible only in the Engagements → Contracts view. **Engagement terms** governs §3's Contextual row (e.g. current-week progress only where the contract carries a measurable weekly capacity; a contract scoped to a single deliverable may instead show simple deliverable-based progress or none). **Action state** is independent of both — a `Paused` contract is not automatically `No action`; it can carry `Action required` (e.g. a resume condition the professional must fulfill) the same as an `Active` one, resolving what would otherwise need a separate flag.
+The Home module surfaces only contracts whose **contract status** is `Awaiting start` or `Active` (§1's "active or upcoming" scope; §4) — `Completed` and `Terminated` drop out of the Home card and remain visible only in the Engagements → Contracts view. **Engagement terms** governs §3's Contextual row (e.g. current-week progress only where the contract carries a measurable weekly capacity; a contract scoped to a single deliverable may instead show simple deliverable-based progress or none). **Action state** is independent of both — an `Awaiting start` contract is not automatically `No action`; it can carry `Action required` (e.g. setup the professional must complete before work begins) the same as an `Active` one, resolving what would otherwise need a separate flag.
+
+✅ **Resolved (2026-09-30) — there is no `Paused` status:** per the product team, a contract is `Awaiting start`, `Active`, `Completed`, or `Terminated`. Every rule that covered `Paused` (its badge tone, its Home visibility, its `Current` filter placement, and its suppressed work actions) is removed.
 
 **Confirmed: single component, boolean properties — not a variant per combination.** The Contract card is built as one component with boolean/conditional properties for its optional regions (status badge, work insights, primary action — §3.1.2), rather than a separate Figma variant or code branch for every axis combination. This follows directly from the independent-axes model above: if engagement terms × contract status × action state each produced their own variant, the component would need to enumerate the full cross-product instead of composing three independent toggles.
 
@@ -49,7 +51,7 @@ The Contract card is a Home preview, not a compressed contract-detail page — t
 
 | Level          | Information                                                                                                                                                                                         |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Essential**  | Engagement title, partner label, contract status (§2), and the relevant date for that status (start date for `Awaiting start`, current period for `Active`, resume condition/date for `Paused`).    |
+| **Essential**  | Engagement title, partner label, contract status (§2), and the relevant date for that status (start date for `Awaiting start`, current period for `Active`).    |
 | **Contextual** | Compensation terms and expected workload (see below), current-week or deliverable progress where the engagement terms (§2) support it, and next deliverable or upcoming milestone when applicable. |
 | **Actionable** | The action state (§2) and its outstanding action (e.g. an unsubmitted `ContractAvailability`, §2.1), deadline when applicable, and one primary CTA routed to the full contract/engagement detail.   |
 
@@ -98,7 +100,7 @@ These fields establish the shared component contract. Requirements refer to the 
 | Primary action  | Conditional                            | Open work                |
 | Deadline        | Conditional                            | 24 days remaining        |
 
-Required data does not mean every field must be displayed. For example, a card inside a module that contains only active contracts does not need an additional **Active** badge unless it conveys a meaningful distinction. When the module includes awaiting-start or paused contracts (§4), communicate those status differences explicitly.
+Required data does not mean every field must be displayed. For example, a card inside a module that contains only active contracts does not need an additional **Active** badge unless it conveys a meaningful distinction. When the module includes awaiting-start contracts (§4), communicate that status difference explicitly.
 
 Display values are illustrative. Compensation follows the contract's payment model below; progress requires reliable data, and session-related actions require confirmed support for that workflow.
 
@@ -126,7 +128,6 @@ Display values are illustrative. Compensation follows the contract's payment mod
 | ------------------ | ------------- | -------------------------------------------------------------------------------------------- |
 | **Awaiting start** | `info`        | Informational, not yet underway — nothing is wrong, work just hasn't started.                |
 | **Active**         | `success`     | Work is healthy and ongoing. Shown only on surfaces with mixed statuses, per the rule above. |
-| **Paused**         | `warning`     | Needs the professional's attention — a resume condition may be outstanding (§2.1).           |
 | **Completed**      | `neutral`     | Terminal and expected — no action needed, and deliberately muted rather than celebratory.    |
 | **Terminated**     | `destructive` | Terminal outside the normal completion path — the one status that should read as negative.   |
 
@@ -136,7 +137,7 @@ This is the first place a status→tone mapping is established in this component
 
 **Primary action default:** `Open work` is the default primary-action label for `Ready to work` contracts, and `Resume work` for `In progress` contracts. §6.2.1 defines when each applies. `Start session` is reserved for the specific case where session-based work functionality is confirmed for that destination (§6.2) — it is not the fallback label when session support is unconfirmed or unknown.
 
-> Next: define the card's behavioral states — `default`, `awaiting start`, `action required`, `paused`, `completed`, `loading`, and `error` — establishing exactly when each element above appears and what the professional can do in each. §6 covers contract-status and action-state rules already; this remaining work is to consolidate them into named, implementation-ready states alongside the loading/error states in §6.4.
+> Next: define the card's behavioral states — `default`, `awaiting start`, `action required`, `completed`, `loading`, and `error` — establishing exactly when each element above appears and what the professional can do in each. §6 covers contract-status and action-state rules already; this remaining work is to consolidate them into named, implementation-ready states alongside the loading/error states in §6.4.
 
 ### 3.2 Engagement terms
 
@@ -243,7 +244,7 @@ For an active contract, display the agreed compensation rather than an opportuni
 
 ## 4. Visibility rule
 
-The Contract card/module renders only while the professional has at least one contract whose **contract status** (§2) is `Awaiting start`, `Active`, or `Paused`. Once no such contract exists, the module is removed from Home entirely, consistent with [`next-steps-card.md` §4](next-steps-card.md#4-visibility-rule)'s pattern for empty-state modules on Home — no confirmation message stands in its place.
+The Contract card/module renders only while the professional has at least one contract whose **contract status** (§2) is `Awaiting start` or `Active`. Once no such contract exists, the module is removed from Home entirely, consistent with [`next-steps-card.md` §4](next-steps-card.md#4-visibility-rule)'s pattern for empty-state modules on Home — no confirmation message stands in its place.
 
 ## 5. Component content model
 
@@ -304,7 +305,6 @@ These are draft component behavior rules. Each card combines contract status, ac
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | **Awaiting start** | Show the start date when known and any outstanding preparation requirement. Do not imply that work is already underway.                                 | Permit available preparation actions. Work actions require authoritative permission to begin; reaching the displayed start date alone does not activate them. | Included under §4. |
 | **Active**         | Show applicable current terms, progress, deadlines, and outstanding requirements.                                                                       | Resolve the primary CTA from the action state below.                                                                                                          | Included under §4. |
-| **Paused**         | Show an explicit paused state and the reason or resume condition when available. Existing progress remains factual, without implying work can continue. | Suppress start/resume-work actions. Allow an available action that addresses the pause condition.                                                             | Included under §4. |
 | **Completed**      | Show completion context and any retained summary in Engagements. A full progress bar alone never sets this status.                                      | No work CTA. Details remain accessible where the card is shown.                                                                                               | Removed from Home. |
 | **Terminated**     | Show the authoritative terminated status in Engagements without presenting the work as completed.                                                       | No work CTA. Details remain accessible where the card is shown.                                                                                               | Removed from Home. |
 
@@ -332,7 +332,7 @@ Rules:
 - **The label is a promise about the destination.** `Resume work` must land on the unfinished item. If the destination can't return the professional there, use `Open work`.
 - **Progress doesn't decide the label.** Hours used or deliverables submitted record past work, not a place to resume. A contract at "10 of 40 hours used this week" with nothing left open shows `Open work`; one at "4 of 5 deliverables submitted" with the fifth in progress shows `Resume work`.
 - **Session labels replace both only where sessions are confirmed.** `Start session` replaces `Open work`, and `Return to session` replaces `Resume work`, only for destinations with confirmed session support (§6.2).
-- **Neither label appears when work can't continue.** Paused, Completed, and Terminated contracts (§6.1), and the Waiting and No action states (§6.2), get no work CTA. A blocking professional requirement takes the CTA instead (§6.3).
+- **Neither label appears when work can't continue.** Completed and Terminated contracts (§6.1), and the Waiting and No action states (§6.2), get no work CTA. A blocking professional requirement takes the CTA instead (§6.3).
 
 ℹ️ Why these words: "Open" stays neutral about whether work has begun, so it fits a first visit and the twentieth alike, where "Start" would be wrong after the first. "Resume" tells the professional they left something unfinished and the button returns them to it.
 
@@ -341,7 +341,7 @@ Rules:
 ### 6.3 State precedence
 
 1. Establish valid identity, status, and permission data before enabling an action. An unavailable or unverifiable action stays unavailable even if cached content suggests it was previously allowed.
-2. Apply contract-status restrictions first: completed and terminated contracts cannot offer work actions; paused and awaiting-start contracts only expose permitted actions.
+2. Apply contract-status restrictions first: completed and terminated contracts cannot offer work actions; awaiting-start contracts only expose permitted actions.
 3. Give a blocking professional requirement precedence over a start/resume action. For concurrent nonblocking requirements and ongoing work, the proposed default is to show the requirement as the primary CTA and preserve access to work through contract details. Confirm this priority before implementation.
 4. With no professional requirement taking precedence, offer a permitted continuation/start action. Use Waiting only when an external dependency prevents the next step; an unrelated pending review must not hide otherwise available work.
 5. Deadline warnings and progress conditions modify supporting content. They do not independently change contract status, permissions, or the action state.
@@ -367,7 +367,7 @@ If several requirements compete, the card uses the authoritative task priority r
 ### 6.5 Transitions and synchronization
 
 - After confirmed requirement completion, refresh the card and any Next steps representation of the same requirement. Recompute the action state from remaining requirements and permissions; do not automatically assume Ready to work.
-- Reflect authoritative pause, resume, completion, and termination changes across the card and its parent module. Apply §4 only after eligibility has been established successfully.
+- Reflect authoritative start, completion, and termination changes across the card and its parent module. Apply §4 only after eligibility has been established successfully.
 - A successful response containing no eligible contracts hides the Home module. Loading, errors, and unknown eligibility do not satisfy that empty-state condition.
 - On period rollover, show progress for the new authoritative period once available. Do not reset a cached count to zero merely because the local clock crossed a boundary.
 - Announce action results and errors accessibly, preserve keyboard focus through updates, and provide text for status, warnings, and progress rather than relying on color alone.
@@ -386,9 +386,11 @@ Required behaviors:
 - Completing one contract must not remove or modify another.
 - Card order should be deterministic, with contracts requiring attention prioritized once the ordering policy is approved.
 
-✅ **Resolved (2026-09-24) — Home shows one row of contracts:** the Home "Current contracts" module (formerly "Active work") shows as many contracts as fit in one row of its grid: 2 at the `xl` breakpoint (1280px) and below, 3 above it (breakpoints include their own width, [DESIGN.md](../DESIGN.md) "Breakpoints include their own width"). It never wraps to a second row. Under the section title, a subtitle reads `Showing {shown} of {total}` (e.g. "Showing 3 of 4"), where `total` is every contract Home is allowed to show (`Awaiting start`, `Active`, or `Paused`, §4). Below the grid, `View all` routes to Engagements → Contracts with the `Current` filter selected ([`engagements.md` §5.2](engagements.md#52-contract-filters)). This matches the Home Applications module's subtitle and link ([`applications-card.md` §5](applications-card.md#5-visibility-rule)).
+✅ **Resolved (2026-09-24) — Home shows one row of contracts:** the Home "Current contracts" module (formerly "Active work") shows as many contracts as fit in one row of its grid: 2 at the `xl` breakpoint (1280px) and below, 3 above it (breakpoints include their own width, [DESIGN.md](../DESIGN.md) "Breakpoints include their own width"). It never wraps to a second row. Under the section title, a subtitle reads `Showing {shown} of {total}` (e.g. "Showing 3 of 4"), where `total` is every contract Home is allowed to show (`Awaiting start` or `Active`, §4). Below the grid, `View all` routes to Engagements → Contracts with the `Current` filter selected ([`engagements.md` §5.2](engagements.md#52-contract-filters)). This matches the Home Applications module's subtitle and link ([`applications-card.md` §5](applications-card.md#5-visibility-rule)).
 
-⚠️ **Decision needed:** which contracts fill the visible row when there are more than fit. The card-order rule above is still unapproved. Until it is, a `Paused` contract or one needing attention can end up hidden behind `View all`.
+✅ **Resolved (2026-09-30) — `Awaiting start` contracts come first:** they lead the list, on Home and in Engagements → Contracts → `Current`, ahead of `Active` contracts.
+
+⚠️ **Decision needed:** the order after that, including where `Active` contracts needing attention sit. Until it's set, one of them can end up hidden behind `View all` when there are more contracts than fit in the row.
 
 ## 8. Open questions
 
@@ -399,7 +401,7 @@ Required behaviors:
 - 🙋 Which work destinations can return a professional to an unfinished item, so their contracts can show `Resume work` (§6.2.1)?
 - 🙋 Confirm supported session/work destinations, authoritative permission checks, and progress counting bases (§5–§6). The deadline warning threshold itself is resolved — 24 hours (§6.4).
 - 🙋 Confirm which of Compensation model and Duration (§3.2.1, §3.2.2) are launch requirements vs. future extensions, now that the `Project-based`/`One-time`/`Retainer`/`Full-time`/`Part-time`/`Flexible` categorical taxonomy and Work location have been retired in favor of Engagement terms.
-- 🙋 Consolidate §3.1.2's named behavioral states (`default`, `awaiting start`, `action required`, `paused`, `completed`, `loading`, `error`) against the existing §6.1/§6.2/§6.4 rules — confirm the named-state list is complete and reconcile naming (e.g. `default` vs. `Ready to work`/`In progress`) before treating it as implementation-ready.
+- 🙋 Consolidate §3.1.2's named behavioral states (`default`, `awaiting start`, `action required`, `completed`, `loading`, `error`) against the existing §6.1/§6.2/§6.4 rules — confirm the named-state list is complete and reconcile naming (e.g. `default` vs. `Ready to work`/`In progress`) before treating it as implementation-ready.
 - 🙋 Does a Contract always show its Opportunity's title, or can it have its own name (e.g. one of several scoped projects from one Opportunity, or work from a Talent Network pool)? If it always uses the Opportunity's title, rename `contract-title` to `opportunity-title` to match the Match, Applications, and Offer cards ([`offer-card.md` §2.1](offer-card.md#21-card-anatomy)). (§3.1)
 
 ## 9. Related docs

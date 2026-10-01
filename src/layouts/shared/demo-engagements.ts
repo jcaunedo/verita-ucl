@@ -406,6 +406,22 @@ type DemoContract = Pick<
  */
 const DEMO_CONTRACTS: DemoContract[] = [
   {
+    // `contract-card.md` §6.1 "Awaiting start": `info` badge (§3.1.2 tone table), no progress since work hasn't
+    // begun, and what's due before it starts — the same training Home's Next steps asks for ("Complete training").
+    // Listed first: an `Awaiting start` contract leads the list (§7).
+    key: "clinical-research-advisor",
+    filter: "open",
+    statusLabel: "Awaiting start",
+    statusTone: "info",
+    company: "verita",
+    title: "Clinical Research Advisor",
+    compensation: "$600/day",
+    partnerName: "Verita partner",
+    engagementTerms: "Up to 3 days/week",
+    duration: "4 months",
+    instructions: "Complete training before it starts on Oct 1",
+  },
+  {
     key: "backend-integration",
     filter: "open",
     company: "verita",
@@ -437,22 +453,6 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 40 hrs/week",
     duration: "3 months",
     progress: { metricLabel: "4 of 5 deliverables submitted", percentageLabel: "80%", percentage: 80 },
-  },
-  {
-    // `contract-card.md` §6.1 "Paused": warning badge (§3.1.2 tone table), the resume condition, and
-    // progress kept as-is.
-    key: "clinical-research-advisor",
-    filter: "open",
-    statusLabel: "Paused",
-    statusTone: "warning",
-    company: "verita",
-    title: "Clinical Research Advisor",
-    compensation: "$600/day",
-    partnerName: "Verita partner",
-    engagementTerms: "Up to 3 days/week",
-    duration: "4 months",
-    progress: { metricLabel: "6 of 12 days completed", percentageLabel: "50%", percentage: 50 },
-    instructions: "Paused pending partner confirmation.",
   },
 ];
 

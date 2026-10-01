@@ -167,7 +167,7 @@ The whole row is a click target that opens the offer detail, the same model as t
 | Card         | Next action and owner                                                    | Primary CTA                                      |
 | ------------ | ------------------------------------------------------------------------ | ------------------------------------------------ |
 | Offer        | Review and decide on the proposal. Owned by the professional.            | "View offer", always, while the offer is open    |
-| Contract     | Do the work. Owned by the professional.                                  | "Open work" or similar ([`contract-card.md` §3.1](contract-card.md#31-contract-card-anatomy)), suppressed while paused |
+| Contract     | Do the work. Owned by the professional.                                  | "Open work" or similar ([`contract-card.md` §3.1](contract-card.md#31-contract-card-anatomy)) |
 | Match        | Apply, or clear what blocks applying. Owned by the professional.         | The recommended action ([`match-card.md` §6](match-card.md#6-recommended-action)) |
 | Applications | Usually a decision by Verita or the partner.                             | None ([`applications-card.md` §4](applications-card.md#4-row-interaction)) |
 

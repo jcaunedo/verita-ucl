@@ -47,9 +47,12 @@ export const WithDuration: Story = {
   },
 };
 
-export const WithStatusBadge: Story = {
+/** `Awaiting start` (`contract-card.md` §3.1.2 tone table: `info`), with what's due before work begins. */
+export const AwaitingStart: Story = {
   args: {
     statusLabel: "Awaiting start",
+    statusTone: "info",
+    instructions: "Complete training before it starts on Oct 1",
   },
 };
 
@@ -85,14 +88,6 @@ export const WithInstructionsNotUrgent: Story = {
   },
 };
 
-export const Paused: Story = {
-  args: {
-    statusLabel: "Paused",
-    compensation: "$1,500 per project",
-    engagementTerms: "One-time",
-  },
-};
-
 export const Completed: Story = {
   args: {
     statusLabel: "Completed",
@@ -112,7 +107,8 @@ export const AllVariants: Story = {
       <ContractCard
         {...args}
         statusLabel="Awaiting start"
-       
+        statusTone="info"
+        instructions="Complete training before it starts on Oct 1"
       />
       <ContractCard
         {...args}
@@ -121,7 +117,6 @@ export const AllVariants: Story = {
           percentageLabel: "40%",
           percentage: 40,
         }}
-       
       />
       <ContractCard
         {...args}
@@ -134,13 +129,6 @@ export const AllVariants: Story = {
           percentageLabel: "40%",
           percentage: 40,
         }}
-       
-      />
-      <ContractCard
-        {...args}
-        statusLabel="Paused"
-        compensation="$1,500 per project"
-        engagementTerms="One-time"
       />
       <ContractCard
         {...args}

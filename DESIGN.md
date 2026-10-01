@@ -356,7 +356,7 @@ with the few rows that really need the professional, and dilute the Offer's
   make the row "more clickable". Flag it instead. Rationale:
   `product-specs/offer-card.md` §4.1.
 - Remove the CTA when the action goes away: a closed offer passes
-  `showCta={false}`, and a paused contract suppresses its primary action.
+  `showCta={false}`.
 
 ## Lists of rows are one table list (`src/components/cards/`, `src/layouts/`)
 
