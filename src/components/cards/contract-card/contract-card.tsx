@@ -161,7 +161,7 @@ function ContractCard({
       <div
         data-slot="contract-card"
         className={cn(
-          "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card px-6 pt-6 pb-5 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
+          "flex w-[374px] flex-col items-start gap-3 rounded-card border border-border bg-card p-6 shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)] transition-[color,background-color,border-color,box-shadow] duration-150 ease-out",
           // Figma `Property 1=Hover`: fill and border unchanged, `card-2` shadow → `shadow/hover-card` (DESIGN.md "Row hover").
           "hover:shadow-hover-card",
           "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
