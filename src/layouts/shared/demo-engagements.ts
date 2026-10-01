@@ -49,7 +49,8 @@ type DemoApplication = Pick<
  * Closed). An application with an offer leaves Applications for Offers (§2),
  * so there are no `Offer received` rows. Demo mix: one `Action required`, one
  * `Interview scheduled`, the rest `Applied` (plain `Applied` has no supporting
- * text, `applications-card.md` §2.4.1).
+ * text, `applications-card.md` §2.4.1), plus one `Closed` under `Not moving
+ * forward`, so that filter isn't empty before anything is withdrawn.
  *
  * Listed in `Open`'s default sort (§3.1 "Default sort"): action required,
  * then interview scheduled, then applied. Consumers rely on this order
@@ -177,6 +178,25 @@ const DEMO_APPLICATIONS: DemoApplication[] = [
     duration: "Ongoing",
     statusLabel: "Applied",
     statusTone: "info",
+  },
+  {
+    // `Not moving forward` → `Closed` (`applications-card.md` §2.4.1): the opportunity closed before the application
+    // advanced. Neutral badge, no supporting text (the closed date lives on the detail page), and no Withdraw.
+    // `lastActivityAt` is the closure, so it sits in `Last 15 days`.
+    key: "health-content-reviewer",
+    filter: "not-moving-forward",
+    nextActionOwner: "partner",
+    lastActivityAt: "2026-09-19",
+    title: "Health Content Reviewer",
+    company: "apple",
+    logoSrc: partnerLogos.apple,
+    logoAlt: "Apple",
+    partnerName: "Apple",
+    compensation: "$70/hr",
+    engagementTerms: "Up to 20 hrs/week",
+    duration: "3 months",
+    statusLabel: "Closed",
+    statusTone: "neutral",
   },
 ];
 

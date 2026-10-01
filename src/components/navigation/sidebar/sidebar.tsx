@@ -7,8 +7,8 @@ import {
   FlexAlignLeft,
   FlexAlignRight,
   HomeLine,
-  LifeBuoy02,
   LogOut01,
+  Send03,
   Settings02,
   Translate01,
   UserCircle,
@@ -60,16 +60,17 @@ const NAV_ITEMS: {
   { key: "referrals", icon: UsersRight, activeIcon: UsersRightSolid, label: "Referrals", href: "/referrals" },
 ];
 
-const FOOTER_ITEMS = [
+const FOOTER_ITEMS: { key: string; icon: React.FC<{ className?: string }>; iconClassName?: string; label: string }[] = [
   { key: "notifications", icon: Bell01, label: "Notifications" },
-  { key: "support", icon: LifeBuoy02, label: "Support" },
-] as const;
+  // Figma: `send-03-flip` (replaced Support's `life-buoy-02`), `send-03` mirrored so the plane points left.
+  { key: "feedback", icon: Send03, iconClassName: "-scale-x-100", label: "Send feedback" },
+];
 
 /**
  * The app-shell sidebar — logo, collapse toggle, main nav, footer nav, and
  * account trigger. Figma: `Sidebar` (Expanded / Collapsed). `activeNavKey`
  * tracks which of the 5 main nav items is current (starts at
- * `defaultActiveNavKey`, "home" by default, and switches on click); the 3 footer items only support hover/press, no
+ * `defaultActiveNavKey`, "home" by default, and switches on click); the footer items only support hover/press, no
  * current-page state, per spec.
  *
  * Behavior/motion adapted from bethere-ucl's `Sidebar` (same underlying
@@ -82,7 +83,7 @@ const FOOTER_ITEMS = [
  * also toggle the rail — only the genuinely empty rail background outside
  * those two wrappers (e.g. between the nav list and the footer list) reaches
  * the root's handler; the small gaps between adjacent items within a list
- * (e.g. between "Home" and "Discover", or "Notifications" and "Support") sit
+ * (e.g. between "Home" and "Discover", or "Notifications" and "Send feedback") sit
  * inside a `stopPropagation` wrapper and were never click-to-toggle either,
  * so `cursor-default` is applied there on the list containers to match that
  * — only the actually-toggleable rail background keeps the
@@ -255,10 +256,10 @@ function Sidebar({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex w-full cursor-default flex-col items-start gap-4">
-          {FOOTER_ITEMS.map(({ key, icon: Icon, label }) => (
+          {FOOTER_ITEMS.map(({ key, icon: Icon, iconClassName, label }) => (
             <SidebarMenuItem
               key={key}
-              icon={<Icon />}
+              icon={<Icon className={iconClassName} />}
               label={label}
               href="#"
               collapsed={collapsed}
