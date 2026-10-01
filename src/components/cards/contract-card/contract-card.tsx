@@ -1,6 +1,6 @@
 import * as React from "react";
 import { motion } from "motion/react";
-import { AlertCircle, Building03, Calendar } from "@untitledui/icons";
+import { AlertCircle, Building03, Calendar, InfoCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { liftPattern, useMotionPreference } from "@/lib/motion";
@@ -114,11 +114,13 @@ interface ContractCardProps
    * that the emphasized color must be reserved for the 24-hour window, so
    * this prop exists to let the consumer (which knows the actual deadline
    * timestamp) express that distinction. Defaults to `false`. Irrelevant
-   * when `instructions` is omitted. The `alert-circle` icon's non-urgent
-   * color (`text-icon-muted`) is an inferred pairing with the text color,
-   * not a Figma-confirmed binding — the icon node carries no bound variable
-   * in either Figma state, so this follows the same icon-matches-text-tone
-   * pattern used elsewhere in the library rather than a sampled value.
+   * when `instructions` is omitted. Also picks the icon: Figma's
+   * `alert-circle` when urgent, `info-circle` otherwise — outside the
+   * warning window the line is informational, not an alert. The non-urgent
+   * icon and its color (`text-icon-muted`) are inferred, not Figma-confirmed:
+   * Figma only shows the urgent variant, and the icon node carries no bound
+   * variable, so this follows the icon-matches-text-tone pattern used
+   * elsewhere in the library rather than a sampled value.
    */
   instructionsUrgent?: boolean;
   /** Primary action label (Figma's `button` instance): `"Start working"`, or the task the professional owes, e.g. `"Submit availability"` (PRD §6.2.1). Omit when no action is available — no CTA renders. */
@@ -223,12 +225,13 @@ function ContractCard({
         <div className="flex min-h-7.5 w-full flex-1 flex-col items-start justify-end gap-2.5">
             {instructions && (
               <div className="flex w-full items-center gap-1.5">
-                <AlertCircle
-                  className={cn(
-                    "size-3.5 shrink-0",
-                    instructionsUrgent ? "text-tone-destructive" : "text-icon-muted",
-                  )}
-                />
+                {/* Urgent → Figma's `alert-circle` in the destructive tone; otherwise the line is informational, so
+                    `info-circle` (same pairing as `Alert`/`InlineAlert`'s `info` tone) in the muted icon color. */}
+                {instructionsUrgent ? (
+                  <AlertCircle className="size-3.5 shrink-0 text-tone-destructive" />
+                ) : (
+                  <InfoCircle className="size-3.5 shrink-0 text-icon-muted" />
+                )}
                 <Typography
                   size="xs"
                   className={instructionsUrgent ? "text-tone-destructive" : "text-foreground"}

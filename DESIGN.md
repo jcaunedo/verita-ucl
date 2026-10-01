@@ -508,3 +508,37 @@ Tailwind's default min-width breakpoints, a frame at exactly 1024px or
   changes.
 - Describe breakpoints in comments and specs as "at `lg` (1024) and below" /
   "above `lg`", not "below `lg`" / "from `lg`".
+
+## Message icons follow the message type, not the design's default (`src/components/feedback/`, `src/components/cards/`)
+
+**Rule:** every status or supporting message (alerts, inline alerts, card
+instruction/deadline lines) picks its leading icon from what the message
+_means_, using one shared map:
+
+| Message type         | Icon            | Color                                                           |
+| -------------------- | --------------- | --------------------------------------------------------------- |
+| Info / neutral       | `InfoCircle`    | `text-tone-info`, or `text-icon-muted` on muted supporting text |
+| Warning              | `AlertTriangle` | `text-tone-warning`                                             |
+| Destructive / urgent | `AlertCircle`   | `text-tone-destructive`                                         |
+| Success              | `CheckCircle`   | `text-tone-success`                                             |
+
+When a component's message type can change (e.g. a deadline that becomes
+urgent), the icon changes with it, not just the text color.
+
+**Why:** `ContractCard`'s instructions line always showed `alert-circle`,
+because Figma only draws the urgent variant. That made routine, non-urgent
+copy ("Complete training before it starts on Oct 1") read as an error. The
+icon is a signal on its own, so it has to match the message type, the same
+as the color does (decided 2026-10-01).
+
+**How to apply:**
+
+- Reuse the map in `Alert`/`InlineAlert` (`toneIcons`). Don't pick an icon
+  because it's the one in the Figma frame you're syncing; Figma often shows
+  only one state of a message.
+- `AlertCircle` means something is wrong or urgent. Never use it for
+  informational copy.
+- `ContractCard`: `instructionsUrgent` switches both icon and color —
+  `AlertCircle` in red within the 24-hour window, `InfoCircle` in muted
+  otherwise (`product-specs/contract-card.md` §6.4).
+- Never let the icon carry the meaning alone. The text has to say it too.
