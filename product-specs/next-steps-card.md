@@ -16,7 +16,7 @@ Purpose: Define the Next steps module's content, requirement-level badges, dismi
 
 ## 1. What Next steps is
 
-Next steps is the task module referenced in [`dashboard.md` §6](dashboard.md#6-information-architecture) module 2. It renders as a row of individually-tappable task cards rather than a single dominant action.
+Next steps is the task module referenced in [`dashboard.md` §6](dashboard.md#6-information-architecture) module 2. It renders as a row of individually-tappable task cards rather than a single dominant action. When there are more cards than fit in one row, the rest sit behind **View more** (§4.1).
 
 > "Next steps" (not "Complete your profile") is the deliberate, final section title — chosen specifically because it's generic enough to hold any self-directed task, not only profile-completion items. Onboarding and profile-improvement tasks are its most common content today, but the module isn't scoped to those alone; any task that fits the §2.1–§2.3 badge/dismiss model belongs here.
 
@@ -97,7 +97,7 @@ Visually it is the `next-step-card` Offer variant (Figma: verita.ds `next-step-c
 
 ℹ️ Dismissing the Offer card only hides it. It never declines an offer: every offer stays under Engagements → Offers → `Awaiting response` until the professional answers it or it expires.
 
-ℹ️ The Offer card takes a slot in the module's single row, so with a full row the last task waits in the queue until a card is completed or dismissed.
+ℹ️ The Offer card takes a slot in the module's first row, so with a full row the last task moves behind **View more** (§4.1).
 
 ⚠️ **Decision needed:** when a dismissed Offer card comes back. The prototype hides it for the current visit only. Options: when a new offer arrives, at the next session, or when the soonest offer is about to expire.
 
@@ -142,6 +142,16 @@ How generation type relates to the badge model (§2.3): a **Recommendation** tas
 ## 4. Visibility rule
 
 The Next steps module renders only while at least one eligible (§3) task, or the Offer card (§2.4), exists for the professional. Once every task in the module is completed, dismissed, or no longer eligible, the module is removed from the Dashboard entirely — it must not remain visible in an empty state. This follows [`dashboard.md` §8](dashboard.md#8-functional-requirements)'s broader empty-state principle (FR-9, "no urgent tasks: confirm that nothing requires attention") but goes further for this specific module: the empty case is no module, not a confirmation message in its place. The dismiss affordance in §2.1 is one of the two paths (alongside completion) to reaching that empty state.
+
+### 4.1 View more and View less
+
+The module shows one row of cards: 2 at `lg` (1024px) and below, 3 across the `xl` range, and 4 from the `2xl` frame up ([DESIGN.md](../DESIGN.md) "Page shell responsiveness"). When there are more eligible cards than fit in that row, a **View more** link (`arrow-down` icon) sits below the grid. It expands the module to show every card, wrapping onto as many rows as needed, and becomes **View less** (`arrow-up` icon), which collapses it back to one row. With every card fitting in one row, neither link shows.
+
+- Collapsed, completing or dismissing a card lets the next one slide into the freed slot, as before.
+- The module opens collapsed on every visit.
+- Expanding and collapsing animate the module's height, and cards that collapse out of view fade away ([CLAUDE.md](../CLAUDE.md#motion-system) "Expand"). If the module's top has scrolled out of view when the professional collapses it, the page scrolls back to the module.
+
+✅ **Resolved (2026-09-30) — overflow cards sit behind View more, not out of reach:** before this, cards past the first row stayed hidden until a card in the row was completed or dismissed, so a professional couldn't see their full list of tasks. **View more** makes every task reachable in one click, while the collapsed default keeps Next steps to one row so the modules below it stay in view ([Figma](https://www.figma.com/design/hdxBo3xOg3uMSovZwidJF5/Verita?node-id=6098-4749)).
 
 ## 5. Open questions
 

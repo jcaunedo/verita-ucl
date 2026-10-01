@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * A text link with an optional trailing "external/navigate" arrow — e.g. a
- * dashboard section's "View All" link. Figma: `Hyperlink` (`Property 1` size
+ * dashboard section's "View all" link. Figma: `Hyperlink` (`Property 1` size
  * axis → `size`: `14`→`sm`, `16`→`base`; `state/link` blue text, hovering to
  * `foreground/foreground` — not an underline). Distinct from `Button`'s
  * `color="link-color"` (a rosewood CTA styled as text) — this is a plain

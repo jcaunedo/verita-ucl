@@ -114,7 +114,7 @@ function offerNextStep(offers: readonly { expiresAt: string }[], viewOffersHref:
  */
 const ACTIVE_WORK = DEMO_CONTRACTS.filter((contract) => contract.filter === "open");
 
-/** Max rows in "Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View All". */
+/** Max rows in "Applications" (`applications-card.md` §5 "Home preview"). The rest are one click away via "View all". */
 const ACTIVE_APPLICATIONS_LIMIT = 3;
 
 
@@ -181,12 +181,12 @@ interface DashboardProps {
    */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
   /**
-   * Target for "Applications" → "View All": Engagements → Applications,
+   * Target for "Applications" → "View all": Engagements → Applications,
    * `In progress` filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllApplicationsHref?: string;
   /**
-   * Target for "Current contracts" → "View All": Engagements → Contracts, `Current`
+   * Target for "Current contracts" → "View all": Engagements → Contracts, `Current`
    * filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllContractsHref?: string;
@@ -239,7 +239,7 @@ function Dashboard({
   const { sidebarCollapsed, handleSidebarCollapsedChange } = useLayoutSidebar();
   /**
    * "Current contracts" stays one row: as many contracts as the grid has columns
-   * (2 at `xl` and below, 3 above `xl`), with the rest behind "View All". Same
+   * (2 at `xl` and below, 3 above `xl`), with the rest behind "View all". Same
    * breakpoint-driven cap as `NextStepsSection`, so "Showing # of {total}"
    * always matches what's on screen.
    */
@@ -355,7 +355,7 @@ function Dashboard({
                   ))}
                 </div>
                 <Hyperlink href={viewAllContractsHref} showArrow>
-                  View All
+                  View all
                 </Hyperlink>
               </div>
 
@@ -394,7 +394,7 @@ function Dashboard({
                 </div>
                 <div className="flex items-start gap-5">
                   <Hyperlink href={viewAllApplicationsHref} showArrow>
-                    View All
+                    View all
                   </Hyperlink>
                   <Hyperlink href="#" showArrow>
                     Discover more opportunities

@@ -7,7 +7,7 @@ const meta: Meta<typeof Hyperlink> = {
   component: Hyperlink,
   tags: ["autodocs"],
   args: {
-    children: "View All",
+    children: "View all",
     href: "#",
   },
   decorators: [
@@ -35,16 +35,16 @@ export const AllVariants: Story = {
   render: (args) => (
     <div className="flex flex-col items-start gap-4">
       <Hyperlink {...args} size="sm">
-        View All
+        View all
       </Hyperlink>
       <Hyperlink {...args} size="sm" showArrow>
-        View All
+        View all
       </Hyperlink>
       <Hyperlink {...args} size="base">
-        View All
+        View all
       </Hyperlink>
       <Hyperlink {...args} size="base" showArrow>
-        View All
+        View all
       </Hyperlink>
     </div>
   ),

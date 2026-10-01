@@ -211,8 +211,9 @@ breakpoint (see "Breakpoints include their own width").
   `grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`, a band ahead of the other
   grids: 3-up across the `xl` range (1025–1280) and 4-up from the `2xl`
   frame (1281) up (design direction, 2026-09-25).
-  It queues extra cards instead of wrapping them to a second row (see
-  `NextStepsSection`).
+  It shows one row and queues the extra cards behind "View more", which
+  expands to every row; "View less" collapses back to one row (see
+  `NextStepsSection`, `product-specs/next-steps-card.md` §4.1).
 
 **Why:** Each layout used to set its own canvas padding, and they drifted.
 Dashboard started at a fixed `pr-[216px]`, later became `xl:pr-30` with a
