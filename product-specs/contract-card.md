@@ -1,7 +1,7 @@
 <!--
 Created: Sep 17, 2026
 Created by: Julio Caunedo
-Last updated: Sep 30, 2026
+Last updated: Oct 01, 2026
 Scope: Verita AI Dashboard — the Contracts module's card content, split out of the Dashboard PRD (product-specs/dashboard.md) [§6](dashboard.md#6-information-architecture) and backed by the Active engagement definition in product-specs/engagements.md [§5](engagements.md#5-active-engagement).
 Purpose: Define the Contract card's engagement-terms/contract-status/action-state component architecture, its content (tiered by Essential/Contextual/Actionable, compensation-model-aware), and its priority behavior as a Home-module surface over the underlying Contract object.
 -->
@@ -19,7 +19,7 @@ The Contract card is how a professional sees their current work at a glance on H
 The Contract card is a reusable component that represents an individual active work agreement on the Dashboard.
 It maintains a consistent structure across engagements while adapting compensation, timeline information, progress indicators, and actions to the contract's specific characteristics.
 Progress is conditional on reliable operational data and must never be simulated to achieve visual consistency.
-The component supports multiple concurrent contracts independently. Its primary action opens the corresponding Verita work environment, while contract management remains within Engagements.
+The component supports multiple concurrent contracts independently. Its primary action, `Start working`, opens the corresponding Verita work environment, while contract management remains within Engagements.
 
 **Scope boundary:** `contract-card.md` owns presentation and interaction. `engagements.md` remains the source of truth for contract lifecycle and business data, while `dashboard.md` owns module-level visibility, ordering, and composition.
 
@@ -31,7 +31,7 @@ The card is driven by three independent axes rather than a single status enum. K
 | ---------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | **Engagement terms**   | Which information and progress indicators are relevant (§3).                 | Time commitment, shown as the actual agreed term rather than a categorical type (§3.2), plus the separate, optional Duration field (§3.2.1).                     |
 | **Contract status**    | Whether the contract is operational, and which actions are available at all. | `Awaiting start` · `Active` · `Completed` · `Terminated` ([`engagements.md` §2](engagements.md#2-engagement-views)) |
-| **Action state**       | The action presented to the professional on the card.                        | `Ready to work` · `In progress` · `Action required` · `Waiting` · `No action`                                                  |
+| **Action state**       | The action presented to the professional on the card.                        | `Ready to work` · `Action required` · `Waiting` · `No action`                                                                  |
 
 The Home module surfaces only contracts whose **contract status** is `Awaiting start` or `Active` (§1's "active or upcoming" scope; §4) — `Completed` and `Terminated` drop out of the Home card and remain visible only in the Engagements → Contracts view. **Engagement terms** governs §3's Contextual row (e.g. current-week progress only where the contract carries a measurable weekly capacity; a contract scoped to a single deliverable may instead show simple deliverable-based progress or none). **Action state** is independent of both — an `Awaiting start` contract is not automatically `No action`; it can carry `Action required` (e.g. setup the professional must complete before work begins) the same as an `Active` one, resolving what would otherwise need a separate flag.
 
@@ -53,7 +53,7 @@ The Contract card is a Home preview, not a compressed contract-detail page — t
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Essential**  | Engagement title, partner label, contract status (§2), and the relevant date for that status (start date for `Awaiting start`, current period for `Active`).    |
 | **Contextual** | Compensation terms and expected workload (see below), current-week or deliverable progress where the engagement terms (§2) support it, and next deliverable or upcoming milestone when applicable. |
-| **Actionable** | The action state (§2) and its outstanding action (e.g. an unsubmitted `ContractAvailability`, §2.1), deadline when applicable, and one primary CTA routed to the full contract/engagement detail.   |
+| **Actionable** | The action state (§2) and its outstanding action (e.g. an unsubmitted `ContractAvailability`, §2.1), deadline when applicable, and at most one primary CTA (§6.2.1).                                  |
 
 Essential fields are always shown, except that a redundant status badge may be omitted when the module already communicates that status (see §3.1.1). Contextual and Actionable fields are shown only when they apply to that contract — a card must not display a field its contract type or current state doesn't support.
 
@@ -68,7 +68,7 @@ The card is organized into four content areas. These describe where information 
 | **Identity** | Partner logo, role or project title, `contract-status` badge (top-right) | Identify the work and its status at a glance. |
 | **Terms**    | Compensation (below title, same large type size, regular weight), then partner and engagement terms/duration as two icon-led rows | Establish contractual context.                         |
 | **Progress** | `work-insights` group (progress bar, metric, percentage) | Communicate the professional's current position. |
-| **Action**   | Contextual primary CTA                     | Continue the work or address the next required action. |
+| **Action**   | Contextual primary CTA                     | Start working or address the next required action.     |
 
 **Confirmed layout, top to bottom** ([Contract Card](https://www.figma.com/design/Q2IVVTNZQaWHDkUiWztX3C/verita.ds?node-id=5891-881&t=PIUaa4bmM1VPq3x8-11)):
 
@@ -97,12 +97,12 @@ These fields establish the shared component contract. Requirements refer to the 
 | Compensation    | When available and permitted           | $85/hour                 |
 | Contract status | Required                               | Active                   |
 | Progress        | Conditional                            | 12 of 30 hours used      |
-| Primary action  | Conditional                            | Open work                |
+| Primary action  | Conditional                            | Start working            |
 | Deadline        | Conditional                            | 24 days remaining        |
 
 Required data does not mean every field must be displayed. For example, a card inside a module that contains only active contracts does not need an additional **Active** badge unless it conveys a meaningful distinction. When the module includes awaiting-start contracts (§4), communicate that status difference explicitly.
 
-Display values are illustrative. Compensation follows the contract's payment model below; progress requires reliable data, and session-related actions require confirmed support for that workflow.
+Display values are illustrative. Compensation follows the contract's payment model below; and progress requires reliable data.
 
 #### 3.1.2 Finalized element behaviors
 
@@ -118,7 +118,7 @@ Display values are illustrative. Compensation follows the contract's payment mod
 | `duration`         | **Optional to show, independent of `engagement-terms`** — the agreed engagement length, its own separate field (§3.2.1), gated by its own `showDuration` toggle in Figma. When shown, it composes onto the same row as `engagement-terms` with its own leading `·` separator (e.g. `Up to 30 hrs/week · 3 months`); when hidden, the separator is also removed, not left dangling — mirrors [`applications-card.md` §2.3.2](applications-card.md#232-duration)'s same rule. |
 | `partner-name`     | Approved name or fallback. Paired with a fixed leading `building-03` icon (confirmed via Figma).                                                                             |
 | `work-insights`    | Optional group containing the progress metric, bar, and percentage — see the work-insights rule below. |
-| `primary-action`   | Contextual, based on available actions (§6.2) — see the primary-action default below.                  |
+| `primary-action`   | Contextual, chosen by §6.2.1 — see the primary-action default below.                                   |
 
 **Status badge visibility:** the badge keeps its current position (top-right of the card) but is hidden for `Active` contracts specifically within the **Current contracts** surface (Home, titled "Active work" until 2026-09-24) — that surface already communicates "these are your current contracts" at the module level, so a repeated `Active` badge on every card is redundant (consistent with §3.1.1's "a card inside a module that contains only active contracts does not need an additional Active badge"). On any other surface where a mix of statuses can appear (e.g. Home, or an Engagements view spanning multiple statuses), the badge is shown for every non-`Active` status so the professional can tell cards apart at a glance.
 
@@ -135,7 +135,7 @@ This is the first place a status→tone mapping is established in this component
 
 **Work insights is fully optional as a group, not just its individual fields:** if no verified progress metric exists for a contract, the entire `work-insights` region (metric text, bar, and percentage together) is removed, and Auto Layout closes the resulting gap. The region must never render empty or with placeholder/zero values standing in for missing data — this extends §5.2's "collapse an absent optional field without a blank row" to the group as a whole, not just its individual rows.
 
-**Primary action default:** `Open work` is the default primary-action label for `Ready to work` contracts, and `Resume work` for `In progress` contracts. §6.2.1 defines when each applies. `Start session` is reserved for the specific case where session-based work functionality is confirmed for that destination (§6.2) — it is not the fallback label when session support is unconfirmed or unknown.
+**Primary action default:** `Start working` is the only work label, used for every `Ready to work` contract. A task the professional owes replaces it (§6.2.1).
 
 > Next: define the card's behavioral states — `default`, `awaiting start`, `action required`, `completed`, `loading`, and `error` — establishing exactly when each element above appears and what the professional can do in each. §6 covers contract-status and action-state rules already; this remaining work is to consolidate them into named, implementation-ready states alongside the loading/error states in §6.4.
 
@@ -198,7 +198,7 @@ Membership alone does not produce a Contract card, compensation, work progress, 
 - Engagement terms (time commitment) and Duration (§3.2.1) are the card's primary contextual content; Compensation model is modeled and displayed independently (§3.2.2), never inferred from either.
 - Use the agreed contract terms. Do not infer an hourly rate from a given time commitment, or a fixed fee from the absence of one, and do not infer duration from time commitment or vice versa.
 - Show time remaining separately from work completed. Omit progress bars when the underlying metric or denominator is unavailable.
-- Choose the primary action from the supported workflow and current action state (§2). No particular engagement term alone guarantees a `Start session` or `Resume work` action.
+- Choose the primary action from the current action state (§6.2.1). Engagement terms alone never decide it.
 
 ### 3.3 Compensation terms and expected workload
 
@@ -297,7 +297,7 @@ This extends §5.2's existing overage rule (cap the visual bar, preserve actual 
 
 ## 6. Component state rules
 
-These are draft component behavior rules. Each card combines contract status, action state, and data availability; the combinations must not be flattened into one status label. Work-session support, exact action destinations, and backend mappings remain validation items.
+These are draft component behavior rules. Each card combines contract status, action state, and data availability; the combinations must not be flattened into one status label. Exact action destinations and backend mappings remain validation items.
 
 ### 6.1 Contract status rules
 
@@ -312,39 +312,35 @@ These are draft component behavior rules. Each card combines contract status, ac
 
 | Action state        | Trigger                                                                                                                 | Primary action and supporting content                                                                                                                         |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Ready to work**   | Work is permitted, a supported work destination exists, and no blocking professional requirement remains.               | Default to `Open work`. Use `Start session` only where session functionality is confirmed for that work destination — it is the reserved, not default, label. |
-| **In progress**     | The professional left a specific item unfinished that the work destination can return them to (§6.2.1), or a supported session is currently running. | Use `Resume work` for resumable work or `Return to session` for an actual running session. Recorded hours alone do not establish a running session.           |
+| **Ready to work**   | Work is permitted, a supported work destination exists, and no blocking professional requirement remains.               | `Start working` (§6.2.1).                                                                                                                                     |
 | **Action required** | An outstanding requirement belongs to the professional, including the recurring availability requirement in §2.1.       | Name the action, such as `Submit availability` or `Complete setup`, and show the relevant deadline. State whether it blocks work; not every obligation does.  |
 | **Waiting**         | The next necessary step belongs to Verita or the partner and the professional has no action that can advance that step. | Explain what is pending and identify the owner when known. Do not show an enabled CTA implying the professional can resolve it. Details remain accessible.    |
 | **No action**       | There is no applicable professional action or supported work operation.                                                 | Omit the primary CTA. Preserve details navigation; do not add a disabled generic button merely to fill the action area.                                       |
 
-### 6.2.1 Open work and Resume work
+### 6.2.1 Choosing the primary CTA
 
-`Open work` and `Resume work` are the two default work CTAs. The label tells the professional where the button takes them.
+The card shows at most one primary CTA. Check these in order; the first that applies decides it:
 
-| Label | Action state | When | Where it goes |
-| --- | --- | --- | --- |
-| `Open work` | Ready to work | Work is permitted and there is no unfinished item to return to. This covers the first visit and repeat work where each sitting starts fresh, such as hourly work logged against a weekly allocation. | The contract's work destination, at its entry point. |
-| `Resume work` | In progress | The professional started a specific item that isn't finished, and the work destination can return them to it: a draft deliverable, a partly completed task, a survey in progress. | That unfinished item, where they left off. |
+1. **The professional owes a task** → the CTA names that task, such as `Submit availability` or `Complete setup`, with its deadline.
+2. **Otherwise, if work is permitted** → `Start working`. It opens the contract's work destination.
+3. **Otherwise** → no CTA. This covers `Awaiting start` contracts without permission to begin, the `Waiting` and `No action` states (§6.2), and `Completed` and `Terminated` contracts (§6.1). The card still opens contract details (§5.2).
 
 Rules:
 
-- **The label is a promise about the destination.** `Resume work` must land on the unfinished item. If the destination can't return the professional there, use `Open work`.
-- **Progress doesn't decide the label.** Hours used or deliverables submitted record past work, not a place to resume. A contract at "10 of 40 hours used this week" with nothing left open shows `Open work`; one at "4 of 5 deliverables submitted" with the fifth in progress shows `Resume work`.
-- **Session labels replace both only where sessions are confirmed.** `Start session` replaces `Open work`, and `Return to session` replaces `Resume work`, only for destinations with confirmed session support (§6.2).
-- **Neither label appears when work can't continue.** Completed and Terminated contracts (§6.1), and the Waiting and No action states (§6.2), get no work CTA. A blocking professional requirement takes the CTA instead (§6.3).
+- **One work label.** `Start working` is used on every visit, whether or not the professional left something unfinished. Returning them to unfinished work is the work destination's job; the label doesn't change.
+- **Progress doesn't change the label.** Hours used or deliverables submitted change supporting content only (§6.3).
+- **A task the professional owes always takes the CTA, blocking or not.** When it doesn't block work, work stays reachable through contract details.
 
-ℹ️ Why these words: "Open" stays neutral about whether work has begun, so it fits a first visit and the twentieth alike, where "Start" would be wrong after the first. "Resume" tells the professional they left something unfinished and the button returns them to it.
+✅ **Resolved (2026-10-01) — one work CTA, `Start working`:** this replaces `Open work`, `Resume work`, `Start session`, and `Return to session`. "Open work" could read as "available work", like open roles, and four labels needed rules about resumable destinations and session support that weren't confirmed. `Start working` is active and written from the professional's point of view, and it fits every visit, because each sitting starts work. `In progress` is removed as an action state: it existed only to choose between those labels.
 
-⚠️ **Decision needed:** which work destinations can return a professional to an unfinished item. Until a destination supports it, its contracts show `Open work` only.
+✅ **Confirmed in Figma (2026-10-01):** the primary-action button is back on the card ([Contract Card](https://www.figma.com/design/Q2IVVTNZQaWHDkUiWztX3C/verita.ds?node-id=5942-2408), `showCta` toggle) and in the `ContractCard` component, after its removal on 2026-09-30.
 
 ### 6.3 State precedence
 
 1. Establish valid identity, status, and permission data before enabling an action. An unavailable or unverifiable action stays unavailable even if cached content suggests it was previously allowed.
 2. Apply contract-status restrictions first: completed and terminated contracts cannot offer work actions; awaiting-start contracts only expose permitted actions.
-3. Give a blocking professional requirement precedence over a start/resume action. For concurrent nonblocking requirements and ongoing work, the proposed default is to show the requirement as the primary CTA and preserve access to work through contract details. Confirm this priority before implementation.
-4. With no professional requirement taking precedence, offer a permitted continuation/start action. Use Waiting only when an external dependency prevents the next step; an unrelated pending review must not hide otherwise available work.
-5. Deadline warnings and progress conditions modify supporting content. They do not independently change contract status, permissions, or the action state.
+3. Then choose the CTA by §6.2.1: a task the professional owes comes before `Start working`. Use Waiting only when an external dependency prevents the next step; an unrelated pending review must not hide otherwise available work.
+4. Deadline warnings and progress conditions modify supporting content. They do not independently change contract status, permissions, or the action state.
 
 If several requirements compete, the card uses the authoritative task priority rather than inventing a new order. The requirement-priority policy and alignment with Next steps remain to be defined.
 
@@ -395,13 +391,12 @@ Required behaviors:
 ## 8. Open questions
 
 - 🙋 When both the Contract card and a Next steps card could represent the same outstanding `ContractAvailability` submission, which is the primary surface for acting on it? (§2.1)
-- 🙋 Are `Ready to work`, `In progress`, `Action required`, `Waiting`, and `No action` (§2) a complete and final action-state taxonomy, and what determines `Waiting` specifically (waiting on partner vs. Verita, per the professional/Verita/partner ownership model in [`engagements.md` §3](engagements.md#3-applications))?
+- 🙋 Are `Ready to work`, `Action required`, `Waiting`, and `No action` (§2) a complete and final action-state taxonomy, and what determines `Waiting` specifically (waiting on partner vs. Verita, per the professional/Verita/partner ownership model in [`engagements.md` §3](engagements.md#3-applications))?
 - 🙋 What is the ordering policy for multiple Contract cards on Home, and how many cards are displayed at once? (§7)
-- 🙋 Confirm the proposed action precedence in §6.3, the priority of multiple requirements, and which obligations block work.
-- 🙋 Which work destinations can return a professional to an unfinished item, so their contracts can show `Resume work` (§6.2.1)?
-- 🙋 Confirm supported session/work destinations, authoritative permission checks, and progress counting bases (§5–§6). The deadline warning threshold itself is resolved — 24 hours (§6.4).
+- 🙋 Confirm the priority of multiple requirements, and which obligations block work. (§6.3)
+- 🙋 Confirm supported work destinations, authoritative permission checks, and progress counting bases (§5–§6). The deadline warning threshold itself is resolved — 24 hours (§6.4).
 - 🙋 Confirm which of Compensation model and Duration (§3.2.1, §3.2.2) are launch requirements vs. future extensions, now that the `Project-based`/`One-time`/`Retainer`/`Full-time`/`Part-time`/`Flexible` categorical taxonomy and Work location have been retired in favor of Engagement terms.
-- 🙋 Consolidate §3.1.2's named behavioral states (`default`, `awaiting start`, `action required`, `completed`, `loading`, `error`) against the existing §6.1/§6.2/§6.4 rules — confirm the named-state list is complete and reconcile naming (e.g. `default` vs. `Ready to work`/`In progress`) before treating it as implementation-ready.
+- 🙋 Consolidate §3.1.2's named behavioral states (`default`, `awaiting start`, `action required`, `completed`, `loading`, `error`) against the existing §6.1/§6.2/§6.4 rules — confirm the named-state list is complete and reconcile naming (e.g. `default` vs. `Ready to work`) before treating it as implementation-ready.
 - 🙋 Does a Contract always show its Opportunity's title, or can it have its own name (e.g. one of several scoped projects from one Opportunity, or work from a Talent Network pool)? If it always uses the Opportunity's title, rename `contract-title` to `opportunity-title` to match the Match, Applications, and Offer cards ([`offer-card.md` §2.1](offer-card.md#21-card-anatomy)). (§3.1)
 
 ## 9. Related docs

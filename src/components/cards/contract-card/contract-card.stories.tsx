@@ -12,6 +12,7 @@ const meta: Meta<typeof ContractCard> = {
     compensation: "$85/hour",
     partnerName: "Verita partner",
     engagementTerms: "Up to 30 hrs/week",
+    primaryActionLabel: "Start working",
   },
   decorators: [
     (Story) => (
@@ -53,6 +54,7 @@ export const AwaitingStart: Story = {
     statusLabel: "Awaiting start",
     statusTone: "info",
     instructions: "Complete training before it starts on Oct 1",
+    primaryActionLabel: "Complete training",
   },
 };
 
@@ -77,6 +79,7 @@ export const ActionRequired: Story = {
       percentageLabel: "40%",
       percentage: 40,
     },
+    primaryActionLabel: "Submit availability",
   },
 };
 
@@ -85,12 +88,15 @@ export const WithInstructionsNotUrgent: Story = {
     statusLabel: "Action required",
     statusTone: "warning",
     instructions: "Submit availability before Sep 25, 8:00 AM EDT",
+    primaryActionLabel: "Submit availability",
   },
 };
 
+/** No work CTA once a contract is completed (`contract-card.md` §6.1). */
 export const Completed: Story = {
   args: {
     statusLabel: "Completed",
+    primaryActionLabel: undefined,
     progress: {
       metricLabel: "5 of 5 deliverables accepted",
       percentageLabel: "100%",
@@ -109,6 +115,7 @@ export const AllVariants: Story = {
         statusLabel="Awaiting start"
         statusTone="info"
         instructions="Complete training before it starts on Oct 1"
+        primaryActionLabel="Complete training"
       />
       <ContractCard
         {...args}
@@ -129,10 +136,12 @@ export const AllVariants: Story = {
           percentageLabel: "40%",
           percentage: 40,
         }}
+        primaryActionLabel="Submit availability"
       />
       <ContractCard
         {...args}
         statusLabel="Completed"
+        primaryActionLabel={undefined}
         progress={{
           metricLabel: "5 of 5 deliverables accepted",
           percentageLabel: "100%",

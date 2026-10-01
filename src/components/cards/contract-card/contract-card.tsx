@@ -10,6 +10,7 @@ import {
   type AvatarCompaniesProps,
 } from "@/components/data-display/avatar-companies";
 import { Badge, type BadgeProps } from "@/components/data-display/badge";
+import { Button, type ButtonProps } from "@/components/buttons/button";
 import { Typography } from "@/components/typography";
 
 /**
@@ -29,14 +30,17 @@ interface ContractCardProgress {
 
 /**
  * A single active/upcoming work agreement preview. Figma: `contract-card`.
- * Composes the existing `Badge` (contract status) and `Typography` (title)
- * rather than reproducing their look inline — matching `NextStepCard`'s
- * composition pattern. There is no primary action button (removed in Figma
- * on 2026-09-30): the card itself is the click target, via `rowProps`.
+ * Composes the existing `Badge` (contract status), `Button` (primary
+ * action), and `Typography` (title) rather than reproducing their look
+ * inline — matching `NextStepCard`'s composition pattern. The card itself
+ * is also a click target (contract details, via `rowProps`); the primary
+ * action button was removed in Figma on 2026-09-30 and restored on
+ * 2026-10-01 (Figma's `showCta` toggle).
  *
- * Per `product-specs/contract-card.md` §3.1.2, the status badge and
- * `work-insights` group are each independently optional — the card must not
- * render a redundant badge or an empty/zeroed progress region (§3.1.2).
+ * Per `product-specs/contract-card.md` §3.1.2, the status badge,
+ * `work-insights` group, and primary action are each independently
+ * optional — the card must not render a redundant badge, an empty/zeroed
+ * progress region, or a CTA when no action is available (§6.2.1).
  * This component only covers presentation; which fields to pass for a given
  * contract's status/action state is the consumer's responsibility, per the
  * PRD's scope boundary (§1).
@@ -117,12 +121,16 @@ interface ContractCardProps
    * pattern used elsewhere in the library rather than a sampled value.
    */
   instructionsUrgent?: boolean;
-  /** Forwarded to the card's own click target (e.g. `onClick`, which opens the contract detail). Passing `onClick` makes the whole card a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps` — same model as `ApplicationCard`/`MatchCard`/`OfferCard`. */
+  /** Primary action label (Figma's `button` instance): `"Start working"`, or the task the professional owes, e.g. `"Submit availability"` (PRD §6.2.1). Omit when no action is available — no CTA renders. */
+  primaryActionLabel?: string;
+  /** Forwarded to the primary action button (e.g. `onPress`). */
+  primaryActionProps?: Omit<ButtonProps, "size" | "color" | "children">;
+  /** Forwarded to the card's own click target (e.g. `onClick`, which opens the contract detail). Passing `onClick` makes the whole card a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps` — same model as `ApplicationCard`/`MatchCard`/`OfferCard`; clicks on the primary action button don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
   className?: string;
 }
 
-/** A Contract card — identity, terms, and progress for one active/upcoming work agreement. Figma: `contract-card`. */
+/** A Contract card — identity, terms, progress, and a primary action for one active/upcoming work agreement. Figma: `contract-card`. */
 function ContractCard({
   company = "partner",
   logoSrc,
@@ -137,6 +145,8 @@ function ContractCard({
   progress,
   instructions,
   instructionsUrgent = false,
+  primaryActionLabel,
+  primaryActionProps,
   rowProps,
   className,
   ...props
@@ -207,9 +217,10 @@ function ContractCard({
             </div>
           </div>
         </div>
-        {/* Figma `Bottom`: instructions and work-insights share one bottom-aligned group with a 10px gap. Always rendered at
-            Figma's 30px (the work-insights height) so every card keeps the same 298px height, even with neither shown. */}
-        <div className="flex min-h-7.5 w-full flex-col items-start justify-end gap-2.5">
+        {/* Figma `Bottom`: instructions, work-insights, and the primary action share one bottom-aligned group with a 10px
+            gap. Kept at a 30px minimum (the work-insights height) so a card with none of them doesn't collapse, and
+            `flex-1` so a card stretched to its grid row's height pins this group (and its CTA) to the bottom. */}
+        <div className="flex min-h-7.5 w-full flex-1 flex-col items-start justify-end gap-2.5">
             {instructions && (
               <div className="flex w-full items-center gap-1.5">
                 <AlertCircle
@@ -248,6 +259,12 @@ function ContractCard({
                   )}
                 </div>
               </div>
+            )}
+            {/* Figma `button` instance: 36px brand pill, `sm -medium` label — `Button`'s default `sm` size/color. */}
+            {primaryActionLabel && (
+              <Button size="sm" {...primaryActionProps}>
+                {primaryActionLabel}
+              </Button>
             )}
         </div>
       </div>

@@ -397,6 +397,7 @@ type DemoContract = Pick<
   | "statusLabel"
   | "statusTone"
   | "instructions"
+  | "primaryActionLabel"
 > & { key: string; filter: ContractFilter };
 
 /**
@@ -420,6 +421,7 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 3 days/week",
     duration: "4 months",
     instructions: "Complete training before it starts on Oct 1",
+    primaryActionLabel: "Complete training",
   },
   {
     key: "backend-integration",
@@ -431,6 +433,7 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 40 hrs/week",
     duration: "3 months",
     progress: { metricLabel: "10 of 40 hours used this week", percentageLabel: "25%", percentage: 25 },
+    primaryActionLabel: "Start working",
   },
   {
     key: "compensation-benchmarking",
@@ -440,6 +443,7 @@ const DEMO_CONTRACTS: DemoContract[] = [
     compensation: "$4,500/project",
     partnerName: "Verita partner",
     engagementTerms: "6 weeks",
+    primaryActionLabel: "Start working",
   },
   {
     key: "clinical-expert-survey",
@@ -453,6 +457,7 @@ const DEMO_CONTRACTS: DemoContract[] = [
     engagementTerms: "Up to 40 hrs/week",
     duration: "3 months",
     progress: { metricLabel: "4 of 5 deliverables submitted", percentageLabel: "80%", percentage: 80 },
+    primaryActionLabel: "Start working",
   },
 ];
 

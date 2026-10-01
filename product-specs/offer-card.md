@@ -1,7 +1,7 @@
 <!--
 Created: Sep 25, 2026
 Created by: Julio Caunedo
-Last updated: Sep 30, 2026
+Last updated: Oct 01, 2026
 Scope: The Offer card — the row that represents one Offer in Engagements → Offers (product-specs/engagements.md §4.1). Home summarizes offers with the Next steps Offer card instead (product-specs/next-steps-card.md §2.4).
 Purpose: Collect the Offer card's content, status model, row interaction, and closed-state treatment in one place, alongside the sibling Applications, Contract, and Match card specs.
 -->
@@ -167,7 +167,7 @@ The whole row is a click target that opens the offer detail, the same model as t
 | Card         | Next action and owner                                                    | Primary CTA                                      |
 | ------------ | ------------------------------------------------------------------------ | ------------------------------------------------ |
 | Offer        | Review and decide on the proposal. Owned by the professional.            | "View offer", always, while the offer is open    |
-| Contract     | Do the work. Owned by the professional.                                  | "Open work" or similar ([`contract-card.md` §3.1](contract-card.md#31-contract-card-anatomy)) |
+| Contract     | Do the work. Owned by the professional.                                  | "Start working" ([`contract-card.md` §6.2.1](contract-card.md#621-choosing-the-primary-cta)) |
 | Match        | Apply, or clear what blocks applying. Owned by the professional.         | The recommended action ([`match-card.md` §6](match-card.md#6-recommended-action)) |
 | Applications | Usually a decision by Verita or the partner.                             | None ([`applications-card.md` §4](applications-card.md#4-row-interaction)) |
 

@@ -630,13 +630,14 @@ function Engagements({
                         )}
                         {contracts.length > 0 && (
                           // Same 2-up / 3-up-from-`xl` grid as `Dashboard`'s "Current contracts".
-                          <div className="grid w-full grid-cols-2 items-start gap-x-5 gap-y-4 xl:grid-cols-3">
+                          <div className="grid w-full auto-rows-fr grid-cols-2 gap-x-5 gap-y-4 xl:grid-cols-3">
                             {contracts.map(({ key, filter: _filter, ...contract }) => (
                               <ContractCard
                                 key={key}
                                 {...contract}
                                 className="w-full"
                                 rowProps={{ onClick: () => {} }}
+                                primaryActionProps={{ onPress: () => {} }}
                               />
                             ))}
                           </div>

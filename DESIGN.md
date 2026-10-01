@@ -214,6 +214,10 @@ breakpoint (see "Breakpoints include their own width").
   It shows one row and queues the extra cards behind "View more", which
   expands to every row; "View less" collapses back to one row (see
   `NextStepsSection`, `product-specs/next-steps-card.md` §4.1).
+- **Contract card grids:** every card in a section is the same height. The
+  grid stretches its items (no `items-start`; multi-row grids add
+  `auto-rows-fr`), and `ContractCard`'s bottom group is `flex-1`, so the CTA
+  sits at the bottom of every card in line (2026-10-01).
 
 **Why:** Each layout used to set its own canvas padding, and they drifted.
 Dashboard started at a fixed `pr-[216px]`, later became `xl:pr-30` with a
@@ -339,11 +343,11 @@ rather than mapping it to `font-black`.
 
 **Rule:** a card gets a persistent primary button only when the professional
 owns the next action and that action is a meaningful step toward secured
-work. `OfferCard` ("View offer") and `MatchCard` (its recommended action)
-have one. `ApplicationCard` has none: the whole row opens the detail, and an
-action the professional owes shows through its status and supporting text
-instead. `ContractCard` has had none since 2026-09-30 (removed in Figma): the
-whole card opens the contract.
+work. `OfferCard` ("View offer"), `ContractCard` ("Start working", or the
+task the professional owes; restored 2026-10-01 after a one-day removal),
+and `MatchCard` (its recommended action) have one. `ApplicationCard` has
+none: the whole row opens the detail, and an action the professional owes
+shows through its status and supporting text instead.
 
 **Why:** every row is clickable, so "it can be opened" is not a reason for a
 button (decided 2026-09-25). A button on every application would compete

@@ -344,13 +344,14 @@ function Dashboard({
                   </Typography>
                 </div>
                 {/* 2-up at `xl` (1280px) and below, 3-up above it, one row only (`visibleActiveWork`). */}
-                <div className="grid w-full grid-cols-2 items-start gap-x-5 xl:grid-cols-3">
+                <div className="grid w-full grid-cols-2 gap-x-5 xl:grid-cols-3">
                   {visibleActiveWork.map(({ key, filter: _filter, ...contract }) => (
                     <ContractCard
                       key={key}
                       {...contract}
                       className="w-full"
                       rowProps={{ onClick: () => {} }}
+                      primaryActionProps={{ onPress: () => {} }}
                     />
                   ))}
                 </div>
