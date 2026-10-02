@@ -1,33 +1,97 @@
 import * as React from "react";
 import { motion, type Variants } from "motion/react";
 import {
+  Button as AriaButton,
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
   Popover as AriaPopover,
+  SelectValue as AriaSelectValue,
   Separator as AriaSeparator,
+  type ButtonProps as AriaButtonProps,
   type ListBoxItemProps as AriaListBoxItemProps,
   type ListBoxProps as AriaListBoxProps,
   type PopoverProps as AriaPopoverProps,
   type SeparatorProps as AriaSeparatorProps,
 } from "react-aria-components";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Check } from "@untitledui/icons";
+import { Check, ChevronDown } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { popoverVariants, useMotionPreference } from "@/lib/motion";
 import { Avatar, type AvatarProps } from "@/components/data-display/avatar";
+import { FieldIcon, fieldState, fieldVariants, type FieldIconProp } from "@/components/forms/field";
 
 /**
- * Dropdown parts for a select: the floating panel (`SelectContent`), its
- * options (`SelectItem`), and a divider (`SelectSeparator`). Figma:
- * `Select Content (Popper)` and `Select Item` (Size: xs 32 / sm 36 / md 40 ×
- * State: Default / Hover / Selected, plus an xs `Divider` state →
- * `SelectSeparator`). Built on React Aria's `Popover` + `ListBox` so they
- * drop straight into a React Aria `Select` (which supplies the trigger ref
- * and selection state) — Figma has no trigger/field design yet, so none is
- * shipped here; compose `<Select>` + a trigger `Button` + `<SelectValue>`
- * around these when one exists.
+ * Parts for a select: the field that opens it (`SelectTrigger`), the floating panel (`SelectContent`), its options
+ * (`SelectItem`), and a divider (`SelectSeparator`). Figma: `Input` `Type=Dropdown`, `Select Content (Popper)`, and
+ * `Select Item` (Size: xs 32 / sm 36 / md 40 × State: Default / Hover / Selected, plus an xs `Divider` state →
+ * `SelectSeparator`). Built on React Aria's `Button`, `Popover`, and `ListBox`, so they drop straight into a React
+ * Aria `Select` (which supplies the label, the trigger ref, and selection state):
+ * `<Select><Label/><SelectTrigger/><SelectContent>…</SelectContent></Select>`.
  */
+
+interface SelectTriggerProps extends Omit<AriaButtonProps, "children" | "className"> {
+  /** Figma `Size`: `md` (40px, `base` text, the default) or `sm` (36px, `sm` text). */
+  size?: "sm" | "md";
+  /** 16px icon before the value (Figma `iconLeft`). An icon component (sized and colored here) or a rendered element. */
+  iconLeading?: FieldIconProp;
+  /** Muted text after the value (Figma `Suffix`). */
+  suffix?: React.ReactNode;
+  /** Figma's Error state. Pass the same value as the `Select`'s `isInvalid`. */
+  isInvalid?: boolean;
+  className?: string;
+}
+
+/**
+ * The field that opens a select. Figma: verita.ds → `Input`, `Type=Dropdown` (`node-id=5724-930`): sizes `sm · 36` and
+ * `md · 40`, states Default, Hover, HasValue, Focused, Error, and Disabled. The box comes from `fieldVariants` (shared
+ * with `Input`), with Figma's 10px right padding before the `chevron-down` (`icon/subtle`, `icon/soft` while
+ * disabled). The value is the selected option's text, or the `Select`'s `placeholder` in `foreground/muted`.
+ *
+ * Focused shows while the trigger has focus and while its panel is open. Figma's Read-only state isn't here: React
+ * Aria's `Select` has no read-only mode, so show a read-only `Input` with the value instead.
+ */
+function SelectTrigger({ size = "md", iconLeading, suffix, isInvalid, className, ...props }: SelectTriggerProps) {
+  return (
+    <AriaButton
+      data-slot="select-trigger"
+      data-size={size}
+      className={({ isDisabled }) =>
+        cn(
+          fieldVariants({ size, state: fieldState({ isDisabled, isInvalid }) }),
+          "pr-2.5 text-left",
+          isInvalid
+            ? "aria-expanded:inset-ring-1 aria-expanded:inset-ring-tone-destructive"
+            : "aria-expanded:border-input-ring aria-expanded:inset-ring-1 aria-expanded:inset-ring-input-ring",
+          className,
+        )
+      }
+      {...props}
+    >
+      {({ isDisabled }) => (
+        <>
+          {iconLeading && <FieldIcon icon={iconLeading} isDisabled={isDisabled} />}
+          <AriaSelectValue
+            className={cn(
+              "min-w-0 flex-1 truncate data-[placeholder]:text-foreground-muted",
+              size === "sm" ? "text-sm" : "text-base",
+              isDisabled && "text-foreground-subtle data-[placeholder]:text-foreground-subtle",
+            )}
+          />
+          {suffix && (
+            <span className={cn("shrink-0 text-foreground-muted", size === "sm" ? "text-sm" : "text-base")}>
+              {suffix}
+            </span>
+          )}
+          <ChevronDown
+            aria-hidden="true"
+            className={cn("size-4 shrink-0", isDisabled ? "text-icon-soft" : "text-icon-subtle")}
+          />
+        </>
+      )}
+    </AriaButton>
+  );
+}
 
 /** Matches `Button`/`Badge`'s icon-prop contract: an unrendered icon component (auto-sized/colored) or a pre-rendered element. */
 type IconProp = React.FC<{ className?: string }> | React.ReactNode;
@@ -218,7 +282,9 @@ export {
   SelectContent,
   SelectItem,
   SelectSeparator,
+  SelectTrigger,
   selectItemVariants,
   type SelectContentProps,
   type SelectItemProps,
+  type SelectTriggerProps,
 };

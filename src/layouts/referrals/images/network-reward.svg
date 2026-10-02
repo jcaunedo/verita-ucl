@@ -1,0 +1,24 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="avatar-users" filter="url(#filter0_d_0_169)">
+<rect x="4" y="4" width="72" height="72" rx="36" fill="url(#paint0_linear_0_169)"/>
+<g id="currency-dollar">
+<path id="Vector" d="M32 45.3333C32 48.2788 34.3878 50.6667 37.3333 50.6667H42.6667C45.6121 50.6667 48 48.2788 48 45.3333C48 42.3879 45.6121 40 42.6667 40H37.3333C34.3878 40 32 37.6121 32 34.6667C32 31.7211 34.3878 29.3333 37.3333 29.3333H42.6667C45.6121 29.3333 48 31.7211 48 34.6667M40 26.6667V53.3333" stroke="#077D0F" style="stroke:#077D0F;stroke:color(display-p3 0.0292 0.4921 0.0578);stroke-opacity:1;" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_0_169" x="0" y="0" width="80" height="80" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="4" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_0_169"/>
+<feOffset/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_169"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_169" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_0_169" x1="40" y1="4" x2="40" y2="76" gradientUnits="userSpaceOnUse">
+<stop stop-color="#CEFFD2" style="stop-color:#CEFFD2;stop-color:color(display-p3 0.8093 1.0000 0.8217);stop-opacity:1;"/>
+<stop offset="1" stop-color="#75FF7E" style="stop-color:#75FF7E;stop-color:color(display-p3 0.4588 1.0000 0.4949);stop-opacity:1;"/>
+</linearGradient>
+</defs>
+</svg>

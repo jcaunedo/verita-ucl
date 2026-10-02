@@ -24,8 +24,3 @@ export const Discover: Story = {
 export const Earnings: Story = {
   args: { title: "Earnings", activeNavKey: "earnings" },
 };
-
-/** The sidebar's Referrals page. No design yet: title only. */
-export const Referrals: Story = {
-  args: { title: "Referrals", activeNavKey: "referrals" },
-};

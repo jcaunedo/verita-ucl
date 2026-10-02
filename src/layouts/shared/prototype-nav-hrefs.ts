@@ -12,7 +12,7 @@ const PROTOTYPE_NAV_HREFS = {
   discover: "iframe.html?id=layouts-placeholderpage--discover&viewMode=story",
   engagements: "iframe.html?id=layouts-engagements--default&viewMode=story",
   earnings: "iframe.html?id=layouts-placeholderpage--earnings&viewMode=story",
-  referrals: "iframe.html?id=layouts-placeholderpage--referrals&viewMode=story",
+  referrals: "iframe.html?id=layouts-referrals--default&viewMode=story",
 } satisfies NonNullable<SidebarProps["navHrefOverrides"]>;
 
 export { PROTOTYPE_NAV_HREFS };

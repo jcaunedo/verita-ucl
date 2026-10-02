@@ -62,13 +62,15 @@ already covers any real interactive element for free.
 	[data-slot][role="switch"]:not([data-disabled]),
 	[data-slot][role="option"]:not([aria-disabled="true"]),
 	[data-slot][role="menuitem"]:not([aria-disabled="true"]),
-	[data-slot][role="tab"]:not([aria-disabled="true"]) {
+	[data-slot][role="tab"]:not([aria-disabled="true"]),
+	[data-slot][role="link"]:not([aria-disabled="true"]) {
 		cursor: pointer;
 	}
 
 	button:disabled,
 	[role="button"][aria-disabled="true"],
 	[data-slot][role="tab"][aria-disabled="true"],
+	[data-slot][role="link"][aria-disabled="true"],
 	select:disabled {
 		cursor: not-allowed;
 	}
@@ -114,6 +116,11 @@ per-component guesswork and keeps the affordance consistent app-wide.
 react-aria tabs (`MetricTab`, `TabButton`) showed the default cursor. Added
 `[data-slot][role="tab"]` for the pointer, and its `aria-disabled` form for
 `not-allowed`.
+
+✅ **Fixed (2026-10-02):** `Hyperlink` without an `href` (an in-page action,
+e.g. Referrals' "or start with your network", which switches tabs) renders
+as react-aria's `<span role="link">`, which no selector matched. Added
+`[data-slot][role="link"]` and its `aria-disabled` form.
 
 
 ---
@@ -542,3 +549,50 @@ as the color does (decided 2026-10-01).
   `AlertCircle` in red within the 24-hour window, `InfoCircle` in muted
   otherwise (`product-specs/contract-card.md` §6.4).
 - Never let the icon carry the meaning alone. The text has to say it too.
+
+## Toasts: bottom right on desktop, bottom center on mobile (`src/components/feedback/toast/`)
+
+**Rule:** toasts appear at the bottom right of the screen above `md`, and at
+the bottom center at `md` (768px) and below. This is `Toaster`'s default, so
+every page gets it from one place.
+
+**Why:** design direction (2026-10-02). Without one shared default, each
+page picked its own placement (the Referrals page first used bottom center
+everywhere).
+
+**How to apply:**
+
+- Mount `<Toaster />` without a `position`, so the responsive default
+  applies. Pass `position` only when a surface genuinely needs a different
+  placement, and note why next to it.
+- The switch uses `useMediaQuery(mediaAbove("md"))`, so it follows
+  "Breakpoints include their own width": exactly 768px is mobile.
+- Show toasts through `toast()`, never by placing a `Toast` card on the page
+  yourself, so placement, stacking, and timing stay consistent.
+
+## Modals leave with a slow fade (`src/lib/motion/`, `src/components/overlays/modal/`)
+
+**Rule:** every modal, and its scrim, closes with a plain 600ms fade
+(`motionDuration.deliberate`, standard curve), with no scale or movement. The
+entrance stays as it is: a 300ms fade with a soft scale and a 12px rise.
+Every modal is built on `Modal`, so they all get this from one place.
+
+**Why:** design direction (2026-10-02): the exit should be more subtle. This
+is a deliberate exception to CLAUDE.md's "exits are shorter than entrances",
+so don't shorten it back to `exitTransition`.
+
+**How to apply:**
+
+- **New modal:** build it on `Modal` (like `ShareReferralLinkModal`). Don't
+  wrap React Aria's `Modal`/`ModalOverlay` yourself or pass your own exit;
+  that's how a modal would end up with a different close.
+- **Changing the timing:** edit `modalExitTransition` in
+  `src/lib/motion/transitions.ts`. It's the one value every modal uses
+  (through `modalVariants` on the dialog and `modalOverlayVariants` on the
+  scrim). The general `overlayVariants` keeps its short exit for non-modal
+  overlays.
+- The dialog renders inside the scrim, so the scrim's exit sets how long the
+  whole modal takes to leave. Change both together.
+- The scrim stops taking clicks as soon as the modal starts closing
+  (`pointerEvents: "none"` in its exit), so the slow fade never blocks the
+  page. Focus returns to the opening button when the fade ends, 600ms later.

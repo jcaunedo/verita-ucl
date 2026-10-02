@@ -17,6 +17,7 @@ const twMerge = extendTailwindMerge({
         "card",
         "input",
         "popover",
+        "sonner",
         "modal",
         "chip",
         "badge",

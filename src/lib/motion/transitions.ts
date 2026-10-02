@@ -26,6 +26,17 @@ const exitTransition: Transition = {
 };
 
 /**
+ * A modal dialog (and its scrim) leaving: a slow, even fade over `motionDuration.deliberate` (600ms) on the standard
+ * curve. A documented exception to "exits are shorter than entrances" (CLAUDE.md "Exit"): design direction
+ * (2026-10-02) wants a modal to recede quietly rather than snap away, e.g. after "Copy referral link" closes it.
+ * The dialog is already gone for focus and clicks while this plays, so nothing waits on it.
+ */
+const modalExitTransition: Transition = {
+	duration: motionDuration.deliberate,
+	ease: [0.4, 0, 0.2, 1],
+};
+
+/**
  * Spring presets. CLAUDE.md "Spring" — direct manipulation, drag, press,
  * shared-element movement, responsive layout changes. Deliberately
  * non-bouncy (high damping) per the brand's "Calm/Refined" personality.
@@ -68,6 +79,7 @@ export {
 	standardTransition,
 	enterTransition,
 	exitTransition,
+	modalExitTransition,
 	subtleSpring,
 	responsiveSpring,
 	layoutSpring,

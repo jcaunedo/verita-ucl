@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ChevronDown, UserCircle } from "@untitledui/icons";
-import { ListBox, Select, SelectValue, type Key } from "react-aria-components";
+import { Label, ListBox, Select, SelectValue, type Key } from "react-aria-components";
 
 import { Button } from "@/components/buttons/button";
-import { SelectContent, SelectItem, SelectSeparator, type SelectItemProps } from "./select";
+import { SelectContent, SelectItem, SelectSeparator, SelectTrigger, type SelectItemProps } from "./select";
+import { fieldTextVariants } from "@/components/forms/field";
 
 /**
- * Figma has no Select trigger/field design yet, so these stories open the
- * panel from a plain `Button` + React Aria `SelectValue` — a stand-in to
- * exercise `SelectContent`/`SelectItem`, not a proposed trigger design.
+ * The panel stories open from a plain `Button` + React Aria `SelectValue`, to show the panel on its own. For the field
+ * trigger (Figma `Input` `Type=Dropdown`), see the `Trigger` stories below.
  */
 function StoryTrigger() {
   return (
@@ -119,6 +119,68 @@ export const AllVariants: Story = {
             <SelectItem id="d" size={size} icon={UserCircle}>Menu Item</SelectItem>
             <SelectItem id="e" size={size} avatar={{ initials: "TS" }}>Menu Item</SelectItem>
           </ListBox>
+        </div>
+      ))}
+    </div>
+  ),
+};
+
+/** A labeled field select: React Aria `Select` + `Label` + `SelectTrigger` + `SelectContent` matched to its width. */
+function FieldSelect({
+  label,
+  size,
+  isDisabled,
+  isInvalid,
+  defaultSelectedKey,
+  withIcon,
+}: {
+  label: string;
+  size?: "sm" | "md";
+  isDisabled?: boolean;
+  isInvalid?: boolean;
+  defaultSelectedKey?: Key;
+  withIcon?: boolean;
+}) {
+  return (
+    <Select
+      placeholder="Value"
+      isDisabled={isDisabled}
+      isInvalid={isInvalid}
+      defaultSelectedKey={defaultSelectedKey}
+      className="flex w-[280px] flex-col gap-1.5"
+    >
+      <Label className={fieldTextVariants({ slot: "label" })}>{label}</Label>
+      <SelectTrigger size={size} isInvalid={isInvalid} iconLeading={withIcon ? UserCircle : undefined} />
+      <SelectContent className="w-(--trigger-width)">
+        {OPTIONS.map((option) => (
+          <SelectItem key={option} id={option} size={size}>
+            {option}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+/**
+ * Figma `Input` `Type=Dropdown`: the field that opens the panel. Hover for `Hover`; open it for `Focused`. The value
+ * is the `Select`'s `placeholder` until an option is picked.
+ */
+export const Trigger: Story = {
+  render: () => <FieldSelect label="Label" />,
+};
+
+/** Every trigger state at both sizes: Default, HasValue, with icon, Error, Disabled. */
+export const TriggerAllVariants: Story = {
+  render: () => (
+    <div className="flex gap-6">
+      {(["sm", "md"] as const).map((size) => (
+        <div key={size} className="flex flex-col gap-6">
+          <FieldSelect label={`Default · ${size}`} size={size} />
+          <FieldSelect label="HasValue" size={size} defaultSelectedKey="Engineering" />
+          <FieldSelect label="With icon" size={size} defaultSelectedKey="Engineering" withIcon />
+          <FieldSelect label="Error" size={size} defaultSelectedKey="Engineering" isInvalid />
+          <FieldSelect label="Disabled" size={size} defaultSelectedKey="Engineering" isDisabled />
         </div>
       ))}
     </div>

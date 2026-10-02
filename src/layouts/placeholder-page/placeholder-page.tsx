@@ -15,7 +15,7 @@ interface PlaceholderPageProps {
 }
 
 /**
- * A sidebar destination with no design yet (Discover, Earnings, Referrals):
+ * A sidebar destination with no design yet (Discover, Earnings):
  * the shared page shell and the page title only, so every sidebar item is
  * clickable in the prototype. Replace with the real layout once it's designed.
  */

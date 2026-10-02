@@ -11,23 +11,19 @@ import {
   MetricTabPanel,
   MetricTabs,
 } from "@/components/navigation/metric-tab";
-import {
-  TabButton,
-  TabButtonList,
-  TabButtonPanel,
-  TabButtons,
-} from "@/components/navigation/tab-button";
+import { TabButtonPanel, TabButtons } from "@/components/navigation/tab-button";
 import { Typography } from "@/components/typography";
-import { SearchField } from "@/components/forms/search-field";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
 import { MenuItem } from "@/components/overlays/menu";
 import { ContractCard } from "@/components/cards/contract-card";
 import { OfferCard } from "@/components/cards/offer-card";
 import { EmptyState, type EmptyStateProps } from "@/components/feedback/empty-state";
+import { FilterBar } from "@/layouts/shared/filter-bar";
 import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { useLayoutSidebar } from "@/layouts/shared/use-layout-sidebar";
+import { useReferOpportunity, type ReferableOpportunity } from "@/layouts/shared/use-refer-opportunity";
 import {
   DEMO_APPLICATIONS,
   DEMO_CONTRACTS,
@@ -216,48 +212,6 @@ const noSearchResults = (query: string): EmptyStateCopy => ({
   description: "Try a different search term.",
 });
 
-/**
- * The search button + filter tabs row shared by every filtered view
- * (`engagements.md` §3.1). Search is a `SearchField`: a search button that
- * expands into an input and filters the selected filter's rows.
- * `Open` never shows a counter: the view tab's `MetricTab` value already
- * carries that number. Any other filter with a zero count keeps its tab but
- * hides its counter.
- */
-function FilterBar({
-  searchLabel,
-  searchQuery,
-  onSearchChange,
-  filtersLabel,
-  filters,
-}: {
-  searchLabel: string;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  filtersLabel: string;
-  /** `count` omitted → no counter for that filter (e.g. Applications → Not moving forward). */
-  filters: { id: string; label: string; count?: number }[];
-}) {
-  return (
-    <div className="flex items-center gap-4">
-      {/* Collapsed until pressed; collapses again when left empty (`SearchField`). */}
-      <SearchField aria-label={searchLabel} value={searchQuery} onChange={onSearchChange} />
-      {/* Figma `Tab Group Button`: `spacing/0_5` (2px) between tabs, tighter than the list's default gap. */}
-      <TabButtonList aria-label={filtersLabel} className="gap-0.5">
-        {filters.map(({ id, label, count }) => (
-          <TabButton
-            key={id}
-            id={id}
-            label={label}
-            size="sm"
-            count={id !== "open" && count != null && count > 0 ? count : undefined}
-          />
-        ))}
-      </TabButtonList>
-    </div>
-  );
-}
-
 /** A labeled group within a filter (e.g. `Action needed`, `Last 15 days`): muted title, 8px above its list. */
 function ListSection({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   const headingId = `${id}-heading`;
@@ -302,9 +256,12 @@ function GroupedList<T>({
 function ApplicationList({
   rows,
   onWithdraw,
+  onRefer,
 }: {
   rows: (typeof DEMO_APPLICATIONS)[number][];
   onWithdraw: (key: string) => void;
+  /** "Refer" in the row's menu: opens the opportunity referral modal. */
+  onRefer: (opportunity: ReferableOpportunity) => void;
 }) {
   return (
     <div className="flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
@@ -316,7 +273,9 @@ function ApplicationList({
           actionsMenu={
             <>
               <MenuItem icon={ArrowUpRight} onAction={() => {}}>View Details</MenuItem>
-              <MenuItem icon={UsersRight} onAction={() => {}}>Refer</MenuItem>
+              <MenuItem icon={UsersRight} onAction={() => onRefer({ key, ...application })}>
+                Refer
+              </MenuItem>
               {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
               {filter === "open" && (
                 <MenuItem icon={XCircle} tone="destructive" onAction={() => onWithdraw(key)}>
@@ -386,6 +345,7 @@ function Engagements({
   const offerCountFor = (filter: OfferFilter) => offers.filter((offer) => offer.filter === filter).length;
   // Withdraw (row `···` menu), here or on `Dashboard`, moves an application to `Not moving forward` — see `useWithdrawnApplications`.
   const { withdrawn, withdraw } = useWithdrawnApplications();
+  const { refer, modal: referModal } = useReferOpportunity();
   const applications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn);
   const countFor = (filter: ApplicationFilter) =>
     applications.filter((application) => application.filter === filter).length;
@@ -502,7 +462,7 @@ function Engagements({
                                     section.id,
                                 ),
                               }))}
-                              renderList={(sectionRows) => <ApplicationList rows={sectionRows} onWithdraw={withdraw} />}
+                              renderList={(sectionRows) => <ApplicationList rows={sectionRows} onWithdraw={withdraw} onRefer={refer} />}
                             />
                           </ApplicationCardGroup>
                         )}
@@ -677,6 +637,8 @@ function Engagements({
           </MetricTabs>
         </div>
       </div>
+      {/* "Refer" in an application's `···` menu opens the opportunity referral modal. */}
+      {referModal}
     </div>
   );
 }

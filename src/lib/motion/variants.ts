@@ -1,7 +1,7 @@
 import type { Variants } from "motion/react";
 
 import { motionDistance, motionScale, motionStagger } from "./tokens";
-import { enterTransition, exitTransition, standardTransition } from "./transitions";
+import { enterTransition, exitTransition, modalExitTransition, standardTransition } from "./transitions";
 
 /**
  * Reusable `Variants` for `initial`/`animate`/`exit`. Named after the
@@ -119,6 +119,28 @@ const overlayVariants: Variants = {
 };
 
 /**
+ * A modal dialog's surface — CLAUDE.md "Dialogs and Overlays": a fade with a soft scale (`motionScale.popIn`, 0.98)
+ * and a `motionDistance.small` (12px) rise, on `standardTransition`. It leaves with a plain fade, no movement, over
+ * `modalExitTransition` (600ms), the documented exception to shorter exits. Pair with `modalOverlayVariants` on the
+ * scrim. The dialog is usable as soon as it mounts — nothing waits on the entrance.
+ */
+const modalVariants: Variants = {
+  initial: { opacity: 0, scale: motionScale.popIn, y: motionDistance.small },
+  animate: { opacity: 1, scale: 1, y: 0, transition: standardTransition },
+  exit: { opacity: 0, transition: modalExitTransition },
+};
+
+/**
+ * A modal's scrim: `overlayVariants`' fade in, with the same slow `modalExitTransition` fade out as the dialog. The
+ * dialog renders inside the scrim, so the scrim's exit sets how long the whole modal takes to leave. It stops taking
+ * pointer events the moment it starts closing, so the page underneath is clickable during the 600ms fade.
+ */
+const modalOverlayVariants: Variants = {
+  ...overlayVariants,
+  exit: { opacity: 0, pointerEvents: "none", transition: modalExitTransition },
+};
+
+/**
  * Drawer/panel surface sliding in from an edge. Callers should set the
  * appropriate axis before spreading — this default assumes a right-edge
  * panel (matching most drawer usage); pass a custom `initial`/`exit` `x`/`y`
@@ -185,6 +207,8 @@ export {
   rowDismissVariants,
   cardEnterFromRightVariants,
   overlayVariants,
+  modalVariants,
+  modalOverlayVariants,
   popoverVariants,
   accountMenuVariants,
   panelVariants,

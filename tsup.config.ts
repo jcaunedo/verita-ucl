@@ -18,6 +18,8 @@ export default defineConfig({
     "formik",
     "react-aria-components",
     "radix-ui",
+    // `sonner` keeps toasts in module-level state: the app's `toast()` and `<Toaster />` must share one copy.
+    "sonner",
   ],
   treeshake: true,
   splitting: false,

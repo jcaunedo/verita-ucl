@@ -415,7 +415,7 @@ Use:
 - `AnimatePresence` for enter and exit.
 - Overlay fade.
 - Small scale or vertical movement for the dialog surface.
-- Shorter exit timing than entrance timing.
+- Shorter exit timing than entrance timing — except modals, which leave with a slow 600ms fade (`modalExitTransition`; DESIGN.md "Modals leave with a slow fade").
 
 Do not delay dialog usability while the entrance animation completes.
 

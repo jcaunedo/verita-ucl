@@ -70,13 +70,15 @@
 	[data-slot][role="switch"]:not([data-disabled]),
 	[data-slot][role="option"]:not([aria-disabled="true"]),
 	[data-slot][role="menuitem"]:not([aria-disabled="true"]),
-	[data-slot][role="tab"]:not([aria-disabled="true"]) {
+	[data-slot][role="tab"]:not([aria-disabled="true"]),
+	[data-slot][role="link"]:not([aria-disabled="true"]) {
 		cursor: pointer;
 	}
 
 	button:disabled,
 	[role="button"][aria-disabled="true"],
 	[data-slot][role="tab"][aria-disabled="true"],
+	[data-slot][role="link"][aria-disabled="true"],
 	select:disabled {
 		cursor: not-allowed;
 	}
@@ -106,6 +108,8 @@
 	--color-icon-foreground: var(--icon-foreground);
 	--color-icon-muted: var(--icon-muted);
 	--color-icon-subtle: var(--icon-subtle);
+	/* Figma: icon/soft — the faintest icon, e.g. a disabled field's chevron. */
+	--color-icon-soft: var(--icon-soft);
 	--color-accent: var(--accent);
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
@@ -114,6 +118,8 @@
 	--color-destructive-muted: var(--destructive-muted);
 	--color-border: var(--border);
 	--color-border-soft: var(--border-soft);
+	/* Figma: border/neutral/border-dark — a stronger border, e.g. `Tag`. */
+	--color-border-dark: var(--border-dark);
 	--color-input: var(--input);
 	/* Figma: input/ring — a focused input's 2px border (e.g. `SearchField`). */
 	--color-input-ring: var(--input-ring);
@@ -124,6 +130,7 @@
 	--color-tertiary-foreground: var(--tertiary-foreground);
 	--color-overlay: var(--overlay);
 	--color-link: var(--link);
+	--color-social-linkedin: var(--social-linkedin);
 	--color-hover: var(--hover);
 	--color-hover-row: var(--hover-row);
 	--color-icon-hover: var(--icon-hover);
@@ -132,6 +139,10 @@
 	/* ---------- Shadows ---------- */
 	/* Figma: shadow/popover — floating surfaces (select/menu content, popovers). */
 	--shadow-popover: 0px 12px 20px 0px rgba(8, 13, 20, 0.12);
+	/* Figma: shadow/modal — modal dialogs. Same value as shadow/popover today, kept separate so the two can diverge. */
+	--shadow-modal: 0px 12px 20px 0px rgba(8, 13, 20, 0.12);
+	/* Figma: shadow/md — toasts. Replaces Tailwind's default `shadow-md`, which nothing in UCL used. */
+	--shadow-md: 0px 6px 16px 0px rgba(0, 0, 0, 0.1);
 	/* Figma: shadow/hover-card — the lifted look of a hovered standalone card (callout, next step, contract). */
 	--shadow-hover-card: 0px 4px 12px 0px rgba(8, 13, 20, 0.06);
 	/* Figma: shadow/Input — text inputs at rest (e.g. `SearchField`). */
@@ -317,6 +328,7 @@
 	--radius-card: var(--radius-card-role);
 	--radius-input: var(--radius-input-role);
 	--radius-popover: var(--radius-popover-role);
+	--radius-sonner: var(--radius-sonner-role);
 	--radius-modal: var(--radius-modal-role);
 	--radius-chip: var(--radius-chip-role);
 	--radius-badge: var(--radius-badge-role);
@@ -553,6 +565,7 @@
 	--radius-card-role: var(--radius-xl-val);
 	--radius-input-role: var(--radius-lg-val);
 	--radius-popover-role: var(--radius-2xl-val); /* Figma: radius/popover (16px) */
+	--radius-sonner-role: var(--radius-2xl-val); /* Figma: radius/sonner (16px) — toasts */
 	--radius-modal-role: var(--radius-4xl-val);
 	--radius-chip-role: var(--radius-lg-val);
 	--radius-badge-role: var(--radius-md-val);
@@ -593,6 +606,7 @@
 
 	--border: var(--neutral-200);
 	--border-soft: var(--neutral-100);
+	--border-dark: #caccce; /* Figma: border/neutral/border-dark — not on the neutral scale */
 	--input: var(--neutral-300);
 	--input-ring: var(--neutral-600);
 	--ring: var(--rosewood-800);
@@ -626,6 +640,7 @@
 
 	--overlay: rgb(0 0 0 / 0.4);
 	--link: #2b73da; /* Figma: state/link — a dedicated blue, not on the rosewood/brand scale */
+	--social-linkedin: #2c64bc; /* Figma: the LinkedIn Logo fill and "Get my LinkedIn connections" button — a third-party brand color, the same in both themes */
 	/* Figma: state/hover = foreground/foreground (neutral-700) at 4% — the
 	   generic hover tint for controls and list items: Button (secondary),
 	   AccountTrigger, Select/Menu items. Not for card/table rows — those
@@ -645,15 +660,17 @@
 	   Button's `tertiary` color when icon-only. */
 	--icon-hover: color-mix(in srgb, var(--neutral-700) 8%, transparent);
 
-	/* Figma: state/active (#fcf8fa) — the selected-item fill in list-style
-	   pickers (Select Item's Selected state). A distinct variable from
-	   state/hover (--hover); no existing ramp step matches it. */
-	--item-active: #fcf8fa;
+	/* Figma: state/active — the selected-item fill in list-style pickers
+	   (Select Item's Selected state). A distinct variable from state/hover
+	   (--hover). Was a rosewood tint (#fcf8fa) until 2026-10-02, when Figma
+	   moved it to neutral #f5f6f7, the --neutral-50 ramp step. */
+	--item-active: var(--neutral-50);
 
 	/* ---------- Semantic: icon ---------- */
 	--icon-foreground: var(--neutral-700);
 	--icon-muted: var(--neutral-500);
 	--icon-subtle: var(--neutral-400);
+	--icon-soft: #caccce; /* Figma: icon/soft — not on the neutral scale */
 	--icon-brand: var(--rosewood-800);
 	--icon-on-brand: var(--white);
 
@@ -762,6 +779,7 @@
 	--popover-foreground: var(--neutral-100);
 	--border: var(--neutral-700);
 	--border-soft: var(--neutral-800);
+	--border-dark: var(--neutral-600);
 	--input: var(--neutral-700);
 	--input-ring: var(--neutral-600);
 	--ring: var(--rosewood-400);

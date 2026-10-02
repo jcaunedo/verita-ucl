@@ -16,6 +16,7 @@ import { layoutCanvasPaddingClassName } from "@/layouts/shared/layout-canvas";
 import { PageTitle } from "@/layouts/shared/page-title";
 import { prototypeAccountMenu } from "@/layouts/shared/prototype-account-menu";
 import { useLayoutSidebar } from "@/layouts/shared/use-layout-sidebar";
+import { useReferOpportunity } from "@/layouts/shared/use-refer-opportunity";
 import { navigatePrototype } from "@/layouts/shared/prototype-navigation";
 import { ContractCard } from "@/components/cards/contract-card";
 import { ApplicationCard, ApplicationCardGroup } from "@/components/cards/application-card";
@@ -256,6 +257,7 @@ function Dashboard({
   // Withdraw (row `···` menu) moves the application to Engagements → `Not moving forward`, so it drops off
   // "Applications" and the next open one takes its place — see `useWithdrawnApplications`.
   const { withdrawn, withdraw } = useWithdrawnApplications();
+  const { refer, modal: referModal } = useReferOpportunity();
   const openApplications = applyWithdrawnApplications(DEMO_APPLICATIONS, withdrawn).filter(
     (application) => application.filter === "open",
   );
@@ -381,7 +383,9 @@ function Dashboard({
                         actionsMenu={
                         <>
                           <MenuItem icon={ArrowUpRight} onAction={() => {}}>View Details</MenuItem>
-                          <MenuItem icon={UsersRight} onAction={() => {}}>Refer</MenuItem>
+                          <MenuItem icon={UsersRight} onAction={() => refer({ key, ...application })}>
+                            Refer
+                          </MenuItem>
                           <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
                             Withdraw
                           </MenuItem>
@@ -433,6 +437,8 @@ function Dashboard({
           </div>
         </div>
       </div>
+      {/* "Refer" in an application's `···` menu opens the opportunity referral modal. */}
+      {referModal}
     </div>
   );
 }

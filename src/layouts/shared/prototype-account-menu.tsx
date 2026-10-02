@@ -12,9 +12,10 @@ import { openWithOffersRestored, restartPrototype } from "@/layouts/shared/demo-
  * the menu item's text. Relative `iframe.html` URLs so they work on any
  * Storybook host (local or Netlify). `restoresOffers` pages open with every
  * declined offer brought back, so they always show the offers they exist to
- * demo.
+ * demo. `hidden` pages keep their entry (and their story) but stay out of the
+ * menu until they're needed again.
  */
-const PROTOTYPE_PAGE_LINKS: { id: string; label: string; href: string; restoresOffers?: boolean }[] = [
+const PROTOTYPE_PAGE_LINKS: { id: string; label: string; href: string; restoresOffers?: boolean; hidden?: boolean }[] = [
   {
     id: "page-dashboard-empty-state",
     label: "Dashboard empty state",
@@ -25,12 +26,19 @@ const PROTOTYPE_PAGE_LINKS: { id: string; label: string; href: string; restoresO
     label: "2 offers",
     href: "iframe.html?id=layouts-dashboard--two-offers&viewMode=story",
     restoresOffers: true,
+    hidden: true,
   },
   {
     id: "page-dashboard-offer-alert-banner",
     label: "Offer alert banner",
     href: "iframe.html?id=layouts-dashboard--offer-alert-banner&viewMode=story",
     restoresOffers: true,
+    hidden: true,
+  },
+  {
+    id: "page-my-referrals-empty",
+    label: "My Referrals empty state",
+    href: "iframe.html?id=layouts-referrals--empty&viewMode=story",
   },
 ];
 
@@ -59,7 +67,7 @@ const prototypeAccountMenu: NonNullable<SidebarProps["accountMenu"]> = {
       </AccountMenuItem>
       {/* Figma's 16px divider (1px `border` line, centered) — the shared menu separator is the same geometry. */}
       <MenuSeparator />
-      {PROTOTYPE_PAGE_LINKS.map(({ id, label, href, restoresOffers }) =>
+      {PROTOTYPE_PAGE_LINKS.filter((link) => !link.hidden).map(({ id, label, href, restoresOffers }) =>
         restoresOffers ? (
           <AccountMenuItem key={id} id={id} icon={ArrowUpRight} onAction={() => openWithOffersRestored(href)}>
             {label}

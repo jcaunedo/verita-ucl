@@ -1,7 +1,7 @@
 <!--
 Created: Sep 30, 2026
 Created by: Julio Caunedo
-Last updated: Oct 01, 2026
+Last updated: Oct 02, 2026
 Scope: Verita AI professional Referrals destination — its two tabs (My referrals and My network), how a referral is made, the referral and network lifecycles, rewards, and the referral entry points on Home and on application rows.
 Purpose: Give Referrals its own page-level PRD, split out of product-specs/main-navigation.md §2.5 and product-specs/dashboard.md §7.7 now that the destination exists in the product.
 -->
@@ -18,7 +18,7 @@ Referrals is the fifth main-navigation destination: `Home` → `Opportunities` �
 
 Opportunities, Engagements, and Earnings are about the professional's own work. Referrals is about bringing other qualified professionals into the network. It is a secondary growth feature: useful, but never ahead of the professional's current work and required actions ([`dashboard.md` §4](dashboard.md#4-dashboard-priority-engine), priority P4).
 
-ℹ️ The prototype has the destination in the sidebar (Referrals, `users-right` icon) with an empty page that shows only the title. No Figma design exists for the page yet.
+ℹ️ The prototype has the destination in the sidebar (Referrals, `users-right` icon) with an empty page that shows only the title.
 
 ## 2. Two concepts: My referrals and My network
 
@@ -29,7 +29,7 @@ Referrals and My network are related but distinct concepts.
 | **Definition** | People the professional has actively referred to Verita, either generally or for a specific opportunity. | People in the professional's network who could potentially be referred. They are not referrals yet. |
 | **Exists when** | Only after the professional takes an explicit referral action (§6). | Once the professional imports or uploads their connections. |
 | **User question** | Who have I referred, and what is happening with those referrals? | Who in my network could be a good fit for current opportunities? |
-| **Responsibilities** | Track referral status, show reward eligibility, show earned and pending rewards, let the professional view referral details. | Import or upload professional connections, match people to active opportunities, surface potential referral value, let the professional decide who to refer. |
+| **Responsibilities** | Track referral status, show qualification progress, show reward eligibility, show earned and pending rewards, let the professional view referral details. | Import or upload professional connections, match people to active opportunities, surface potential referral value, let the professional decide who to refer. |
 | **Lifecycle** | §7 | §8 |
 
 The mental model:
@@ -114,8 +114,8 @@ Page conventions follow the rest of the product:
 | Figure | Definition |
 | --- | --- |
 | **Total referrals** | All referrals the professional has made, whatever their current status. A lifetime count unless a date filter is added later. |
-| **In progress** | Referrals currently at `Referred`, `Joined`, `Applied`, or `Hired`. |
-| **Qualified** | Referrals whose person started working (their contract became `Active`, §9), including referrals at `Reward earned` or `Paid`. |
+| **In progress** | Referrals currently at `Referred`, `Joined`, `Applied`, `Hired`, or `Qualifying`. |
+| **Qualified** | Referrals that have met the program's qualifying milestone (§9), including referrals at `Reward earned` or `Paid`. |
 | **Rewards earned** | Total value of every reward the professional has earned across qualified referrals, both already paid and still awaiting payout. |
 | **Pending payout** | Total reward amount for referrals currently at `Reward earned`: earned, but not yet paid. |
 
@@ -143,6 +143,14 @@ A Referral exists only after the professional takes an explicit referral action:
 - **Refer someone to a specific opportunity**, from the application row's **Refer** action or from a matched connection in My network. The person can be anyone: in or outside the professional's network, new to Verita or already a member.
 - **Send an introduction** on their behalf. An introduction is either to a specific opportunity or general, like the two options above.
 
+✅ **Resolved (2026-10-02) — referral link usage limit:** a professional's referral link can be used up to 100 times within any 30-day period. The window is rolling: it counts the last 30 days at any moment, not a calendar month.
+
+✅ **Resolved (2026-10-02) — what counts as a use:** sharing the link. Each share counts as one use, such as copying the link, sending it by email, or posting it to LinkedIn, X, or Facebook from the share modal. Someone opening the link or joining through it doesn't count.
+
+✅ **Resolved (2026-10-02) — sharing by email to several people:** each email address counts as one use. Sending the link to three addresses at once uses three.
+
+⚠️ **Decision needed:** what the professional sees once the limit is reached (e.g. the share actions disabled with a message saying when sharing is available again).
+
 ✅ **Resolved (2026-10-01) — referring someone new to an opportunity:** the invite opens a read-only preview of the opportunity. To apply, the person joins Verita first (§7: `Referred` → `Joined` → `Applied`).
 
 ✅ **Resolved (2026-10-01) — existing members can be referred to an opportunity:** a professional can refer someone who already has a Verita account, as long as it's to a specific opportunity. Two rules keep the reward tied to the referral actually causing something:
@@ -162,15 +170,16 @@ The member skips `Joined` in the lifecycle (§7).
 
 Each referral moves through these stages. The row shows the current stage as a badge.
 
-`Referred` → `Joined` → `Applied` → `Hired` → `Reward earned` → `Paid`
+`Referred` → `Joined` → `Applied` → `Hired` → `Qualifying` → `Reward earned` → `Paid`
 
 | Stage | Meaning |
 | --- | --- |
 | **Referred** | The professional made the referral (§6); the person hasn't acted on it yet. |
 | **Joined** | The person created a Verita account. Only for people new to Verita: an existing member goes from `Referred` to `Applied` (§6). |
 | **Applied** | The person applied to an opportunity. |
-| **Hired** | The person's application was accepted and their contract is signed, but it hasn't started yet (`Awaiting start`, [`contract-card.md` §6.1](contract-card.md#61-contract-status-rules)). The reward follows once the contract becomes `Active`. |
-| **Reward earned** | The referred person started working: their contract became `Active` (§9). The referral succeeded, and the reward is earned and awaiting payout. |
+| **Hired** | The person's application was accepted and their contract is signed, but it hasn't started yet (`Awaiting start`, [`contract-card.md` §6.1](contract-card.md#61-contract-status-rules)). Once the contract becomes `Active`, the referral moves to `Qualifying`. |
+| **Qualifying** | The referred person is working on an engagement that counts toward the referral reward (their contract is `Active`), and has started making progress toward the qualifying milestone (§9) without reaching it yet. The row shows that progress against the milestone, such as "12 of 40 hours". When the milestone is met, the referral moves to `Reward earned`. |
+| **Reward earned** | The referred person met the qualifying milestone. The referral succeeded, and the reward is earned and awaiting payout. |
 | **Paid** | The referral reward has been paid. |
 
 ⚠️ **Decision needed:** what happens to a referral that stops moving. Examples: the person never joins, isn't selected, or doesn't pass vetting. These need end states (e.g. `Expired`, `Not eligible`) so the list doesn't fill with stalled referrals.
@@ -197,14 +206,16 @@ Each connection moves through these stages:
 
 ## 9. Rewards
 
-✅ **Resolved (2026-10-01) — when a referral succeeds:** the moment the referred person starts working, when their contract becomes `Active` ([`contract-card.md` §6.1](contract-card.md#61-contract-status-rules)). Signing up isn't enough, and neither is being hired: a contract still `Awaiting start` keeps the referral at `Hired` (§7). That moment moves the referral to `Reward earned` (§7). The contract that counts:
+✅ **Resolved (2026-10-01, confirmed with the team) — when a referral succeeds:** after the referred person starts working (their contract becomes `Active`, [`contract-card.md` §6.1](contract-card.md#61-contract-status-rules)) *and* meets the qualifying milestone (§7: `Hired` → `Qualifying` → `Reward earned`). Signing up isn't enough, being hired isn't, and neither is starting work on its own. The contract that counts:
 
 - **Opportunity referral:** a contract for the referred opportunity.
 - **General referral:** any contract.
 
-This replaces the earlier rule (2026-09-30) that the reward also waited for a further qualifying milestone after work started. That rule is now an open question to verify with the team (§11).
+This restores the 2026-09-30 rule after a same-day change that earned the reward as soon as the contract became `Active`.
 
-⚠️ **Copy fix needed:** the "Refer and earn" callout on Home says "Refer talented professionals and earn rewards when they join the network." That promises a reward on joining, but the reward comes when the person starts working. New copy is needed before launch.
+⚠️ **Decision needed:** the exact qualifying milestone (e.g. a number of hours worked or a first completed contract), and how its progress is shown on the row.
+
+⚠️ **Copy fix needed:** the "Refer and earn" callout on Home says "Refer talented professionals and earn rewards when they join the network." That promises a reward on joining, but the reward comes only after the person starts working and meets the qualifying milestone. New copy is needed before launch.
 
 ✅ **Resolved (2026-10-01) — who gets the reward:** the professional who made the referral (`referrerId`, §10). The invited person doesn't receive a referral reward.
 
@@ -218,13 +229,13 @@ This replaces the earlier rule (2026-09-30) that the reward also waited for a fu
 
 Referral and reward states are related but separate. `Reward earned` and `Paid` are referral lifecycle stages (§7). `Pending payout` and `Paid` are reward statuses. They run as two parallel tracks:
 
-- **Referral lifecycle:** `Referred` → `Joined` → `Applied` → `Hired` → `Reward earned` → `Paid`
+- **Referral lifecycle:** `Referred` → `Joined` → `Applied` → `Hired` → `Qualifying` → `Reward earned` → `Paid`
 - **Reward status:** `Not earned` → `Pending payout` → `Paid`
 
 | Reward status | Meaning |
 | --- | --- |
-| **Not earned** | The referred person hasn't started working yet. |
-| **Pending payout** | The referred person started working, and the reward is owed but not yet paid. |
+| **Not earned** | The referral hasn't reached the qualifying milestone yet. |
+| **Pending payout** | The qualifying milestone was met, and the reward is owed but not yet paid. |
 | **Paid** | The reward has been paid. |
 
 How they move together:
@@ -264,7 +275,7 @@ All three are collections on `User` ([`dashboard.md` §9.1](dashboard.md#91-enti
 
 ## 11. Open questions
 
-- 🙋 Verify with the team: should the reward wait for a further business milestone after the person starts working, such as a number of hours worked or a first completed contract? That was the previous rule (2026-09-30), with a `Qualifying` stage between `Started working` and `Reward earned` that showed progress (e.g. "12 of 40 hours"). It was replaced on 2026-10-01 by earning the reward when the contract becomes `Active` (§9).
+- 🙋 What is the exact qualifying milestone for a reward, and how is progress shown (§9)?
 - 🙋 What should the "Refer and earn" callout say now that rewards come after the person starts working (§9)?
 - 🙋 Are referral rewards paid through Earnings, and does Referrals link there (§9)?
 - 🙋 What end states does a stalled referral get (§7)?
@@ -273,7 +284,8 @@ All three are collections on `User` ([`dashboard.md` §9.1](dashboard.md#91-enti
 - 🙋 Which LinkedIn import is technically possible, and is CSV the first source (§5.2)?
 - 🙋 What consent and retention rules apply to imported contacts (§5.2)?
 - 🙋 Which referral and network events promote Referrals on Home, and in which module (§4, [`dashboard.md` §7.7](dashboard.md#77-referrals))?
-- 🙋 Is there a limit on how many people a professional can refer, or on rewards per period?
+- 🙋 Beyond the referral link's 100 uses per 30 days (§6), is there a limit on opportunity referrals, or on rewards per period?
+- 🙋 What does the professional see once the referral link hits its limit (§6)?
 - 🙋 How is an opportunity's referral reward amount configured, and by which team (§9)?
 - 🙋 If two professionals refer the same person, to the same opportunity or generally, who gets the credit?
 - 🙋 Is the Referrals program a launch requirement or future scope, and does My network ship with it or later ([`dashboard.md` §22](dashboard.md#22-recommended-mvp-boundary))?

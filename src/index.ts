@@ -35,6 +35,7 @@ export {
 /* -------------------------------------------------------------------------- */
 
 export { Logo, logoVariants, type LogoProps } from "./components/branding/logo";
+export { LinkedInLogo, type LinkedInLogoProps } from "./components/branding/linkedin-logo";
 
 /* -------------------------------------------------------------------------- */
 /* Typography                                                                 */
@@ -78,12 +79,25 @@ export {
   SelectContent,
   SelectItem,
   SelectSeparator,
+  SelectTrigger,
   selectItemVariants,
   type SelectContentProps,
   type SelectItemProps,
+  type SelectTriggerProps,
 } from "./components/forms/select";
 
 export { SearchField, type SearchFieldProps } from "./components/forms/search-field";
+export { TagInput, type TagInputProps } from "./components/forms/tag-input";
+export { Input, type InputProps } from "./components/forms/input";
+export { Textarea, type TextareaProps } from "./components/forms/textarea";
+export {
+  fieldVariants,
+  fieldTextVariants,
+  fieldState,
+  FieldIcon,
+  type FieldState,
+  type FieldIconProp,
+} from "./components/forms/field";
 
 /* -------------------------------------------------------------------------- */
 /* Data display                                                               */
@@ -97,6 +111,15 @@ export {
 } from "./components/data-display/avatar-companies";
 
 export { Badge, badgeVariants, type BadgeProps } from "./components/data-display/badge";
+export {
+  Tag,
+  TagGroup,
+  TagList,
+  tagVariants,
+  type TagProps,
+  type TagGroupProps,
+  type TagListProps,
+} from "./components/data-display/tag";
 
 /* -------------------------------------------------------------------------- */
 /* Feedback                                                                   */
@@ -112,6 +135,16 @@ export {
 } from "./components/feedback/inline-alert";
 
 export { EmptyState, type EmptyStateProps } from "./components/feedback/empty-state";
+export {
+  Toast,
+  toastVariants,
+  Toaster,
+  toast,
+  type ToastProps,
+  type ToastTone,
+  type ToasterProps,
+  type ToastOptions,
+} from "./components/feedback/toast";
 
 /* -------------------------------------------------------------------------- */
 /* Cards                                                                      */
@@ -165,6 +198,15 @@ export {
   type TabButtonProps,
   type TabButtonListProps,
 } from "./components/navigation/tab-button";
+export {
+  TabUnderlines,
+  TabUnderlineList,
+  TabUnderline,
+  TabUnderlinePanel,
+  tabUnderlineVariants,
+  type TabUnderlineProps,
+  type TabUnderlineListProps,
+} from "./components/navigation/tab-underline";
 
 /* -------------------------------------------------------------------------- */
 /* Overlays                                                                   */
@@ -193,3 +235,9 @@ export {
   SidebarTooltipTrigger,
   type SidebarTooltipProps,
 } from "./components/overlays/sidebar-tooltip";
+export { Modal, type ModalProps } from "./components/overlays/modal";
+export {
+  ShareReferralLinkModal,
+  type ShareReferralLinkModalProps,
+  type ReferralOpportunity,
+} from "./components/overlays/share-referral-link-modal";
