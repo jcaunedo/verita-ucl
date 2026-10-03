@@ -107,9 +107,9 @@ function offerNextStep(offers: readonly { expiresAt: string }[], viewOffersHref:
 }
 
 /**
- * Current contracts, Applications, and the offer card come from the shared
+ * Contracts, Applications, and the offer card come from the shared
  * demo data (`src/layouts/shared/demo-engagements.ts`), so they match what
- * the `Engagements` layout lists: "Current contracts" is the `Open` contracts, and
+ * the `Engagements` layout lists: "Contracts" is the `Open` contracts, and
  * "Applications" is the top of Engagements → Applications → `In progress`,
  * in that filter's default sort (`engagements.md` §3.1).
  */
@@ -187,7 +187,7 @@ interface DashboardProps {
    */
   viewAllApplicationsHref?: string;
   /**
-   * Target for "Current contracts" → "View all": Engagements → Contracts, `Current`
+   * Target for "Contracts" → "View all": Engagements → Contracts, `Current`
    * filter. Same no-router reason as `navHrefOverrides`; defaults to `#`.
    */
   viewAllContractsHref?: string;
@@ -239,7 +239,7 @@ function Dashboard({
 }: DashboardProps = {}) {
   const { sidebarCollapsed, handleSidebarCollapsedChange } = useLayoutSidebar();
   /**
-   * "Current contracts" stays one row: as many contracts as the grid has columns
+   * "Contracts" stays one row: as many contracts as the grid has columns
    * (2 at `xl` and below, 3 above `xl`), with the rest behind "View all". Same
    * breakpoint-driven cap as `NextStepsSection`, so "Showing # of {total}"
    * always matches what's on screen.
@@ -339,7 +339,7 @@ function Dashboard({
               <div className="flex w-full flex-col items-start gap-3">
                 <div className="flex w-full flex-col items-start gap-0.5">
                   <Typography size="xl" weight="semibold">
-                    Current contracts
+                    Contracts
                   </Typography>
                   <Typography size="sm" className="text-foreground-muted">
                     Showing {visibleActiveWork.length} of {ACTIVE_WORK.length}

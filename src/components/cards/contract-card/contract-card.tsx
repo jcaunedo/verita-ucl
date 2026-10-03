@@ -80,7 +80,7 @@ interface ContractCardProps
    * Contract status label (Figma's `badge` instance). Omit entirely when the
    * surrounding module already communicates the status (PRD §3.1.2's
    * status-badge visibility rule) — e.g. hide it for `Active` contracts
-   * inside an "Current contracts" surface, but show it on Home or any
+   * inside a "Contracts" surface, but show it on Home or any
    * mixed-status view.
    */
   statusLabel?: string;

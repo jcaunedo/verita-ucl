@@ -19,7 +19,7 @@ type Story = StoryObj<typeof Dashboard>;
  * layout. The empty-state dashboard is reached from the account menu's page
  * links instead (`prototype-account-menu.tsx`). "Applications" → "View
  * All" also opens `Engagements`, whose default story lands on Applications
- * with the `In progress` filter selected; "Current contracts" → "View all" opens its
+ * with the `In progress` filter selected; "Contracts" → "View all" opens its
  * `Contracts` story (Contracts view, `Current` filter). The Offer card leading Next steps ("1 new offer") opens
  * Engagements → Offers → `Awaiting response`.
  * Relative `iframe.html` URL so it works on any Storybook host (local dev

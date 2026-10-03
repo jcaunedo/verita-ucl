@@ -589,7 +589,7 @@ function Engagements({
                           <EmptyState {...noSearchResults(searchQueries.contracts)} className="flex-1" />
                         )}
                         {contracts.length > 0 && (
-                          // Same 2-up / 3-up-from-`xl` grid as `Dashboard`'s "Current contracts".
+                          // Same 2-up / 3-up-from-`xl` grid as `Dashboard`'s "Contracts".
                           <div className="grid w-full auto-rows-fr grid-cols-2 gap-x-5 gap-y-4 xl:grid-cols-3">
                             {contracts.map(({ key, filter: _filter, ...contract }) => (
                               <ContractCard
