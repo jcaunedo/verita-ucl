@@ -1,7 +1,13 @@
 import type { Variants } from "motion/react";
 
 import { motionDistance, motionScale, motionStagger } from "./tokens";
-import { enterTransition, exitTransition, modalExitTransition, standardTransition } from "./transitions";
+import {
+  enterTransition,
+  exitTransition,
+  modalEnterTransition,
+  modalExitTransition,
+  standardTransition,
+} from "./transitions";
 
 /**
  * Reusable `Variants` for `initial`/`animate`/`exit`. Named after the
@@ -119,15 +125,17 @@ const overlayVariants: Variants = {
 };
 
 /**
- * A modal dialog's surface — CLAUDE.md "Dialogs and Overlays": a fade with a soft scale (`motionScale.popIn`, 0.98)
- * and a `motionDistance.small` (12px) rise, on `standardTransition`. It leaves with a plain fade, no movement, over
- * `modalExitTransition` (600ms), the documented exception to shorter exits. Pair with `modalOverlayVariants` on the
+ * A modal dialog's surface — CLAUDE.md "Dialogs and Overlays": it grows in place from the center of the viewport, a
+ * fade with a scale from `motionScale.modalIn` (0.92) to 1 and no movement, on `modalEnterTransition` (300ms, enter
+ * curve; design direction, 2026-10-03). The scale originates at the surface's center, which is the viewport's center.
+ * It leaves the same way in reverse, shrinking back to 0.92 toward the center as it fades, over `modalExitTransition`
+ * (600ms), the documented exception to shorter exits. Pair with `modalOverlayVariants` on the
  * scrim. The dialog is usable as soon as it mounts — nothing waits on the entrance.
  */
 const modalVariants: Variants = {
-  initial: { opacity: 0, scale: motionScale.popIn, y: motionDistance.small },
-  animate: { opacity: 1, scale: 1, y: 0, transition: standardTransition },
-  exit: { opacity: 0, transition: modalExitTransition },
+  initial: { opacity: 0, scale: motionScale.modalIn },
+  animate: { opacity: 1, scale: 1, transition: modalEnterTransition },
+  exit: { opacity: 0, scale: motionScale.modalIn, transition: modalExitTransition },
 };
 
 /**

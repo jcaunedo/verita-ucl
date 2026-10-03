@@ -26,6 +26,15 @@ const exitTransition: Transition = {
 };
 
 /**
+ * A modal dialog growing in: `motionDuration.normal` (300ms) on the enter curve (quick start, gentle finish), so the
+ * scale-up reads as arriving rather than easing in slowly.
+ */
+const modalEnterTransition: Transition = {
+	duration: motionDuration.normal,
+	ease: [0.16, 1, 0.3, 1],
+};
+
+/**
  * A modal dialog (and its scrim) leaving: a slow, even fade over `motionDuration.deliberate` (600ms) on the standard
  * curve. A documented exception to "exits are shorter than entrances" (CLAUDE.md "Exit"): design direction
  * (2026-10-02) wants a modal to recede quietly rather than snap away, e.g. after "Copy referral link" closes it.
@@ -79,6 +88,7 @@ export {
 	standardTransition,
 	enterTransition,
 	exitTransition,
+	modalEnterTransition,
 	modalExitTransition,
 	subtleSpring,
 	responsiveSpring,

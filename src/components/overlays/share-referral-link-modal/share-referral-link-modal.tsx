@@ -1,9 +1,10 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Link02 } from "@untitledui/icons";
+import { CurrencyDollarCircle, Link02 } from "@untitledui/icons";
 
 import { fadeVariants, standardTransition, useMotionPreference } from "@/lib/motion";
 import { Button } from "@/components/buttons/button";
+import { Hyperlink } from "@/components/buttons/hyperlink";
 import { Typography, typographyVariants } from "@/components/typography";
 import { Modal } from "@/components/overlays/modal";
 import { TagInput } from "@/components/forms/tag-input";
@@ -156,6 +157,11 @@ interface ShareReferralLinkModalProps {
    * with a toast. Sending the emails is the app's job; the prototype only shows the toast.
    */
   onSendInvite?: (emails: string[]) => void;
+  /**
+   * "Preview email", at the right of the "Share by email" label when referring an `opportunity` (Figma `Opportunity
+   * Email`). Shows what the invite will say; there's no design for the preview yet, so it's the app's to open.
+   */
+  onPreviewEmail?: () => void;
 }
 
 const rewardCurrency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
@@ -165,7 +171,7 @@ const rewardCurrency = new Intl.NumberFormat("en-US", { style: "currency", curre
  * its status badge or hover, since it isn't a row to open. A 1px `border/neutral/border` box with `radius/base` (8px),
  * 20px left and 24px right padding, 16px top and bottom: the 48px `avatar-companies` tile, 20px gap, then partner name
  * (`xs`, muted) over the title (`base -bold`), and 2px below them the terms (`sm`: pay `semibold`, then hours and
- * duration, with muted `·` between). The reward sits 12px below as an info `InlineAlert`.
+ * duration, with muted `·` between). The reward sits 12px below as a success `InlineAlert` with `currency-dollar-circle`.
  */
 function OpportunitySummary({ opportunity }: { opportunity: ReferralOpportunity }) {
   const {
@@ -213,7 +219,11 @@ function OpportunitySummary({ opportunity }: { opportunity: ReferralOpportunity 
         </div>
       </div>
       {reward !== undefined && (
-        <InlineAlert tone="info">{rewardCurrency.format(reward)} potential referral reward</InlineAlert>
+        // Figma `Opportunity Email`: green `tone/success` with `currency-dollar-circle`, since it's money the professional
+        // can earn. Also used on the link view, so the line doesn't change color when the views swap.
+        <InlineAlert tone="success" icon={CurrencyDollarCircle}>
+          {rewardCurrency.format(reward)} potential referral reward
+        </InlineAlert>
       )}
     </div>
   );
@@ -277,7 +287,8 @@ function useMeasuredHeight() {
  * from an opportunity's "Refer"). Built on `Modal`.
  *
  * - Opportunity: "Refer someone to apply", its own description, and the opportunity summary with its potential reward
- *   (`OpportunitySummary`) between the description and the link. The link and email views below are the same.
+ *   (`OpportunitySummary`) between the description and the link. The link and email views below are the same, except
+ *   that the email view adds "Preview email" at the right of its label (`onPreviewEmail`).
  *
  * - Link view (`Default`): a `sm -medium` label over a read-only field on `color-tone-info-subtle` with `radius/input`,
  *   a leading `link-02` icon, and the link in `base`. It's a real read-only input, so the link can be selected and
@@ -309,6 +320,7 @@ function ShareReferralLinkModal({
   opportunity,
   onCopy,
   onSendInvite,
+  onPreviewEmail,
 }: ShareReferralLinkModalProps) {
   const { prefersReducedMotion } = useMotionPreference();
   const close = React.useCallback(() => onOpenChange(false), [onOpenChange]);
@@ -452,8 +464,16 @@ function ShareReferralLinkModal({
                   <TagInput
                     ref={emailRef}
                     label="Share by email"
+                    labelAction={
+                      // Figma `Opportunity Email` only: lets the professional see what the invite will say.
+                      opportunity && (
+                        <Hyperlink onPress={onPreviewEmail} className="font-normal">
+                          Preview email
+                        </Hyperlink>
+                      )
+                    }
                     hint={EMAIL_HELP}
-                    placeholder="Add email"
+                    placeholder="Search connections or enter email"
                     value={emails}
                     onChange={setEmails}
                     inputValue={draft}

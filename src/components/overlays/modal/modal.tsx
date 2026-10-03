@@ -43,11 +43,12 @@ interface ModalProps {
  *
  * Built on React Aria's `ModalOverlay` + `Modal` + `Dialog` (Untitled UI's own foundation), so focus is trapped and
  * restored, Esc closes, the page behind is inert, and the title labels the dialog. Motion: the scrim fades
- * (`modalOverlayVariants`) and the surface fades in with a soft scale and a 12px rise (`modalVariants`). Both leave
- * with a slow, even 600ms fade and no movement (`modalExitTransition`, design direction 2026-10-02); reduced motion
- * keeps only the fades. `AnimatePresence` keeps the modal mounted until its exit finishes. When the content changes height (e.g. a modal swapping views), the surface glides to its new centered
+ * (`modalOverlayVariants`) and the surface grows in from the center of the viewport, fading in as it scales from 0.92 to 1 (`modalVariants`). It leaves in
+ * reverse, shrinking back to 0.92 toward the center as it fades, while the scrim fades, both over a slow 600ms
+ * (`modalExitTransition`, design direction 2026-10-02/03); reduced motion keeps only the fades. `AnimatePresence` keeps the modal mounted until its exit finishes. When the content changes height (e.g. a modal swapping views), the surface glides to its new centered
  * position (`layout="position"` on `standardTransition`) instead of jumping; off under reduced motion. The scrim is
- * `--overlay` (black at 40%); Figma's component frame doesn't show one.
+ * `--overlay` (neutral-800 at 18%) over a 1px background blur (`backdrop-blur-overlay`), Figma's `Overlay` component
+ * (verita.ds `node-id=6072-11956`). The blur fades in and out with the scrim's opacity.
  */
 function Modal({
   isOpen,
@@ -74,7 +75,7 @@ function Modal({
           initial="initial"
           animate="animate"
           exit="exit"
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-overlay p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-overlay p-4 backdrop-blur-overlay"
         >
           <MotionModal
             data-slot="modal"

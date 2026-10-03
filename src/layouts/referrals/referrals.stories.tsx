@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { DEMO_CONNECTIONS } from "@/layouts/shared/demo-connections";
 import { PROTOTYPE_NAV_HREFS } from "@/layouts/shared/prototype-nav-hrefs";
 import { Referrals } from "./referrals";
 
@@ -23,7 +24,12 @@ export const Empty: Story = {
   args: { referrals: [] },
 };
 
-/** The My network tab before any connections are imported. Figma: `My network`. */
+/** The My network tab before any connections are imported. "Upload connections" imports the demo network. */
 export const MyNetwork: Story = {
   args: { defaultView: "network" },
+};
+
+/** My network with connections: search, filters, the activity dropdown, and the connection table. Figma: `My network`. */
+export const MyNetworkConnections: Story = {
+  args: { defaultView: "network", defaultConnections: DEMO_CONNECTIONS },
 };

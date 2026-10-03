@@ -4,6 +4,7 @@ export {
   standardTransition,
   enterTransition,
   exitTransition,
+  modalEnterTransition,
   modalExitTransition,
   subtleSpring,
   responsiveSpring,

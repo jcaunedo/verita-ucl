@@ -1,5 +1,5 @@
 import * as React from "react";
-import { AlertCircle, AlertTriangle, InfoCircle } from "@untitledui/icons";
+import { AlertCircle, AlertTriangle, CheckCircle, InfoCircle } from "@untitledui/icons";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
@@ -31,6 +31,9 @@ const inlineAlertVariants = cva("flex items-start gap-2 text-sm font-normal", {
       warning: "text-tone-warning",
       // Figma `Danger` — `color/tone/destructive/destructive` (#c63333).
       destructive: "text-tone-destructive",
+      // `color-tone-success-success` (#018638). Not a `Property 1` value in Figma's `inline-alert` set yet; first used
+      // for the referral reward line in `share-referral-link-modal` `Opportunity Email` (2026-10-03).
+      success: "text-tone-success",
     },
   },
   defaultVariants: { tone: "info" },
@@ -42,6 +45,7 @@ const toneIcons: Record<InlineAlertTone, React.FC<{ className?: string }>> = {
   info: InfoCircle,
   warning: AlertTriangle,
   destructive: AlertCircle,
+  success: CheckCircle,
 };
 
 interface InlineAlertProps
@@ -49,12 +53,18 @@ interface InlineAlertProps
     VariantProps<typeof inlineAlertVariants> {
   /** Shows the tone's leading icon (Figma: `showIcon`). */
   showIcon?: boolean;
+  /**
+   * Replaces the tone's icon when the message is about something specific, e.g. `CurrencyDollarCircle` for a reward.
+   * The color still follows `tone`. Keep the tone's own icon for plain status messages (DESIGN.md "Message icons
+   * follow the message type").
+   */
+  icon?: React.FC<{ className?: string }>;
 }
 
 /** A single-line status message — tone-colored icon + text, e.g. "No {name} added yet". Figma: `inline-alert`. */
-function InlineAlert({ className, tone, showIcon = true, children, ...props }: InlineAlertProps) {
+function InlineAlert({ className, tone, showIcon = true, icon, children, ...props }: InlineAlertProps) {
   const resolvedTone = tone ?? "info";
-  const Icon = toneIcons[resolvedTone];
+  const Icon = icon ?? toneIcons[resolvedTone];
 
   return (
     <div

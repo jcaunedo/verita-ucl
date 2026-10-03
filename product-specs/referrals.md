@@ -1,7 +1,7 @@
 <!--
 Created: Sep 30, 2026
 Created by: Julio Caunedo
-Last updated: Oct 02, 2026
+Last updated: Oct 03, 2026
 Scope: Verita AI professional Referrals destination — its two tabs (My referrals and My network), how a referral is made, the referral and network lifecycles, rewards, and the referral entry points on Home and on application rows.
 Purpose: Give Referrals its own page-level PRD, split out of product-specs/main-navigation.md §2.5 and product-specs/dashboard.md §7.7 now that the destination exists in the product.
 -->
@@ -26,18 +26,20 @@ Referrals and My network are related but distinct concepts.
 
 | | My referrals | My network |
 | --- | --- | --- |
-| **Definition** | People the professional has actively referred to Verita, either generally or for a specific opportunity. | People in the professional's network who could potentially be referred. They are not referrals yet. |
+| **Definition** | Referral records: each time the professional actively referred someone to Verita, either generally or for a specific opportunity. | People in the professional's network: who they could refer now, and who they've referred before. One row per person. |
 | **Exists when** | Only after the professional takes an explicit referral action (§6). | Once the professional imports or uploads their connections. |
-| **User question** | Who have I referred, and what is happening with those referrals? | Who in my network could be a good fit for current opportunities? |
-| **Responsibilities** | Track referral status, show qualification progress, show reward eligibility, show earned and pending rewards, let the professional view referral details. | Import or upload professional connections, match people to active opportunities, surface potential referral value, let the professional decide who to refer. |
+| **User question** | Who have I referred, and what is happening with those referrals? | Who in my network could be a good fit for current opportunities, and what have those relationships earned so far? |
+| **Responsibilities** | Track referral status, show qualification progress, show reward eligibility, show earned and pending rewards, let the professional view referral details. | Import or upload professional connections, match people to active opportunities, show each connection's referral history and earnings, surface potential referral value, let the professional decide who to refer. |
 | **Lifecycle** | §7 | §8 |
 
 The mental model:
 
-- **My network** is the pool of people I may refer.
-- **My referrals** is the record of people I actually referred.
+- **My network** is people: everyone in my network, whether or not I've referred them.
+- **My referrals** is referrals: the record of each referral I actually made.
 
-Together they form one flow: `My network` → identify opportunity fit → **Refer** → `My referrals` → track → reward. Once the professional refers someone, that person moves from the network model into the referral model.
+One person appears once in My network, however many times they're referred. In My referrals the same person can have several rows, one per referral (§5.1).
+
+Together they form one flow: build network → find matches → **Refer** → `My referrals` → track → reward. Referring someone creates a referral record in My referrals; the person stays in My network, because new opportunities may make them worth referring again (§8).
 
 ✅ **Resolved (2026-09-30) — naming:** the tabs are **My referrals** and **My network**. "My network" is preferred over "Connections" because it is broader and more future-proof: "Connections" can feel LinkedIn-specific, while the source may eventually include CSV uploads, manually added contacts, or other professional networks.
 
@@ -127,9 +129,72 @@ So `Rewards earned` = paid rewards + `Pending payout`. `Pending payout` is deriv
 
 ### 5.2 My network
 
-- **Import action:** import or upload professional connections (LinkedIn, CSV, and possibly manually added contacts later).
-- **Network list:** one row per connection, with the opportunities they match and their potential referral value. Each row has a **Refer** action.
-- **Empty state:** no connections yet; the primary action is to import them.
+My network is where the professional uses their professional connections to find referral opportunities and earn rewards. It's a working view of who is in their network, who matches opportunities now, who they've referred before, what those relationships have earned, and where more earning potential is.
+
+- **One row per connection.** The list is person-based: each connection appears once, however many opportunities they match, however many times they've been referred, and whatever they've earned. This is the key difference from My referrals, where one person can have several rows.
+- **No summary figures.** The tab's counter (e.g. `My network 42`, the number of connections) carries the one network-level figure that matters. A row of summary cards would add weight without helping the main task, finding useful connections and acting on matches. The tab goes straight to search → filters → the connection table.
+- **Import action:** import or upload professional connections (below).
+
+**Empty state**
+
+When the network is empty, the one goal is to build it. The empty state isn't a multi-step "how it works" explainer.
+
+- **Title:** Build your network, make referrals, and earn rewards
+- **Description:** Import your professional network to find potential matches. You choose who to refer, and no one is contacted automatically. You stay in control of every referral.
+
+ℹ️ The reassurance matters: importing contacts can otherwise suggest that Verita may contact people without the professional acting.
+
+**Import sources**
+
+My network isn't a LinkedIn-only feature. LinkedIn is emphasized as the primary path, but the network model stays source-agnostic.
+
+| Option | Description |
+| --- | --- |
+| **Get my LinkedIn network** | Bring in LinkedIn connections to get started. |
+| **Upload a contact list** | Upload connections from another source using a CSV file. |
+
+**Connection table columns**
+
+| Column | Shows | Align |
+| --- | --- | --- |
+| **Name** | The connection's name, with their current or most recent job title below it. | Left |
+| **Matches** | Current active opportunities the connection may be worth referring to, e.g. `3 opportunities`, `1 opportunity`, `No current matches`. | Left |
+| **Last activity** | The most recent referral or relationship event for this connection (§8), e.g. `Referral created`, `Applied`, `Started working`, `Reward earned`, `New match surfaced`. | Left |
+| **Referrals** | The lifetime number of referral records created for this connection, e.g. `0`, `1`, `5`. Historical engagement, not a current status. | Right |
+| **Earned** | Lifetime rewards already earned through referrals of this connection, e.g. `$0`, `$400`, `$1,200`. Past value: "How much has this relationship generated so far?" | Right |
+| **Potential** | The rewards this connection's current matches could earn. Future value: "How much more could this connection generate now?" | Right |
+
+The columns combine current opportunity (Matches), historical engagement (Last activity, Referrals), and financial value (Earned, Potential). They follow the product convention of text left, numbers right; numeric and money columns use consistent formatting and tabular figures.
+
+- **Job title over email.** The professional is judging whether someone fits an opportunity, which a job title helps with and an email doesn't. Email stays available in the connection detail and as a fallback identifier.
+- **Matches is the main actionable column.** When there are matches, the value is interactive and opens that person's matched opportunities.
+- **No "best match".** Matches is a neutral count. My network doesn't claim a single best match unless Verita has a reliable ranking model.
+- **Earned vs Potential:** Earned is past value, Potential is future value.
+
+✅ **Resolved (2026-10-03) — no Status column:** a single status would oversimplify a connection. The same person can at once have 3 current matches, 2 earlier referrals, $800 earned, a new match, and another referral qualifying. The table shows each of those dimensions in its own column instead of forcing them into one status.
+
+⚠️ **Decision needed:** what Potential shows when a connection has no current matches: `—` or `$0`.
+
+**Filters and search**
+
+- **Quick filters:** `All` · `Matches` · `New matches` · `Referred`.
+  - **All:** the full network.
+  - **Matches:** connections with at least one current opportunity match.
+  - **New matches:** connections where a new opportunity match recently surfaced. This makes My network worth coming back to.
+  - **Referred:** connections that already have referral history.
+
+  These aren't mutually exclusive lifecycle states: a person can be both `Referred` and have `New matches`. They're different views of the same network.
+- **Activity filter:** a secondary dropdown, defaulting to `All activity` (no restriction). Other values: `Referral created`, `Applied`, `Started working`, `Reward earned`, `New match surfaced`. It stays secondary because finding opportunities matters more than filtering past activity.
+- **Search:** finds connections by name, job title, and email (as a fallback). Visually lightweight, so it doesn't compete with the opportunity filters.
+
+⚠️ **Decision needed:** how recent a match must be to count as `New matches` (e.g. surfaced in the last 7 days, or not yet seen by the professional).
+
+**Interactions**
+
+- Clicking the row opens the connection detail.
+- Clicking **Matches** opens the connection's current matched opportunities.
+- From the matches view, the professional refers the person to an opportunity (§6). The referral's lifecycle is then tracked in My referrals.
+- The connection stays in My network after being referred, because it may produce future referrals as new opportunities appear (§8).
 
 ⚠️ **Constraint:** LinkedIn heavily restricts access to a member's connections through its API. A CSV of the member's own LinkedIn data export may be the realistic first source. Engineering needs to confirm what's possible before design commits to a "Connect LinkedIn" flow.
 
@@ -188,19 +253,23 @@ Each referral moves through these stages. The row shows the current stage as a b
 
 ## 8. My network lifecycle
 
-Each connection moves through these stages:
+A connection doesn't move through a single lifecycle status (§5.2, "no Status column"). It's imported once and stays in My network, and several things can be true of it at the same time: it can match current opportunities, have earlier referrals, have earned rewards, and have a referral in progress.
 
-`Not connected to Verita yet` → `Imported` → `Matched` → `Reviewed` → `Referred`
+- **Imported:** the professional imported or uploaded the connection (§5.2). It's a row in My network from then on.
+- **Matched:** Verita matches the connection to active opportunities. Matches come and go as opportunities open and close, so this is the `Matches` column, not a stage.
+- **Referred:** each referral of the connection creates a referral record in My referrals, starting at `Referred` (§7). The connection stays in My network, and its `Referrals`, `Earned`, and `Potential` columns update.
 
-| Stage | Meaning |
+**Activity events** — what `Last activity` and the activity filter show (§5.2):
+
+| Event | Meaning |
 | --- | --- |
-| **Not connected to Verita yet** | The person is in the professional's network outside Verita. |
-| **Imported** | The professional imported or uploaded the connection. |
-| **Matched** | Verita matched the connection to one or more active opportunities. |
-| **Reviewed** | The professional reviewed the match. |
-| **Referred** | The professional referred the person. The person now also appears in My referrals, starting at `Referred` (§7). |
+| **Referral created** | The professional referred the connection (§6). |
+| **Applied** | A referral of the connection reached `Applied` (§7). |
+| **Started working** | A referral of the connection reached `Qualifying`: their contract is `Active` (§7). |
+| **Reward earned** | A referral of the connection reached `Reward earned` (§7). |
+| **New match surfaced** | Verita matched the connection to a new opportunity. |
 
-✅ **Resolved (2026-10-01) — referred people live only in My referrals:** a referred connection leaves My network, and a new invitee who joins Verita isn't added to it. My network stays the pool of people not referred yet (§2). To refer the same person to another opportunity, the professional uses that opportunity's **Refer** action, which creates a new referral row.
+✅ **Resolved (2026-10-03) — referred connections stay in My network:** a referred connection keeps its row in My network, with its referral history (`Referrals`, `Earned`) and the `Referred` filter, because it may produce future referrals as new opportunities appear. Each referral is also a row in My referrals. This replaces the 2026-10-01 decision that a referred connection leaves My network. A new invitee who joins Verita through a general referral link still isn't added to My network unless they're also one of the professional's imported connections.
 
 ⚠️ **Decision needed:** what happens when the professional dismisses a match.
 
@@ -271,7 +340,20 @@ All three are collections on `User` ([`dashboard.md` §9.1](dashboard.md#91-enti
 | `createdAt` / `updatedAt` | When it was created and last changed. |
 | `rewardStatus` / `rewardAmount` | `rewardStatus` is one of `Not earned`, `Pending payout`, or `Paid` (§9.1). `rewardAmount` is $50 for a general referral, and set by the opportunity otherwise (§9). |
 
-⚠️ **Gap:** `Connection` and `ReferralCandidate` fields aren't defined yet. They depend on the import sources (§5.2).
+**`Connection` fields (proposed)** — enough for the My network table (§5.2):
+
+| Field | Description |
+| --- | --- |
+| `id` | Connection ID. |
+| `name` | The connection's name. |
+| `jobTitle` | Current or most recent job title, shown under the name. |
+| `email` | Optional. Fallback identifier and search field; shown in the connection detail. |
+| `source` | Where it came from: LinkedIn or a CSV upload (§5.2). |
+| `lastActivity` / `lastActivityAt` | The latest activity event (§8) and when it happened. |
+
+The table's other columns are derived, not stored on the connection: `Matches` and `Potential` from the connection's current `ReferralCandidate`s, and `Referrals` and `Earned` from the referrals whose `connectionId` points at it.
+
+⚠️ **Gap:** `ReferralCandidate` fields, and any `Connection` fields beyond these, aren't defined yet. They depend on the import sources (§5.2) and the matching model (§3).
 
 ## 11. Open questions
 
@@ -283,6 +365,10 @@ All three are collections on `User` ([`dashboard.md` §9.1](dashboard.md#91-enti
 - 🙋 What does "Send an introduction" do in practice (§6)?
 - 🙋 Which LinkedIn import is technically possible, and is CSV the first source (§5.2)?
 - 🙋 What consent and retention rules apply to imported contacts (§5.2)?
+- 🙋 In My network, does Potential show `—` or `$0` when a connection has no current matches (§5.2)?
+- 🙋 How recent must a match be to count as `New matches` (§5.2)?
+- 🙋 Does a connection's `Earned` include rewards still pending payout, like the `Rewards earned` figure (§9.1), or only rewards paid (§5.2)?
+- 🙋 How is a connection's `Potential` worked out when it matches several opportunities: the sum of their rewards, or the highest one (§5.2)?
 - 🙋 Which referral and network events promote Referrals on Home, and in which module (§4, [`dashboard.md` §7.7](dashboard.md#77-referrals))?
 - 🙋 Beyond the referral link's 100 uses per 30 days (§6), is there a limit on opportunity referrals, or on rewards per period?
 - 🙋 What does the professional see once the referral link hits its limit (§6)?

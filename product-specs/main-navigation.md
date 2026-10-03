@@ -1,7 +1,7 @@
 <!--
 Created: Sep 16, 2026
 Created by: Julio Caunedo
-Last updated: Sep 30, 2026
+Last updated: Oct 03, 2026
 Scope: Verita AI professional-facing main navigation — the primary nav items and their naming rationale, shared across every page-level PRD.
 Purpose: Give a single, high-level reference for the site's top-level destinations and the naming decisions behind them, split out of the Dashboard PRD (product-specs/dashboard.md) [§6.1](dashboard.md#61-main-navigation) once it became clear this content governs more than just Home.
 -->
@@ -120,7 +120,7 @@ Design rationale:
 
 **Key distinction:** Opportunities focuses on the user's own potential work. Referrals focuses on bringing other professionals into the network.
 
-The destination has two tabs: **My referrals**, the record of people the user actually referred, and **My network**, the pool of people they may refer ([`referrals.md` §2](referrals.md#2-two-concepts-my-referrals-and-my-network)).
+The destination has two tabs: **My referrals**, the record of people the user actually referred, and **My network**, the people in their network: who they could refer now, and who they've referred before ([`referrals.md` §2](referrals.md#2-two-concepts-my-referrals-and-my-network)).
 
 ## 3. How the navigation works as a system
 

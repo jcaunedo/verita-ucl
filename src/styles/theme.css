@@ -129,6 +129,8 @@
 	--color-tertiary: var(--tertiary);
 	--color-tertiary-foreground: var(--tertiary-foreground);
 	--color-overlay: var(--overlay);
+	/* Figma `Overlay`'s background blur — `backdrop-blur-overlay` on the modal scrim. */
+	--blur-overlay: 1px;
 	--color-link: var(--link);
 	--color-social-linkedin: var(--social-linkedin);
 	--color-hover: var(--hover);
@@ -638,7 +640,9 @@
 	--accent: var(--neutral-100);
 	--accent-foreground: var(--foreground);
 
-	--overlay: rgb(0 0 0 / 0.4);
+	/* Figma: verita.ds `Overlay` (node 6072-11956), an unbound #222a34 (neutral-800) at 18% over a 1px background
+	   blur (`--blur-overlay`) — the modal scrim. */
+	--overlay: color-mix(in srgb, var(--neutral-800) 18%, transparent);
 	--link: #2b73da; /* Figma: state/link — a dedicated blue, not on the rosewood/brand scale */
 	--social-linkedin: #2c64bc; /* Figma: the LinkedIn Logo fill and "Get my LinkedIn connections" button — a third-party brand color, the same in both themes */
 	/* Figma: state/hover = foreground/foreground (neutral-700) at 4% — the

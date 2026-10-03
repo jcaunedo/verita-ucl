@@ -415,9 +415,21 @@ Use:
 - `AnimatePresence` for enter and exit.
 - Overlay fade.
 - Small scale or vertical movement for the dialog surface.
-- Shorter exit timing than entrance timing — except modals, which leave with a slow 600ms fade (`modalExitTransition`; DESIGN.md "Modals leave with a slow fade").
+- Shorter exit timing than entrance timing — except modals, which leave with a slow 600ms fade and shrink (`modalExitTransition`; DESIGN.md "Modals grow in and shrink out from the center").
 
 Do not delay dialog usability while the entrance animation completes.
+
+**Modal spec** (every modal, through `Modal`; design direction 2026-10-03, full rule in DESIGN.md "Modals grow in and shrink out from the center"):
+
+| Part | Enter | Exit |
+| --- | --- | --- |
+| Surface | Grows from the viewport center: opacity 0 → 1, scale 0.92 → 1, no movement. 300ms, enter curve `[0.16, 1, 0.3, 1]` (`modalVariants`, `modalEnterTransition`) | Shrinks back toward the center: opacity → 0, scale → 0.92. 600ms, standard curve `[0.4, 0, 0.2, 1]` (`modalExitTransition`) |
+| Scrim | Fades in, 300ms, standard curve (`modalOverlayVariants`) | Fades out over the same 600ms; stops taking clicks as it starts (`pointerEvents: "none"`) |
+
+- Scale: `motionScale.modalIn` (0.92), shared by enter and exit. Origin: the surface's center, which is the viewport's center.
+- Scrim look: `--overlay`, neutral-800 (#222a34) at 18%, over a 1px background blur (`--blur-overlay`, `backdrop-blur-overlay`). The blur fades with the scrim's opacity.
+- Content height changes (e.g. swapping views) glide the surface to its new centered position: `layout="position"` on `standardTransition` (300ms).
+- Reduced motion: fades only, no scale and no layout glide.
 
 #### Drawers and Panels
 

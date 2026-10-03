@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { CurrencyDollarCircle } from "@untitledui/icons";
 
 import { InlineAlert } from "./inline-alert";
 
@@ -8,7 +9,7 @@ const meta: Meta<typeof InlineAlert> = {
   tags: ["autodocs"],
   args: { children: "No work history added yet" },
   argTypes: {
-    tone: { control: "inline-radio", options: ["info", "warning", "destructive"] },
+    tone: { control: "inline-radio", options: ["info", "warning", "destructive", "success"] },
   },
 };
 export default meta;
@@ -32,6 +33,11 @@ export const Destructive: Story = {
 };
 
 /** Figma `showIcon` off. */
+/** `success`, here with a custom `icon` for a reward (`share-referral-link-modal`'s reward line). */
+export const SuccessWithIcon: Story = {
+  args: { tone: "success", icon: CurrencyDollarCircle, children: "$450 potential referral reward" },
+};
+
 export const WithoutIcon: Story = {
   args: { tone: "warning", showIcon: false },
 };
@@ -55,6 +61,9 @@ export const AllVariants: Story = {
       <InlineAlert tone="info">No languages added yet</InlineAlert>
       <InlineAlert tone="warning">No work history added yet</InlineAlert>
       <InlineAlert tone="destructive">No resume added yet</InlineAlert>
+      <InlineAlert tone="success" icon={CurrencyDollarCircle}>
+        $450 potential referral reward
+      </InlineAlert>
       <InlineAlert tone="warning" showIcon={false}>
         No work history added yet
       </InlineAlert>

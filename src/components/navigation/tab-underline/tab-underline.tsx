@@ -23,6 +23,11 @@ import { Typography } from "@/components/typography";
  * - Hover → `foreground` text. No Figma source; follows `TabButton`'s hover text change.
  * - Active → `color/tone/brand/brand` text and a 2px `color/tone/brand/brand` underline.
  *
+ * Counter (Figma `Counter`, 2026-10-03): pass `count` to show it 6px after the label, the same pill as `TabButton`'s —
+ * `xs -medium`, 22px min width, 6px × 2px padding, fully round. Default/Hover → `color-tone-neutral-subtle` fill +
+ * `foreground/muted` text; Active → `color/tone/brand/muted` fill + `color/tone/brand/brand` text. Omit `count` to hide
+ * it; whether a zero shows is the consumer's call.
+ *
  * Figma: 36px tall, `pb-[10px]`, `base/base -semibold` label. The underline is a separate `motion.span` with a shared
  * `layoutId`, so it glides from the previously selected tab to the new one (CLAUDE.md "Tabs").
  */
@@ -40,11 +45,13 @@ const tabUnderlineVariants = cva(
 interface TabUnderlineProps extends Omit<AriaTabProps, "children" | "className"> {
   /** Tab label (Figma's `Tab` text). */
   label: React.ReactNode;
+  /** Counter after the label (Figma's `Counter`), e.g. how many items the view holds. Omit to hide it. */
+  count?: React.ReactNode;
   className?: string;
 }
 
 /** One underline tab — label with a gliding underline when selected. Figma: `Tab Item Underline`. Render inside `TabUnderlineList`. */
-function TabUnderline({ label, className, ...props }: TabUnderlineProps) {
+function TabUnderline({ label, count, className, ...props }: TabUnderlineProps) {
   const { resolve } = useMotionPreference();
 
   return (
@@ -54,6 +61,22 @@ function TabUnderline({ label, className, ...props }: TabUnderlineProps) {
           <Typography as="span" size="base" weight="semibold" className="whitespace-nowrap">
             {label}
           </Typography>
+          {count != null && (
+            <Typography
+              as="span"
+              size="xs"
+              weight="medium"
+              data-slot="tab-underline-counter"
+              className={cn(
+                "min-w-[22px] rounded-full px-1.5 py-0.5 text-center tabular-nums",
+                isSelected
+                  ? "bg-tone-brand-muted text-tone-brand"
+                  : "bg-tone-neutral-subtle text-foreground-muted",
+              )}
+            >
+              {count}
+            </Typography>
+          )}
           {isSelected && (
             <motion.span
               aria-hidden="true"

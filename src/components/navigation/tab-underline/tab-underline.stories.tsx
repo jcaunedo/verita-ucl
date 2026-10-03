@@ -49,6 +49,18 @@ export const Group: Story = {
   ),
 };
 
+/** With counters (Figma `Counter`): the active tab's pill is `tone/brand/muted`, the others `tone-neutral-subtle`. */
+export const WithCounters: Story = {
+  render: () => (
+    <TabUnderlines defaultSelectedKey="referrals">
+      <TabUnderlineList aria-label="Referrals views">
+        <TabUnderline id="referrals" label="My referrals" count={7} />
+        <TabUnderline id="network" label="My network" count={0} />
+      </TabUnderlineList>
+    </TabUnderlines>
+  ),
+};
+
 /** Every state at once: Active, Default, and Disabled (no Figma source for disabled). */
 export const AllVariants: Story = {
   render: () => (

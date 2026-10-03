@@ -570,29 +570,53 @@ everywhere).
 - Show toasts through `toast()`, never by placing a `Toast` card on the page
   yourself, so placement, stacking, and timing stay consistent.
 
-## Modals leave with a slow fade (`src/lib/motion/`, `src/components/overlays/modal/`)
+## Modals grow in and shrink out from the center (`src/lib/motion/`, `src/components/overlays/modal/`)
 
-**Rule:** every modal, and its scrim, closes with a plain 600ms fade
-(`motionDuration.deliberate`, standard curve), with no scale or movement. The
-entrance stays as it is: a 300ms fade with a soft scale and a 12px rise.
+**Rule:** every modal grows in place from the center of the viewport and
+leaves the same way in reverse, with no movement. Entrance: a 300ms fade as it
+scales from 0.92 to 1 (`modalEnterTransition`). Exit: a slow 600ms fade as it
+shrinks back to 0.92 toward the center, while the scrim fades over the same
+600ms (`modalExitTransition`, `motionDuration.deliberate`, standard curve).
 Every modal is built on `Modal`, so they all get this from one place.
 
-**Why:** design direction (2026-10-02): the exit should be more subtle. This
-is a deliberate exception to CLAUDE.md's "exits are shorter than entrances",
-so don't shorten it back to `exitTransition`.
+| Part | Enter | Exit |
+| --- | --- | --- |
+| Surface | Opacity 0 → 1, scale 0.92 → 1, no movement. 300ms, enter curve `[0.16, 1, 0.3, 1]` (`modalEnterTransition`) | Opacity → 0, scale → 0.92 toward the center. 600ms, standard curve `[0.4, 0, 0.2, 1]` (`modalExitTransition`) |
+| Scrim | Opacity 0 → 1, 300ms, standard curve | Opacity → 0, 600ms, standard curve; no clicks from the start |
+
+- **Scrim look:** `--overlay`, neutral-800 (#222a34) at 18%, over a 1px
+  background blur (`--blur-overlay`, applied as `backdrop-blur-overlay`).
+  Figma: verita.ds `Overlay` (`node-id=6072-11956`). The blur fades in and out
+  with the scrim's opacity.
+- **Origin:** the surface scales from its own center, which is the viewport's
+  center, since `Modal` centers it.
+- **Height changes** (e.g. a modal swapping views): the surface glides to its
+  new centered position (`layout="position"`, 300ms `standardTransition`)
+  instead of jumping.
+- **Reduced motion:** fades only. No scale, no layout glide.
+
+**Why:** design direction. 2026-10-02: the exit should be slow and subtle,
+a deliberate exception to CLAUDE.md's "exits are shorter than entrances", so
+don't shorten it back to `exitTransition`. 2026-10-03: the modal grows in from
+and shrinks out to the center, replacing the 12px rise and the fade-only exit;
+the scrim moved from black at 40% to Figma's 18% neutral-800 with a 1px blur.
 
 **How to apply:**
 
 - **New modal:** build it on `Modal` (like `ShareReferralLinkModal`). Don't
   wrap React Aria's `Modal`/`ModalOverlay` yourself or pass your own exit;
   that's how a modal would end up with a different close.
-- **Changing the timing:** edit `modalExitTransition` in
-  `src/lib/motion/transitions.ts`. It's the one value every modal uses
+- **Changing the timing:** edit `modalEnterTransition` / `modalExitTransition`
+  in `src/lib/motion/transitions.ts`. They're the values every modal uses
   (through `modalVariants` on the dialog and `modalOverlayVariants` on the
   scrim). The general `overlayVariants` keeps its short exit for non-modal
   overlays.
+- **Changing the scrim:** edit `--overlay` and `--blur-overlay` in
+  `theme.css`. Keep the blur small: a large backdrop blur over the whole
+  viewport is costly to render (CLAUDE.md "Performance").
 - The dialog renders inside the scrim, so the scrim's exit sets how long the
-  whole modal takes to leave. Change both together.
+  whole modal takes to leave. Change both together. The scale (0.92) is
+  `motionScale.modalIn`, shared by the entrance and the exit.
 - The scrim stops taking clicks as soon as the modal starts closing
   (`pointerEvents: "none"` in its exit), so the slow fade never blocks the
   page. Focus returns to the opening button when the fade ends, 600ms later.

@@ -10,6 +10,8 @@ const DEFAULT_DELIMITER = /[,\n]+/;
 interface TagInputProps {
   /** Visible label above the field (`sm -medium`). Omit it and pass `aria-label` when the context already names it. */
   label?: React.ReactNode;
+  /** An action at the right end of the label row, e.g. a "Preview email" link (Figma `Input` `Label Container`). */
+  labelAction?: React.ReactNode;
   /** Accessible name for the input when there's no visible `label`. */
   "aria-label"?: string;
   /** Helper line under the field (`sm`, muted). An error message takes its place while there is one. */
@@ -86,6 +88,7 @@ const hasValue = (values: string[], value: string) =>
 const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagInput(
   {
     label,
+    labelAction,
     "aria-label": ariaLabel,
     hint,
     placeholder,
@@ -162,10 +165,15 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
 
   return (
     <div data-slot="tag-input" className={cn("flex w-full flex-col items-start gap-1.5", className)}>
-      {label && (
-        <label htmlFor={inputId} className={fieldTextVariants({ slot: "label" })}>
-          {label}
-        </label>
+      {(label || labelAction) && (
+        <div data-slot="tag-input-label" className="flex w-full items-center justify-between gap-4">
+          {label && (
+            <label htmlFor={inputId} className={fieldTextVariants({ slot: "label" })}>
+              {label}
+            </label>
+          )}
+          {labelAction}
+        </div>
       )}
       {/* Clicking the field's empty space focuses the input. */}
       <div

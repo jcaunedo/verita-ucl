@@ -45,6 +45,8 @@ const motionScale = {
 	mediaHover: 1.03,
 	/** Menu/dropdown content entering (Menus and Dropdowns). */
 	popIn: 0.98,
+	/** A modal growing in from the center of the viewport (design direction, 2026-10-03). */
+	modalIn: 0.92,
 	/** A whole card/surface leaving on dismiss — larger than `press`/`popIn` since the element is actually exiting, not micro-adjusting. */
 	dismiss: 0.95,
 } as const;
