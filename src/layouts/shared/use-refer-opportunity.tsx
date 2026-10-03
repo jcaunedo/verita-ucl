@@ -20,6 +20,22 @@ const DEMO_OPPORTUNITY_REWARDS: Record<string, number> = { "senior-financial-ana
 const DEFAULT_OPPORTUNITY_REWARD = 300;
 
 /**
+ * Demo audiences: who each opportunity suits (roles, job titles, industry), for the LinkedIn and X share copy.
+ * An opportunity without one falls back to "professionals with {title} experience".
+ */
+const DEMO_OPPORTUNITY_AUDIENCES: Record<string, string> = {
+  "senior-financial-analyst": "financial analysts and FP&A professionals",
+  "amazon-clinical-data-coordinator": "clinical research coordinators and healthcare data specialists",
+  "retail-operations-contractor": "retail operations and store management professionals",
+  "clinical-data-coordinator": "clinical research coordinators and healthcare data specialists",
+  "strategic-finance-expert": "CFOs, finance leaders, and strategic finance professionals",
+  "movement-physical-activity-expert": "physical therapists, kinesiologists, and fitness professionals",
+  "search-quality-analyst": "search quality, content, and linguistics specialists",
+  "developer-relations-contractor": "developer advocates and software engineers",
+  "health-content-reviewer": "clinicians and medical writers",
+};
+
+/**
  * The professional's link for one opportunity: their referral link plus a short code for the opportunity, as in Figma
  * ("https://ref.verita-ai.com/hhd87-yw7e"). The code is derived from the key, so it stays the same between openings.
  */
@@ -63,6 +79,7 @@ function useReferOpportunity() {
           engagementTerms,
           duration,
           reward: DEMO_OPPORTUNITY_REWARDS[key] ?? DEFAULT_OPPORTUNITY_REWARD,
+          audience: DEMO_OPPORTUNITY_AUDIENCES[key],
         },
       });
       setOpen(true);

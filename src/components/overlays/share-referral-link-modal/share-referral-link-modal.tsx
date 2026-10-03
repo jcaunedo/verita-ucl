@@ -44,7 +44,62 @@ const SHARE_NETWORKS = [
   },
 ];
 
-/** A random index into `SHARE_MESSAGES`, never the same as `previous`, so reopening the modal changes the copy. */
+/** What an opportunity's share copy is written from (see `OPPORTUNITY_SHARE_MESSAGES`). */
+interface OpportunityShareContext {
+  /** "Senior Financial Analyst". */
+  title: string;
+  /** "a Senior Financial Analyst" / "an AI Trainer". */
+  role: string;
+  /** Who it suits, as a plural phrase, e.g. "financial analysts and FP&A professionals". */
+  audience: string;
+  /** The terms in brackets with a leading space, e.g. " ($95–115k/yr, 32 hrs/week, 1 year)", or "" when there are none. */
+  terms: string;
+}
+
+/**
+ * Intro copy for sharing a specific opportunity (pass `opportunity`), one picked at random each time the modal opens,
+ * like `SHARE_MESSAGES`. Each names the role and its terms and speaks to the people it suits (`audience`), so the post
+ * reaches the right part of the professional's network. Kept short enough for X with a long title. The link follows on
+ * its own line.
+ */
+const OPPORTUNITY_SHARE_MESSAGES: ((context: OpportunityShareContext) => string)[] = [
+  ({ role, audience, terms }) =>
+    `Calling ${audience}: Verita is looking for ${role}${terms}. Flexible, expert-level work. Take a look or pass it along:`,
+  ({ role, audience, terms }) =>
+    `Know any ${audience}? There’s ${role} opportunity on Verita${terms} that could be a great fit. Worth a look:`,
+  ({ role, audience, terms }) =>
+    `Sharing ${role} opportunity for ${audience}${terms}. Verita connects experts with flexible work that fits their background:`,
+  ({ title, audience, terms }) =>
+    `Open role for ${audience}: ${title} on Verita${terms}. Apply, or share it with someone who’d be a great fit:`,
+  ({ role, audience, terms }) =>
+    `If you’re one of the ${audience} in my network, this could be for you: ${role} opportunity on Verita${terms}. Details here:`,
+];
+
+/** "a Senior Financial Analyst", "an AI Trainer": the title with its indefinite article. */
+function withArticle(title: string) {
+  return `${/^[aeiou]/i.test(title) ? "an" : "a"} ${title}`;
+}
+
+/**
+ * The share copy for an opportunity: `OPPORTUNITY_SHARE_MESSAGES[index]` filled from it, then the link. Without an
+ * `audience`, the copy speaks to "professionals with {title} experience".
+ */
+function opportunityShareText(opportunity: ReferralOpportunity, index: number, link: string) {
+  const { title, audience, compensation, engagementTerms, duration } = opportunity;
+  const termParts = [compensation, engagementTerms, duration].filter(Boolean);
+  const message = OPPORTUNITY_SHARE_MESSAGES[index % OPPORTUNITY_SHARE_MESSAGES.length]({
+    title,
+    role: withArticle(title),
+    audience: audience ?? `professionals with ${title} experience`,
+    terms: termParts.length > 0 ? ` (${termParts.join(", ")})` : "",
+  });
+  return `${message}\n${link}`;
+}
+
+/**
+ * A random index into the share messages (`SHARE_MESSAGES` and `OPPORTUNITY_SHARE_MESSAGES` are the same length),
+ * never the same as `previous`, so reopening the modal changes the copy.
+ */
 function pickMessageIndex(previous: number | null) {
   if (SHARE_MESSAGES.length < 2) return 0;
   let next = Math.floor(Math.random() * SHARE_MESSAGES.length);
@@ -71,6 +126,12 @@ interface ReferralOpportunity {
   duration?: string;
   /** The opportunity's referral reward in USD (`referrals.md` §9), shown as "$450 potential referral reward". */
   reward?: number;
+  /**
+   * Who the opportunity suits, as a plural phrase: the roles, job titles, or industry it's for, e.g. "financial analysts
+   * and FP&A professionals". Not shown in the modal; the LinkedIn and X share copy speaks to them. Defaults to
+   * "professionals with {title} experience".
+   */
+  audience?: string;
 }
 
 interface ShareReferralLinkModalProps {
@@ -107,8 +168,17 @@ const rewardCurrency = new Intl.NumberFormat("en-US", { style: "currency", curre
  * duration, with muted `·` between). The reward sits 12px below as an info `InlineAlert`.
  */
 function OpportunitySummary({ opportunity }: { opportunity: ReferralOpportunity }) {
-  const { title, partnerName, company = "verita", logoSrc, logoAlt, compensation, engagementTerms, duration, reward } =
-    opportunity;
+  const {
+    title,
+    partnerName,
+    company = "verita",
+    logoSrc,
+    logoAlt,
+    compensation,
+    engagementTerms,
+    duration,
+    reward,
+  } = opportunity;
   const terms = [
     { value: compensation, className: "font-semibold" },
     { value: engagementTerms },
@@ -220,7 +290,8 @@ function useMeasuredHeight() {
  *   `disabled:bg-neutral-300`); a valid address still in the input counts and is sent with the tags.
  * - Bottom row: the toggle between the two views ("Share by email" / "Share your link", underlined `sm`), `or` in
  *   `xs` muted, then "Share on:" LinkedIn · X · Facebook, each opening that network's share page in a new window.
- *   LinkedIn and X prefill one of `SHARE_MESSAGES` (picked at random per opening) with the link; Facebook takes the
+ *   LinkedIn and X prefill one of `SHARE_MESSAGES` (picked at random per opening) with the link, or, for an
+ *   opportunity, one of `OPPORTUNITY_SHARE_MESSAGES`, naming the role and its terms for the people it suits (`audience`). Facebook takes the
  *   link only. No hover in Figma; links fade to `foreground/muted`, like `Hyperlink`'s hover swap.
  *
  * Motion: swapping views crossfades the field and button (`fadeVariants`, the old view leaves before the new one
@@ -268,7 +339,10 @@ function ShareReferralLinkModal({
     setDraft("");
     setEmailError(null);
   }, [isOpen]);
-  const shareText = SHARE_MESSAGES[messageIndex].replace("{link}", link);
+  // An opportunity gets copy written for it and the people it suits; a general referral gets the general copy.
+  const shareText = opportunity
+    ? opportunityShareText(opportunity, messageIndex, link)
+    : SHARE_MESSAGES[messageIndex].replace("{link}", link);
 
   const switchMode = () => {
     const next: ShareMode = mode === "link" ? "email" : "link";

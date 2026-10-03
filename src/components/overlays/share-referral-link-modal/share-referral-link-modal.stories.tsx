@@ -31,7 +31,8 @@ export const Default: Story = {
 
 /**
  * Figma `Opportunity Default` / `Opportunity Email`: referring someone to a specific opportunity. The opportunity summary
- * and its potential reward sit above the same link and email views.
+ * and its potential reward sit above the same link and email views. LinkedIn and X open with copy written for the
+ * opportunity and the people it suits (`audience`).
  */
 export const Opportunity: Story = {
   render: () => {
@@ -50,6 +51,7 @@ export const Opportunity: Story = {
             engagementTerms: "32 hrs/week",
             duration: "1 year",
             reward: 450,
+            audience: "financial analysts and FP&A professionals",
           }}
         />
         <Toaster />
