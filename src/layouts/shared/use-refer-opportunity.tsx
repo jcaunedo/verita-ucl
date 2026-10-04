@@ -47,7 +47,7 @@ function opportunityLink(key: string) {
 }
 
 /**
- * "Refer" from an opportunity's more-actions menu (`referrals.md` §6): opens `ShareReferralLinkModal` for that
+ * "Refer someone" from an opportunity's more-actions menu (`referrals.md` §6): opens `ShareReferralLinkModal` for that
  * opportunity. Returns `refer(row)` for the menu item and `modal` to render once on the page (the modal and the
  * `Toaster` its confirmations need). The last opportunity is kept after closing, so the modal fades out with its
  * content instead of going blank.

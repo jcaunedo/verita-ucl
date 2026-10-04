@@ -39,7 +39,7 @@ export const Opportunity: Story = {
     const [isOpen, setOpen] = React.useState(true);
     return (
       <div className="flex min-h-[640px] items-start bg-white p-6">
-        <Button onPress={() => setOpen(true)}>Refer</Button>
+        <Button onPress={() => setOpen(true)}>Refer someone</Button>
         <ShareReferralLinkModal
           isOpen={isOpen}
           onOpenChange={setOpen}

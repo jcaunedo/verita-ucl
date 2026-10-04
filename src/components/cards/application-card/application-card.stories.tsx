@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { partnerLogos } from "@/assets/logos";
-import { ArrowUpRight, UsersRight, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, XCircle } from "@untitledui/icons";
 
+import { FaceSlightlySmilingPlus } from "@/components/icons";
 import { MenuItem } from "@/components/overlays/menu";
 import { ApplicationCard, ApplicationCardGroup } from "./application-card";
 
@@ -145,7 +146,7 @@ export const WithActionsMenu: Story = {
     actionsMenu: (
       <>
         <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
-        <MenuItem icon={UsersRight}>Refer</MenuItem>
+        <MenuItem icon={FaceSlightlySmilingPlus}>Refer someone</MenuItem>
         <MenuItem icon={XCircle} tone="destructive">Withdraw</MenuItem>
       </>
     ),

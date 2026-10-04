@@ -1,9 +1,10 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, UsersRight, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { cardDismissVariants, rowDismissVariants, standardTransition, useMotionPreference } from "@/lib/motion";
+import { FaceSlightlySmilingPlus } from "@/components/icons";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import {
   MetricTab,
@@ -260,7 +261,7 @@ function ApplicationList({
 }: {
   rows: (typeof DEMO_APPLICATIONS)[number][];
   onWithdraw: (key: string) => void;
-  /** "Refer" in the row's menu: opens the opportunity referral modal. */
+  /** "Refer someone" in the row's menu: opens the opportunity referral modal. */
   onRefer: (opportunity: ReferableOpportunity) => void;
 }) {
   return (
@@ -273,8 +274,8 @@ function ApplicationList({
           actionsMenu={
             <>
               <MenuItem icon={ArrowUpRight} onAction={() => {}}>View Details</MenuItem>
-              <MenuItem icon={UsersRight} onAction={() => onRefer({ key, ...application })}>
-                Refer
+              <MenuItem icon={FaceSlightlySmilingPlus} onAction={() => onRefer({ key, ...application })}>
+                Refer someone
               </MenuItem>
               {/* Withdraw only while the application is still open (`applications-card.md` §4.1). */}
               {filter === "open" && (
@@ -637,7 +638,7 @@ function Engagements({
           </MetricTabs>
         </div>
       </div>
-      {/* "Refer" in an application's `···` menu opens the opportunity referral modal. */}
+      {/* "Refer someone" in an application's `···` menu opens the opportunity referral modal. */}
       {referModal}
     </div>
   );

@@ -192,7 +192,7 @@ function ReferralTable({ rows }: { rows: readonly DemoReferral[] }) {
               </Typography>
             </div>
           </div>
-          {/* Figma `badge`: `md` (26px), `sm` label. */}
+          {/* Figma `badge`: `md` (24px), `sm` label. */}
           <div className="flex min-w-0">
             <Badge tone={REFERRAL_STAGE_TONES[referral.stage]} label={referral.stage} size="md" />
           </div>

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { ArrowUpRight, DotsHorizontal, UsersRight, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, DotsHorizontal, XCircle } from "@untitledui/icons";
 
+import { FaceSlightlySmilingPlus } from "@/components/icons";
 import { Button } from "@/components/buttons/button";
 import { MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "./menu";
 
@@ -26,7 +27,7 @@ export const Default: Story = {
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
         <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
-        <MenuItem icon={UsersRight}>Refer</MenuItem>
+        <MenuItem icon={FaceSlightlySmilingPlus}>Refer someone</MenuItem>
         <MenuItem icon={XCircle} tone="destructive">
           Withdraw
         </MenuItem>
@@ -42,7 +43,7 @@ export const WithSeparator: Story = {
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
         <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
-        <MenuItem icon={UsersRight}>Refer</MenuItem>
+        <MenuItem icon={FaceSlightlySmilingPlus}>Refer someone</MenuItem>
         <MenuSeparator />
         <MenuItem icon={XCircle} tone="destructive">
           Withdraw
@@ -59,7 +60,7 @@ export const TextOnly: Story = {
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
         <MenuItem>View Details</MenuItem>
-        <MenuItem>Refer</MenuItem>
+        <MenuItem>Refer someone</MenuItem>
         <MenuItem tone="destructive">Withdraw</MenuItem>
       </MenuContent>
     </MenuTrigger>
@@ -77,7 +78,7 @@ export const AllVariants: Story = {
           </Button>
           <MenuContent placement="bottom start">
             <MenuItem size={size} icon={ArrowUpRight}>View Details</MenuItem>
-            <MenuItem size={size} icon={UsersRight}>Refer</MenuItem>
+            <MenuItem size={size} icon={FaceSlightlySmilingPlus}>Refer someone</MenuItem>
             <MenuItem size={size} icon={XCircle} tone="destructive">
               Withdraw
             </MenuItem>

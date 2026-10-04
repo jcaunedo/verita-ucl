@@ -1,12 +1,13 @@
 import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, UsersRight, XCircle } from "@untitledui/icons";
+import { ArrowUpRight, XCircle } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
 import { partnerLogos } from "@/assets/logos";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
 import { mediaAbove } from "@/lib/breakpoints";
 import { cardDismissVariants, reflowTransition, useMotionPreference } from "@/lib/motion";
+import { FaceSlightlySmilingPlus } from "@/components/icons";
 import { Sidebar, type SidebarProps } from "@/components/navigation/sidebar";
 import { Typography } from "@/components/typography";
 import { Hyperlink } from "@/components/buttons/hyperlink";
@@ -383,8 +384,8 @@ function Dashboard({
                         actionsMenu={
                         <>
                           <MenuItem icon={ArrowUpRight} onAction={() => {}}>View Details</MenuItem>
-                          <MenuItem icon={UsersRight} onAction={() => refer({ key, ...application })}>
-                            Refer
+                          <MenuItem icon={FaceSlightlySmilingPlus} onAction={() => refer({ key, ...application })}>
+                            Refer someone
                           </MenuItem>
                           <MenuItem icon={XCircle} tone="destructive" onAction={() => withdraw(key)}>
                             Withdraw
@@ -437,7 +438,7 @@ function Dashboard({
           </div>
         </div>
       </div>
-      {/* "Refer" in an application's `···` menu opens the opportunity referral modal. */}
+      {/* "Refer someone" in an application's `···` menu opens the opportunity referral modal. */}
       {referModal}
     </div>
   );

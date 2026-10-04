@@ -42,17 +42,20 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * combination (2026-09) — the fill alone now carries the tone, no
  * `border-tone-*-muted` outline.
  *
- * `size`: `sm` (22px, `text-xs`, `gap-0.5`/`px-1.5`), `md` (26px, `text-sm`,
- * `gap-px`/`px-1.5`), `lg` (30px, `text-sm`, `gap-0.5`/`px-2`) — the type
- * ramp comes from the file's `xs`/`sm` text styles, so heights differ
- * slightly from Untitled UI's own 22/24/28 scale. Label weight is regular
+ * `size`: `sm` (22px, `text-xs`, `gap-0.5`/`px-1`/`py-0.5`), `md` (24px,
+ * `text-sm`, `gap-px`/`px-[3px]`/`py-px`), `lg` (30px, `text-sm`,
+ * `gap-0.5`/`px-1.5`/`py-1`) — the type ramp comes from the file's `xs`/`sm`
+ * text styles, so heights differ slightly from Untitled UI's own 22/24/28
+ * scale. Re-synced 2026-10-04: outer horizontal padding is now sm 4px, md
+ * 3px, lg 6px, and md's vertical padding 1px, making md 24px (Figma's variant
+ * name still says 26). Label weight is regular
  * (400), not medium, per Figma's bound `font-weight/regular` text style.
  * Gap/padding re-measured directly from Figma per size (2026-09-17) — each
  * size's outer gap and horizontal padding are its own literal value, not a
  * shared token, so don't normalize them to match each other. The label also
  * carries Figma's `Label Container` padding (2026-09-22: sm 2px, md/lg 4px),
- * so text sits 8/10/12px from the badge edge — outer `px-*` alone
- * (6/6/8px) under-pads it.
+ * so text sits 6/7/10px from the badge edge — outer `px-*` alone
+ * (4/3/6px) under-pads it.
  *
  * `dot`, `icon`, `rightIcon`, and `onClose` are boolean-driven slots rather
  * than `cva` variants, matching `Button`'s icon-prop pattern — passing
@@ -81,9 +84,11 @@ const badgeVariants = cva(
       },
       size: {
         // `*:data-[slot=badge-label]:px-*` = Figma's `Label Container` padding, on top of the outer `px-*`.
-        sm: "h-[22px] gap-0.5 px-1.5 py-0.5 text-xs *:data-[slot=badge-label]:px-0.5",
-        md: "h-[26px] gap-px px-1.5 py-0.5 text-sm *:data-[slot=badge-label]:px-1",
-        lg: "h-[30px] gap-0.5 px-2 py-1 text-sm *:data-[slot=badge-label]:px-1",
+        sm: "h-[22px] gap-0.5 px-1 py-0.5 text-xs *:data-[slot=badge-label]:px-0.5",
+        // Figma still names it `md · 26`, but the frame measures 24px since 2026-10-04 (22px line + 1px top/bottom).
+        // 3px horizontal padding is a raw value in Figma (no spacing variable), so it's a literal here.
+        md: "h-6 gap-px px-[3px] py-px text-sm *:data-[slot=badge-label]:px-1",
+        lg: "h-[30px] gap-0.5 px-1.5 py-1 text-sm *:data-[slot=badge-label]:px-1",
       },
     },
     defaultVariants: { tone: "neutral", size: "sm" },

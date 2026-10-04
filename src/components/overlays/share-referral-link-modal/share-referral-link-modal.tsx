@@ -303,7 +303,7 @@ function useMeasuredHeight() {
  * The modal for sharing a professional's referral link (`product-specs/referrals.md` §6). Figma: verita.ds →
  * `share-referral-link-modal` (`node-id=6087-4006`), four states: `Link Default` / `Link Email` (a general referral,
  * from Referrals' "Share your referral link") and `Opportunity Default` / `Opportunity Email` (pass `opportunity`;
- * from an opportunity's "Refer"). Built on `Modal`.
+ * from an opportunity's "Refer someone"). Built on `Modal`.
  *
  * - Opportunity: "Refer someone to apply", its own description, and the opportunity summary with its potential reward
  *   (`OpportunitySummary`) between the description and the link. The link and email views below are the same.
