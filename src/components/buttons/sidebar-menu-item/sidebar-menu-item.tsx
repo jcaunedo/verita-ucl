@@ -9,23 +9,31 @@ import { SidebarTooltip, SidebarTooltipTrigger } from "@/components/overlays/sid
  * Figma states → code (updated 2026-09-21 — dropped the rosewood/primary
  * accent for a neutral/brand grayscale scheme; text size dropped from
  * `base`/16px to `sm`/14px in the same pass; since 2026-10-03 Active is
- * semibold, the other two medium):
+ * semibold, the other two medium; on 2026-10-04 the fill moved from Active to
+ * Hover):
  * - Default: `foreground-muted` text/icon, medium weight, no fill.
- * - Hover (`data-hovered`): `icon-foreground` text/icon, medium weight, no
- *   fill.
+ * - Hover (`data-hovered`): `icon-foreground` text/icon, medium weight,
+ *   `tone-brand-subtle` fill, and a 4px outside outline in the same color
+ *   (Figma's icon sits at the same 8px inset with and without it, so the
+ *   stroke doesn't consume content space: `outline`, not `border`).
  * - Active/current page (`aria-current="page"` → React Aria's `data-current`):
- *   `tone-brand` text/icon, semibold (`sm -semibold`), `tone-brand-subtle` fill, and a
- *   4px outside outline in the same `tone-brand-subtle` color (Figma's icon
- *   sits at the same 8px inset in both Default and Active, confirming the
- *   stroke doesn't consume content space, so `outline` rather than `border`
- *   still matches) — a deliberately distinct third state, not hover reused.
+ *   `tone-brand` text/icon and semibold (`sm -semibold`), with no fill; the
+ *   sidebar also swaps in the solid icon. Hovering the current item shows the
+ *   hover fill behind it.
  *
  * `h-9` (36px) is explicit rather than content-driven — Figma fixes every
  * item at `h-[36px]` regardless of state; `py-[7px]` with `sm`'s 22px
  * line-height now computes to exactly 36px.
  */
 const sidebarMenuItemVariants = cva(
-  "inline-flex h-9 w-full items-center gap-3.5 rounded-full px-2 py-[7px] text-sm font-medium text-foreground-muted outline-4 outline-transparent data-[hovered]:text-icon-foreground data-[current]:bg-tone-brand-subtle data-[current]:font-semibold data-[current]:text-tone-brand data-[current]:outline-tone-brand-subtle data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 [&_svg]:size-5 [&_svg]:shrink-0",
+  [
+    "inline-flex h-9 w-full items-center gap-3.5 rounded-full px-2 py-[7px] text-sm font-medium text-foreground-muted outline-4 outline-transparent",
+    // The hover fill fades in and out with the text color (`motionDuration.fast`, standard curve, like Button).
+    "transition-[background-color,color,outline-color] duration-160 ease-in-out",
+    "data-[hovered]:bg-tone-brand-subtle data-[hovered]:text-icon-foreground data-[hovered]:outline-tone-brand-subtle",
+    "data-[current]:font-semibold data-[current]:text-tone-brand",
+    "data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 [&_svg]:size-5 [&_svg]:shrink-0",
+  ].join(" "),
 );
 
 interface SidebarMenuItemProps extends Omit<LinkProps, "children" | "className"> {
