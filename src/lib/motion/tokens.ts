@@ -47,6 +47,8 @@ const motionScale = {
 	popIn: 0.98,
 	/** A modal growing in from the center of the viewport (design direction, 2026-10-03). */
 	modalIn: 0.92,
+	/** A small element (e.g. an icon) growing in as it replaces another in place (design direction, 2026-10-03). */
+	swapIn: 0.8,
 	/** A whole card/surface leaving on dismiss — larger than `press`/`popIn` since the element is actually exiting, not micro-adjusting. */
 	dismiss: 0.95,
 } as const;

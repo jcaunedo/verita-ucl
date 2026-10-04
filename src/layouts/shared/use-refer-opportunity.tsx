@@ -4,6 +4,7 @@ import type { ApplicationCardProps } from "@/components/cards/application-card";
 import { Toaster } from "@/components/feedback/toast";
 import { ShareReferralLinkModal, type ReferralOpportunity } from "@/components/overlays/share-referral-link-modal";
 import { DEMO_REFERRAL_LINK } from "@/layouts/shared/demo-referrals";
+import { DEMO_CONNECTIONS } from "@/layouts/shared/demo-connections";
 
 /** An opportunity row the prototype can refer from: an application's own fields, plus its key. */
 type ReferableOpportunity = { key: string } & Pick<
@@ -95,6 +96,8 @@ function useReferOpportunity() {
           onOpenChange={setOpen}
           link={opportunity.link}
           opportunity={opportunity.details}
+          // "Share by email" suggests the demo network, as if it had been imported on Referrals → My network.
+          connections={DEMO_CONNECTIONS}
         />
       )}
       {/* Confirms "Copy referral link" and "Send invite": bottom right on desktop, bottom center on mobile. */}

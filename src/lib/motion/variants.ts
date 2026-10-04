@@ -7,6 +7,7 @@ import {
   modalEnterTransition,
   modalExitTransition,
   standardTransition,
+  swapEnterTransition,
 } from "./transitions";
 
 /**
@@ -149,6 +150,17 @@ const modalOverlayVariants: Variants = {
 };
 
 /**
+ * Two small elements swapping in place, stacked on each other (e.g. the collapsed sidebar's logo mark and expand icon
+ * on hover). Animate the one leaving to `hidden` and the one arriving to `shown`: the leaving one dissolves quickly
+ * (`exitTransition`, 160ms) while the arriving one fades in and grows from `motionScale.swapIn` (0.8) to 1
+ * (`swapEnterTransition`, 300ms), so the swap reads as one handing off to the other (design direction, 2026-10-03).
+ */
+const iconSwapVariants: Variants = {
+  shown: { opacity: 1, scale: 1, transition: swapEnterTransition },
+  hidden: { opacity: 0, scale: motionScale.swapIn, transition: exitTransition },
+};
+
+/**
  * Drawer/panel surface sliding in from an edge. Callers should set the
  * appropriate axis before spreading — this default assumes a right-edge
  * panel (matching most drawer usage); pass a custom `initial`/`exit` `x`/`y`
@@ -217,6 +229,7 @@ export {
   overlayVariants,
   modalVariants,
   modalOverlayVariants,
+  iconSwapVariants,
   popoverVariants,
   accountMenuVariants,
   panelVariants,

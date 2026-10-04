@@ -7,14 +7,14 @@ import { SidebarTooltip, SidebarTooltipTrigger } from "@/components/overlays/sid
 
 /**
  * Figma states → code (updated 2026-09-21 — dropped the rosewood/primary
- * accent for a neutral/brand grayscale scheme; all three states are now
- * medium weight (previously only Active was); text size dropped from
- * `base`/16px to `sm`/14px in the same pass):
+ * accent for a neutral/brand grayscale scheme; text size dropped from
+ * `base`/16px to `sm`/14px in the same pass; since 2026-10-03 Active is
+ * semibold, the other two medium):
  * - Default: `foreground-muted` text/icon, medium weight, no fill.
  * - Hover (`data-hovered`): `icon-foreground` text/icon, medium weight, no
  *   fill.
  * - Active/current page (`aria-current="page"` → React Aria's `data-current`):
- *   `tone-brand` text/icon, medium weight, `tone-brand-subtle` fill, and a
+ *   `tone-brand` text/icon, semibold (`sm -semibold`), `tone-brand-subtle` fill, and a
  *   4px outside outline in the same `tone-brand-subtle` color (Figma's icon
  *   sits at the same 8px inset in both Default and Active, confirming the
  *   stroke doesn't consume content space, so `outline` rather than `border`
@@ -25,7 +25,7 @@ import { SidebarTooltip, SidebarTooltipTrigger } from "@/components/overlays/sid
  * line-height now computes to exactly 36px.
  */
 const sidebarMenuItemVariants = cva(
-  "inline-flex h-9 w-full items-center gap-3.5 rounded-full px-2 py-[7px] text-sm font-medium text-foreground-muted outline-4 outline-transparent data-[hovered]:text-icon-foreground data-[current]:bg-tone-brand-subtle data-[current]:text-tone-brand data-[current]:outline-tone-brand-subtle data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 [&_svg]:size-5 [&_svg]:shrink-0",
+  "inline-flex h-9 w-full items-center gap-3.5 rounded-full px-2 py-[7px] text-sm font-medium text-foreground-muted outline-4 outline-transparent data-[hovered]:text-icon-foreground data-[current]:bg-tone-brand-subtle data-[current]:font-semibold data-[current]:text-tone-brand data-[current]:outline-tone-brand-subtle data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focus-visible]:ring-offset-2 [&_svg]:size-5 [&_svg]:shrink-0",
 );
 
 interface SidebarMenuItemProps extends Omit<LinkProps, "children" | "className"> {

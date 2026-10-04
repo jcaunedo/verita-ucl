@@ -36,9 +36,10 @@ const PROTOTYPE_PAGE_LINKS: { id: string; label: string; href: string; restoresO
     hidden: true,
   },
   {
-    id: "page-my-referrals-empty",
-    label: "My Referrals empty state",
-    href: "iframe.html?id=layouts-referrals--empty&viewMode=story",
+    // The sidebar's Referrals opens the empty start; this jumps to the page with My referrals and My network filled in.
+    id: "page-referrals-with-content",
+    label: "Referrals with content",
+    href: "iframe.html?id=layouts-referrals--with-referrals&viewMode=story",
   },
 ];
 

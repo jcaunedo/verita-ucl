@@ -31,6 +31,20 @@ Storybook launches on [http://localhost:6009](http://localhost:6009) where you c
 | `npm run lint`            | Type-check with TypeScript              |
 | `npm run build-storybook` | Build static Storybook site             |
 
+## Retrying a Failed Netlify Deploy
+
+The Storybook site deploys to Netlify on every push to `main` (see `netlify.toml`). If a deploy fails before the build
+starts, for example with "Failed during stage 'preparing repo'" or "Host key verification failed", Netlify couldn't
+fetch the repo and the code isn't at fault. Push an empty commit to trigger a fresh deploy:
+
+```bash
+git commit --allow-empty -m "chore: retry Netlify deploy"
+git push
+```
+
+If it fails the same way again, re-link the repository in Netlify (Project configuration → Build & deploy → Continuous
+deployment → Manage repository → Link to a different repository).
+
 ## Using in an App
 
 This package is not yet published to a registry. For now, consume it locally

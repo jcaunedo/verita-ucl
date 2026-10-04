@@ -87,7 +87,7 @@ export {
 } from "./components/forms/select";
 
 export { SearchField, type SearchFieldProps } from "./components/forms/search-field";
-export { TagInput, type TagInputProps } from "./components/forms/tag-input";
+export { TagInput, type TagInputProps, type TagInputSuggestion } from "./components/forms/tag-input";
 export { Input, type InputProps } from "./components/forms/input";
 export { Textarea, type TextareaProps } from "./components/forms/textarea";
 export {
@@ -239,5 +239,6 @@ export { Modal, type ModalProps } from "./components/overlays/modal";
 export {
   ShareReferralLinkModal,
   type ShareReferralLinkModalProps,
+  type ReferralConnection,
   type ReferralOpportunity,
 } from "./components/overlays/share-referral-link-modal";

@@ -26,6 +26,15 @@ const exitTransition: Transition = {
 };
 
 /**
+ * An element growing in as it replaces another in place (`iconSwapVariants`): `motionDuration.normal` (300ms) on the
+ * enter curve, so the scale-up arrives quickly and settles gently. The element it replaces leaves on `exitTransition`.
+ */
+const swapEnterTransition: Transition = {
+	duration: motionDuration.normal,
+	ease: [0.16, 1, 0.3, 1],
+};
+
+/**
  * A modal dialog growing in: `motionDuration.normal` (300ms) on the enter curve (quick start, gentle finish), so the
  * scale-up reads as arriving rather than easing in slowly.
  */
@@ -89,6 +98,7 @@ export {
 	enterTransition,
 	exitTransition,
 	modalEnterTransition,
+	swapEnterTransition,
 	modalExitTransition,
 	subtleSpring,
 	responsiveSpring,

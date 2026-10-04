@@ -1,8 +1,28 @@
 import * as React from "react";
+import { Popover as AriaPopover } from "react-aria-components";
 
 import { cn } from "@/lib/utils";
+import { Avatar } from "@/components/data-display/avatar";
 import { Tag, TagGroup, TagList } from "@/components/data-display/tag";
 import { fieldState, fieldTextVariants, fieldVariants } from "@/components/forms/field";
+import { PopoverSurface, selectItemVariants } from "@/components/forms/select";
+
+/** A value the field can suggest as you type, e.g. a connection: picking it adds `value` as a tag, labeled `label`. */
+interface TagInputSuggestion {
+  /** What becomes the tag's value, e.g. an email address. */
+  value: string;
+  /** What the option and the tag show, e.g. the person's name. */
+  label: string;
+  /** Secondary text after the label in the option, e.g. a job title. Searchable. */
+  description?: string;
+  /** Leading 24px avatar photo in the option. */
+  avatarSrc?: string;
+  /** Initials avatar background when there's no photo. */
+  avatarClassName?: string;
+}
+
+/** The most suggestions shown at once. Keep typing to narrow them. */
+const MAX_SUGGESTIONS = 6;
 
 /** What splits typed or pasted text into tags by default: commas and line breaks. */
 const DEFAULT_DELIMITER = /[,\n]+/;
@@ -43,6 +63,14 @@ interface TagInputProps {
     React.InputHTMLAttributes<HTMLInputElement>,
     "value" | "defaultValue" | "onChange" | "placeholder" | "id" | "aria-invalid" | "aria-describedby"
   >;
+  /**
+   * Values to suggest while typing (e.g. the professional's connections), matched on label, description, and value.
+   * Picking one adds its `value` as a tag showing its `label`. With suggestions, a typed space or delimiter only splits
+   * off a tag when the text before it is valid (e.g. an email), so names can be searched with spaces.
+   */
+  suggestions?: readonly TagInputSuggestion[];
+  /** Accessible name for the suggestion list. Default: "Suggestions". */
+  suggestionsLabel?: string;
   /** Figma `Size` (from `Input`): `md` (40px, `base` text, the default) or `sm` (36px, `sm` text). Tags stay 24px. */
   size?: "sm" | "md";
   /** No typing and no removing tags; Figma `Input`'s Disabled look. */
@@ -82,6 +110,11 @@ const hasValue = (values: string[], value: string) =>
  * - Backspace in the empty input removes the last tag. Arrow keys move between tags and Backspace/Delete removes the
  *   focused one (React Aria `TagGroup`); each tag's × removes it too. Removing the last tag returns focus to the input.
  * - Enter never submits the surrounding form, so a second Enter can't send by accident.
+ * - With `suggestions`: typing opens a list of matches under the field (`SelectContent`'s panel and `SelectItem`'s rows:
+ *   avatar, label, muted description), excluding values already added. The first match is highlighted; Up/Down move,
+ *   Enter or a click adds it, Escape closes the list (and only the list). The input is an ARIA combobox, so screen
+ *   readers announce the highlighted option. The list is portaled, so a clipping parent (e.g. a modal) can't cut it off.
+ *   A picked suggestion's tag shows its label and avatar (photo, or first initial on its color).
  *
  * The ref goes to the text input, e.g. to focus it.
  */
@@ -104,6 +137,8 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
     errorMessage,
     tagsLabel,
     inputProps,
+    suggestions,
+    suggestionsLabel = "Suggestions",
     size = "md",
     isDisabled,
     isReadOnly,
@@ -113,7 +148,9 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
 ) {
   const inputId = React.useId();
   const helpId = React.useId();
+  const listId = React.useId();
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const fieldRef = React.useRef<HTMLDivElement>(null);
   React.useImperativeHandle(forwardedRef, () => inputRef.current as HTMLInputElement);
 
   const [values, setValues] = useControllableState(value, defaultValue, onChange);
@@ -155,6 +192,50 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
   };
   const add = (text: string, options: { showError: boolean }) => addParts(split(text), options);
 
+  // Suggestions: the matches for what's typed, minus values already added.
+  const [listDismissed, setListDismissed] = React.useState(false);
+  const [highlighted, setHighlighted] = React.useState(0);
+  const needle = draft.trim().toLowerCase();
+  const matches = React.useMemo(
+    () =>
+      needle && suggestions
+        ? suggestions
+            .filter((suggestion) => !hasValue(values, suggestion.value))
+            .filter((suggestion) =>
+              [suggestion.label, suggestion.description ?? "", suggestion.value].some((text) =>
+                text.toLowerCase().includes(needle),
+              ),
+            )
+            .slice(0, MAX_SUGGESTIONS)
+        : [],
+    [needle, suggestions, values],
+  );
+  const listOpen = matches.length > 0 && !listDismissed && !isDisabled && !isReadOnly;
+  const activeIndex = Math.min(highlighted, matches.length - 1);
+  const optionId = (index: number) => `${listId}-option-${index}`;
+  const suggestionFor = (item: string) => suggestions?.find((suggestion) => suggestion.value === item);
+  const labelFor = (item: string) => suggestionFor(item)?.label ?? item;
+
+  const pick = (suggestion: TagInputSuggestion) => {
+    setValues([...values, suggestion.value]);
+    setDraft("");
+    setOwnError(null);
+    setHighlighted(0);
+    inputRef.current?.focus();
+  };
+
+  /** With suggestions, a delimiter only splits when everything before the last one is valid (names keep their spaces). */
+  const shouldSplit = (text: string) => {
+    const parts = text.split(delimiter);
+    if (parts.length < 2) return false;
+    if (!suggestions) return true;
+    return parts
+      .slice(0, -1)
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .every((part) => !validate?.(part));
+  };
+
   const remove = (keys: Set<React.Key>) => {
     const next = values.filter((item) => !keys.has(item));
     setValues(next);
@@ -177,6 +258,7 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
       )}
       {/* Clicking the field's empty space focuses the input. */}
       <div
+        ref={fieldRef}
         data-slot="tag-input-field"
         data-invalid={error ? true : undefined}
         onMouseDown={(event) => {
@@ -199,11 +281,23 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
             className="contents"
           >
             <TagList className="contents">
-              {values.map((item) => (
-                <Tag key={item} id={item}>
-                  {item}
-                </Tag>
-              ))}
+              {values.map((item) => {
+                // A picked suggestion (e.g. a connection) keeps its avatar on the tag: the photo, or its initial.
+                const suggestion = suggestionFor(item);
+                const hasAvatar = Boolean(suggestion?.avatarSrc || suggestion?.avatarClassName);
+                return (
+                  <Tag
+                    key={item}
+                    id={item}
+                    textValue={labelFor(item)}
+                    avatarSrc={suggestion?.avatarSrc}
+                    avatarInitials={hasAvatar && suggestion ? initialsOf(suggestion.label) : undefined}
+                    avatarClassName={suggestion?.avatarClassName}
+                  >
+                    {labelFor(item)}
+                  </Tag>
+                );
+              })}
             </TagList>
           </TagGroup>
         )}
@@ -216,10 +310,19 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
           readOnly={isReadOnly}
           aria-label={label ? undefined : ariaLabel}
           value={draft}
+          {...(suggestions && {
+            role: "combobox",
+            "aria-autocomplete": "list" as const,
+            "aria-expanded": listOpen,
+            "aria-controls": listOpen ? listId : undefined,
+            "aria-activedescendant": listOpen ? optionId(activeIndex) : undefined,
+          })}
           onChange={(event) => {
             const next = event.target.value;
+            setListDismissed(false);
+            setHighlighted(0);
             // A delimiter typed (or autocompleted) splits off the values before it.
-            if (next.split(delimiter).length > 1) add(next, { showError: true });
+            if (shouldSplit(next)) add(next, { showError: true });
             else {
               setDraft(next);
               setOwnError(null);
@@ -228,9 +331,19 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
           onKeyDown={(event) => {
             inputProps?.onKeyDown?.(event);
             if (isReadOnly) return;
-            if (event.key === "Enter") {
+            if (listOpen && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
               event.preventDefault();
-              add(draft, { showError: true });
+              const step = event.key === "ArrowDown" ? 1 : -1;
+              setHighlighted((activeIndex + step + matches.length) % matches.length);
+            } else if (listOpen && event.key === "Escape") {
+              // Close the list only, not a surrounding modal.
+              event.preventDefault();
+              event.stopPropagation();
+              setListDismissed(true);
+            } else if (event.key === "Enter") {
+              event.preventDefault();
+              if (listOpen) pick(matches[activeIndex]);
+              else add(draft, { showError: true });
             } else if (event.key === "Backspace" && draft === "" && values.length > 0) {
               event.preventDefault();
               setValues(values.slice(0, -1));
@@ -265,6 +378,55 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
           )}
         />
       </div>
+      {suggestions && (
+        <AriaPopover
+          triggerRef={fieldRef}
+          isOpen={listOpen}
+          onOpenChange={(open) => !open && setListDismissed(true)}
+          isNonModal
+          placement="bottom start"
+          offset={4}
+        >
+          {({ placement }) => (
+            <PopoverSurface placement={placement} className="w-(--trigger-width)">
+              <div id={listId} role="listbox" aria-label={suggestionsLabel} className="flex flex-col gap-0.5">
+                {matches.map((suggestion, index) => (
+                  <div
+                    key={suggestion.value}
+                    id={optionId(index)}
+                    role="option"
+                    aria-selected={index === activeIndex}
+                    data-focused={index === activeIndex || undefined}
+                    data-slot="tag-input-option"
+                    // Keep focus in the input while picking.
+                    onMouseDown={(event) => event.preventDefault()}
+                    onMouseEnter={() => setHighlighted(index)}
+                    onClick={() => pick(suggestion)}
+                    className={selectItemVariants({ size: "sm" })}
+                  >
+                    {(suggestion.avatarSrc || suggestion.avatarClassName) && (
+                      <Avatar
+                        src={suggestion.avatarSrc}
+                        alt=""
+                        initials={initialsOf(suggestion.label)}
+                        className={cn("shrink-0", suggestion.avatarClassName)}
+                      />
+                    )}
+                    <span className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden whitespace-nowrap">
+                      <span className="shrink-0">{suggestion.label}</span>
+                      {suggestion.description && (
+                        <span className="min-w-0 flex-1 truncate font-normal text-foreground-subtle">
+                          {suggestion.description}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </PopoverSurface>
+          )}
+        </AriaPopover>
+      )}
       {(hint || error) && (
         <span id={helpId} aria-live="polite" className={fieldTextVariants({ slot: error ? "error" : "hint" })}>
           {error ?? hint}
@@ -274,4 +436,13 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(function TagI
   );
 });
 
-export { TagInput, type TagInputProps };
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+export { TagInput, type TagInputProps, type TagInputSuggestion };

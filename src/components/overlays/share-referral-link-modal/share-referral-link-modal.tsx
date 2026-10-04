@@ -7,7 +7,7 @@ import { Button } from "@/components/buttons/button";
 import { Hyperlink } from "@/components/buttons/hyperlink";
 import { Typography, typographyVariants } from "@/components/typography";
 import { Modal } from "@/components/overlays/modal";
-import { TagInput } from "@/components/forms/tag-input";
+import { TagInput, type TagInputSuggestion } from "@/components/forms/tag-input";
 import { AvatarCompanies, type AvatarCompaniesProps } from "@/components/data-display/avatar-companies";
 import { InlineAlert } from "@/components/feedback/inline-alert";
 import { toast } from "@/components/feedback/toast";
@@ -135,6 +135,18 @@ interface ReferralOpportunity {
   audience?: string;
 }
 
+/** Someone in the professional's network, suggested in "Share by email" as they type (`referrals.md` §5.2). */
+interface ReferralConnection {
+  name: string;
+  /** Where the invite goes. */
+  email: string;
+  /** Shown muted after the name in the suggestion, and searchable. */
+  jobTitle?: string;
+  avatarSrc?: string;
+  /** Initials avatar background when there's no photo. */
+  avatarClassName?: string;
+}
+
 interface ShareReferralLinkModalProps {
   /** Whether the modal is open. Controlled: pair with `onOpenChange`. */
   isOpen: boolean;
@@ -158,10 +170,17 @@ interface ShareReferralLinkModalProps {
    */
   onSendInvite?: (emails: string[]) => void;
   /**
-   * "Preview email", at the right of the "Share by email" label when referring an `opportunity` (Figma `Opportunity
-   * Email`). Shows what the invite will say; there's no design for the preview yet, so it's the app's to open.
+   * "Preview invite email", at the right of the "Share by email" label once a connection or email is added (Figma
+   * `Opportunity Email`'s "Preview email", on every email view since 2026-10-03). Shows what the invite will say; there's no design for the preview
+   * yet, so it's the app's to open.
    */
   onPreviewEmail?: () => void;
+  /**
+   * The professional's connections (My network). "Share by email" suggests them as the professional types a name, job
+   * title, or email; picking one adds them as a tag showing their name, and the invite goes to their email. Omit to
+   * accept typed emails only.
+   */
+  connections?: readonly ReferralConnection[];
 }
 
 const rewardCurrency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
@@ -287,8 +306,7 @@ function useMeasuredHeight() {
  * from an opportunity's "Refer"). Built on `Modal`.
  *
  * - Opportunity: "Refer someone to apply", its own description, and the opportunity summary with its potential reward
- *   (`OpportunitySummary`) between the description and the link. The link and email views below are the same, except
- *   that the email view adds "Preview email" at the right of its label (`onPreviewEmail`).
+ *   (`OpportunitySummary`) between the description and the link. The link and email views below are the same.
  *
  * - Link view (`Default`): a `sm -medium` label over a read-only field on `color-tone-info-subtle` with `radius/input`,
  *   a leading `link-02` icon, and the link in `base`. It's a real read-only input, so the link can be selected and
@@ -296,9 +314,12 @@ function useMeasuredHeight() {
  *   modal, and shows a toast, so render a `Toaster`.
  * - Email view (`Variant2`): "Share by email" as a `TagInput`: each address becomes a removable tag. Enter, a comma,
  *   a semicolon, or a space adds the typed address, and a pasted list adds one tag per address. An invalid or repeated
- *   address isn't added, and its message replaces the helper line. The addresses are kept as a `string[]`.
+ *   address isn't added, and its message replaces the helper line. "Preview invite email" appears at the right of the
+ *   label once a connection or email is added (`onPreviewEmail`). The addresses are kept as a `string[]`.
  *   "Send invite" is disabled until there's at least one valid address (Figma's disabled fill is the Button's own
- *   `disabled:bg-neutral-300`); a valid address still in the input counts and is sent with the tags.
+ *   `disabled:bg-neutral-300`); a valid address still in the input counts and is sent with the tags. With
+ *   `connections`, typing also searches them by name, job title, or email; picking one adds a tag with their name and
+ *   sends to their email (design direction, 2026-10-03).
  * - Bottom row: the toggle between the two views ("Share by email" / "Share your link", underlined `sm`), `or` in
  *   `xs` muted, then "Share on:" LinkedIn · X · Facebook, each opening that network's share page in a new window.
  *   LinkedIn and X prefill one of `SHARE_MESSAGES` (picked at random per opening) with the link, or, for an
@@ -321,6 +342,7 @@ function ShareReferralLinkModal({
   onCopy,
   onSendInvite,
   onPreviewEmail,
+  connections,
 }: ShareReferralLinkModalProps) {
   const { prefersReducedMotion } = useMotionPreference();
   const close = React.useCallback(() => onOpenChange(false), [onOpenChange]);
@@ -372,6 +394,21 @@ function ShareReferralLinkModal({
 
   const hasValidEmail = emails.length > 0 || isDraftValid;
 
+  const suggestions = React.useMemo<TagInputSuggestion[] | undefined>(
+    () =>
+      connections?.map(({ name, email, jobTitle, avatarSrc, avatarClassName }) => ({
+        value: email,
+        label: name,
+        description: jobTitle,
+        avatarSrc,
+        avatarClassName,
+      })),
+    [connections],
+  );
+  /** A connection's name for its email, or the email itself. */
+  const recipientName = (email: string) =>
+    connections?.find((connection) => connection.email.toLowerCase() === email.toLowerCase())?.name ?? email;
+
   const sendInvite = (event: React.FormEvent) => {
     event.preventDefault();
     // A repeat of a tag is dropped rather than blocking the send; anything else still typed must be valid.
@@ -391,7 +428,7 @@ function ShareReferralLinkModal({
     onSendInvite?.(list);
     close();
     toast({
-      title: list.length === 1 ? `Invite sent to ${list[0]}` : `Invites sent to ${list.length} people`,
+      title: list.length === 1 ? `Invite sent to ${recipientName(list[0])}` : `Invites sent to ${list.length} people`,
     });
   };
 
@@ -465,12 +502,26 @@ function ShareReferralLinkModal({
                     ref={emailRef}
                     label="Share by email"
                     labelAction={
-                      // Figma `Opportunity Email` only: lets the professional see what the invite will say.
-                      opportunity && (
-                        <Hyperlink onPress={onPreviewEmail} className="font-normal">
-                          Preview email
-                        </Hyperlink>
-                      )
+                      // Lets the professional see what the invite will say. Figma `Opportunity Email` ("Preview email");
+                      // on every email view, renamed "Preview invite email", and only once someone is added: there's
+                      // nobody to preview it for before that (design direction, 2026-10-03).
+                      // Fades in and out (`fadeVariants`) rather than popping, since it reacts to the field. No fade when
+                      // the email view opens with people already added (`initial={false}`).
+                      <AnimatePresence initial={false}>
+                        {emails.length > 0 && (
+                          <motion.span
+                            key="preview-invite-email"
+                            variants={fadeVariants}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                          >
+                            <Hyperlink onPress={onPreviewEmail} className="font-normal">
+                              Preview invite email
+                            </Hyperlink>
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
                     }
                     hint={EMAIL_HELP}
                     placeholder="Search connections or enter email"
@@ -484,6 +535,8 @@ function ShareReferralLinkModal({
                     validate={(email) => (EMAIL_PATTERN.test(email) ? null : INVALID_EMAIL_MESSAGE)}
                     duplicateMessage={DUPLICATE_EMAIL_MESSAGE}
                     delimiter={EMAIL_DELIMITER}
+                    suggestions={suggestions}
+                    suggestionsLabel="Connections"
                     // Only the send-time error; the field shows its own validation messages.
                     errorMessage={emailError ?? undefined}
                     tagsLabel="Email addresses to invite"
@@ -539,4 +592,4 @@ function ShareReferralLinkModal({
   );
 }
 
-export { ShareReferralLinkModal, type ShareReferralLinkModalProps, type ReferralOpportunity };
+export { ShareReferralLinkModal, type ShareReferralLinkModalProps, type ReferralConnection, type ReferralOpportunity };

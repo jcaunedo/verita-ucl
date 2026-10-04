@@ -31,7 +31,7 @@ function BriefcaseBusiness({ className }: IconProps) {
 /**
  * Solid nav icons for the current page (Figma, verita.ds: `home-line-solid`,
  * `compass-03-solid`, `bank-note-01-solid`, `briefcase-business-solid`,
- * `users-right-solid`). `@untitledui/icons` ships no solid set, so these are
+ * `users-right-solid`; `FaceSmileSolid` below is drawn locally). `@untitledui/icons` ships no solid set, so these are
  * Figma's exported paths on the same 24x24 grid as the outline icons they
  * replace, filled with `currentColor` so they take the item's text color.
  */
@@ -89,4 +89,33 @@ function UsersRightSolid({ className }: IconProps) {
   );
 }
 
-export { BankNote01Solid, BriefcaseBusiness, BriefcaseBusinessSolid, Compass03Solid, HomeLineSolid, UsersRightSolid };
+/**
+ * Solid `face-smile`, for Referrals as the current page (Figma, 2026-10-03: Referrals' icon is now `face-smile`).
+ * verita.ds has no solid version yet, so this one is drawn to match the others: the outline's 22px circle filled with
+ * `currentColor`, with its eyes and smile (the outline's own geometry, 2px round strokes) cut out by a mask, so the
+ * page background shows through them on any fill.
+ */
+function FaceSmileSolid({ className }: IconProps) {
+  const maskId = React.useId();
+  return (
+    <svg viewBox="0 0 24 24" width={24} height={24} fill="currentColor" aria-hidden="true" className={className}>
+      <mask id={maskId}>
+        <rect width="24" height="24" fill="white" />
+        <circle cx="9" cy="9" r="1.25" fill="black" />
+        <circle cx="15" cy="9" r="1.25" fill="black" />
+        <path d="M8 14s1.5 2 4 2 4-2 4-2" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" />
+      </mask>
+      <circle cx="12" cy="12" r="11" mask={`url(#${maskId})`} />
+    </svg>
+  );
+}
+
+export {
+  BankNote01Solid,
+  BriefcaseBusiness,
+  BriefcaseBusinessSolid,
+  Compass03Solid,
+  FaceSmileSolid,
+  HomeLineSolid,
+  UsersRightSolid,
+};

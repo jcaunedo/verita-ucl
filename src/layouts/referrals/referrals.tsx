@@ -24,14 +24,14 @@ type ReferralsView = "referrals" | "network";
 interface ReferralsProps {
   /** Passed through to the internal `Sidebar` — see `Dashboard`'s same prop. */
   navHrefOverrides?: SidebarProps["navHrefOverrides"];
-  /** The professional's referrals. Defaults to `DEMO_REFERRALS`; the Empty story passes none. */
-  referrals?: readonly DemoReferral[];
+  /**
+   * The professional's referrals on first render. Defaults to none: the page starts on both empty states, and "Upload
+   * connections" on My network brings in `DEMO_REFERRALS` with the network.
+   */
+  defaultReferrals?: readonly DemoReferral[];
   /** Tab selected on first render. Defaults to `"referrals"`. */
   defaultView?: ReferralsView;
-  /**
-   * The professional's network on first render. Defaults to none, so My network opens on its empty state;
-   * "Upload connections" there imports `DEMO_CONNECTIONS`.
-   */
+  /** The professional's network on first render. Defaults to none, so My network opens on its empty state. */
   defaultConnections?: readonly DemoConnection[];
 }
 
@@ -46,14 +46,17 @@ interface ReferralsProps {
  *   Last 12 months) narrows the summary and the table by referred date. Shown on My referrals once there are
  *   referrals.
  * - My referrals: `MyReferralsPanel` (`my-referrals.tsx`).
- * - My network: `MyNetworkPanel` (`my-network.tsx`). "Upload connections" imports `DEMO_CONNECTIONS`.
+ * - My network: `MyNetworkPanel` (`my-network.tsx`).
+ *
+ * Both tabs start empty. "Upload connections" on My network's empty state fills both: the demo network
+ * (`DEMO_CONNECTIONS`) and the demo referrals (`DEMO_REFERRALS`).
  *
  * The page owns the state the tabs share or keep across tab switches: the selected tab, the period, each tab's search,
  * the activity filter, and the network itself.
  */
 function Referrals({
   navHrefOverrides,
-  referrals = DEMO_REFERRALS,
+  defaultReferrals = [],
   defaultView = "referrals",
   defaultConnections = [],
 }: ReferralsProps = {}) {
@@ -62,6 +65,9 @@ function Referrals({
   // My network's connections. Empty until "Upload connections" imports the demo network (design direction, 2026-10-03):
   // the prototype skips the file picker and the import itself, which aren't designed yet.
   const [connections, setConnections] = React.useState<readonly DemoConnection[]>(defaultConnections);
+  // The referrals, empty by default like the network. The import fills both (design direction, 2026-10-03), so the
+  // prototype goes from a brand-new professional to one with a network and referrals in one step.
+  const [referrals, setReferrals] = React.useState<readonly DemoReferral[]>(defaultReferrals);
   const [networkSearchQuery, setNetworkSearchQuery] = React.useState("");
   const [activity, setActivity] = React.useState<ActivityFilter>("all");
   const [shareOpen, setShareOpen] = React.useState(false);
@@ -130,7 +136,10 @@ function Referrals({
             />
             <MyNetworkPanel
               connections={connections}
-              onImport={() => setConnections(DEMO_CONNECTIONS)}
+              onImport={() => {
+                setConnections(DEMO_CONNECTIONS);
+                setReferrals(DEMO_REFERRALS);
+              }}
               searchQuery={networkSearchQuery}
               onSearchChange={setNetworkSearchQuery}
               activity={activity}
@@ -140,7 +149,13 @@ function Referrals({
         </div>
       </div>
       {/* Opened by either "Share your referral link". Focus returns to the button that opened it when it closes. */}
-      <ShareReferralLinkModal isOpen={shareOpen} onOpenChange={setShareOpen} link={DEMO_REFERRAL_LINK} />
+      {/* "Share by email" suggests the professional's network: none until it's imported on My network. */}
+      <ShareReferralLinkModal
+        isOpen={shareOpen}
+        onOpenChange={setShareOpen}
+        link={DEMO_REFERRAL_LINK}
+        connections={connections}
+      />
       {/* Confirms "Copy referral link": bottom right on desktop, bottom center on mobile (the `Toaster` default). */}
       <Toaster />
     </div>

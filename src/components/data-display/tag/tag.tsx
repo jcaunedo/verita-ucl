@@ -37,6 +37,13 @@ interface TagProps extends Omit<AriaTagProps, "children" | "className"> {
   avatarSrc?: string;
   /** Alt text for the avatar. Defaults to empty, since the label already names the tag. */
   avatarAlt?: string;
+  /**
+   * Initials avatar when there's no photo, e.g. a person without a picture. At 16px only the first letter fits, in
+   * `xxs` (11px).
+   */
+  avatarInitials?: string;
+  /** The initials avatar's background, e.g. `bg-tone-success`. */
+  avatarClassName?: string;
   /** Accessible label for the remove (×) button. Defaults to "Remove <label>" when the label is a string. */
   removeLabel?: string;
   className?: string;
@@ -48,7 +55,17 @@ interface TagProps extends Omit<AriaTagProps, "children" | "className"> {
  * 50% opacity (Figma, 2026-10-02), rising to 100% while the tag is hovered or the × has keyboard focus, the same
  * treatment as `Toast`'s close.
  */
-function Tag({ children, avatarSrc, avatarAlt = "", removeLabel, className, textValue, ...props }: TagProps) {
+function Tag({
+  children,
+  avatarSrc,
+  avatarAlt = "",
+  avatarInitials,
+  avatarClassName,
+  removeLabel,
+  className,
+  textValue,
+  ...props
+}: TagProps) {
   const label = typeof children === "string" ? children : undefined;
 
   return (
@@ -60,7 +77,16 @@ function Tag({ children, avatarSrc, avatarAlt = "", removeLabel, className, text
     >
       {({ allowsRemoving }) => (
         <>
-          {avatarSrc && <Avatar src={avatarSrc} alt={avatarAlt} className="size-4" />}
+          {(avatarSrc || avatarInitials) && (
+            <Avatar
+              // Decorative unless `avatarAlt` says otherwise: the label already names the tag.
+              aria-hidden={avatarAlt ? undefined : true}
+              src={avatarSrc}
+              alt={avatarAlt}
+              initials={avatarInitials?.slice(0, 1)}
+              className={cn("size-4 text-xxs", avatarClassName)}
+            />
+          )}
           {/* Figma `Label container`: 2px either side of the label. */}
           <span className={cn(typographyVariants({ size: "sm", weight: "medium" }), "px-0.5 text-icon-foreground")}>
             {children}

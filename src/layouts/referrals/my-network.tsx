@@ -122,9 +122,19 @@ const NETWORK_COLUMNS =
  * current matches shows `—` for Potential (an open decision in §5.2: `—` or `$0`), and one with no activity yet shows `—`
  * for Last activity.
  */
-function ConnectionTable({ rows }: { rows: readonly DemoConnection[] }) {
+function ConnectionTable({
+  rows,
+  loadingRows = 0,
+}: {
+  rows: readonly DemoConnection[];
+  /** Skeleton rows at the end while the next page loads. */
+  loadingRows?: number;
+}) {
   return (
-    <div className="flex w-full flex-col overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]">
+    <div
+      aria-busy={loadingRows > 0 || undefined}
+      className="flex w-full flex-col overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]"
+    >
       <div aria-hidden="true" className={cn(NETWORK_COLUMNS, "h-10 bg-tone-neutral-subtle")}>
         {["Name", "Matches", "Last activity", "Referrals", "Earned", "Potential"].map((column, index) => (
           <Typography
@@ -182,6 +192,96 @@ function ConnectionTable({ rows }: { rows: readonly DemoConnection[] }) {
           </Typography>
         </div>
       ))}
+      {Array.from({ length: loadingRows }, (_, index) => (
+        <ConnectionSkeletonRow key={index} />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * A placeholder row while more connections load: the table row's layout (40px avatar, two lines, then each column's
+ * value) in `muted` shapes, with a subtle opacity pulse (CLAUDE.md "Skeletons and Loading States"). The pulse stops
+ * under reduced motion; the screen-reader status in `ConnectionList` still announces the load.
+ */
+function ConnectionSkeletonRow() {
+  const bar = "h-3.5 rounded-full bg-muted";
+  return (
+    <div
+      aria-hidden="true"
+      data-slot="connection-skeleton"
+      className={cn(
+        NETWORK_COLUMNS,
+        "animate-pulse border-t border-border bg-background py-3.5 motion-reduce:animate-none",
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="size-10 shrink-0 rounded-full bg-muted" />
+        <div className="flex min-w-0 flex-1 flex-col gap-2 py-1">
+          <div className={cn(bar, "w-28 max-w-full")} />
+          <div className={cn(bar, "w-36 max-w-full")} />
+        </div>
+      </div>
+      <div className={cn(bar, "w-24 max-w-full")} />
+      <div className={cn(bar, "w-28 max-w-full")} />
+      <div className={cn(bar, "ml-auto w-6")} />
+      <div className={cn(bar, "ml-auto w-12")} />
+      <div className={cn(bar, "ml-auto w-14")} />
+    </div>
+  );
+}
+
+/** Connections shown per page of the simulated infinite scroll. */
+const PAGE_SIZE = 20;
+/** How long the prototype pretends the next page takes to load. */
+const SIMULATED_LOAD_MS = 800;
+/** Skeleton rows shown while a page loads. */
+const LOADING_ROWS = 3;
+
+/**
+ * The connection table with a simulated infinite scroll (design direction, 2026-10-03): the first `PAGE_SIZE` rows,
+ * then, when the end of the list comes within 200px of the viewport, `LOADING_ROWS` skeleton rows for
+ * `SIMULATED_LOAD_MS` before the next page appends, until every row is shown. A real app would fetch the next page
+ * here. Remount it (a `key`) to start again from the first page, e.g. when the filters or search change.
+ */
+function ConnectionList({ rows }: { rows: readonly DemoConnection[] }) {
+  const [visibleCount, setVisibleCount] = React.useState(PAGE_SIZE);
+  const [isLoading, setLoading] = React.useState(false);
+  const sentinelRef = React.useRef<HTMLDivElement>(null);
+  const hasMore = visibleCount < rows.length;
+
+  // Watch the end of the list; reaching it starts loading the next page. Re-armed after each page.
+  React.useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasMore || isLoading) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setLoading(true);
+      },
+      { rootMargin: "0px 0px 200px 0px" },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, isLoading, visibleCount]);
+
+  // The simulated fetch: after the delay, the next page appends.
+  React.useEffect(() => {
+    if (!isLoading) return;
+    const timer = window.setTimeout(() => {
+      setVisibleCount((count) => count + PAGE_SIZE);
+      setLoading(false);
+    }, SIMULATED_LOAD_MS);
+    return () => window.clearTimeout(timer);
+  }, [isLoading]);
+
+  return (
+    <div className="flex w-full flex-col">
+      <ConnectionTable rows={rows.slice(0, visibleCount)} loadingRows={isLoading ? LOADING_ROWS : 0} />
+      {/* What the scroll watches: the end of the list. */}
+      <div ref={sentinelRef} aria-hidden="true" className="h-px" />
+      <span role="status" className="sr-only">
+        {isLoading ? "Loading more connections" : ""}
+      </span>
     </div>
   );
 }
@@ -280,7 +380,10 @@ function MyNetworkPanel({
                   className="flex-1"
                 />
               )}
-              {rows.length > 0 && <ConnectionTable rows={rows} />}
+              {rows.length > 0 && (
+                // A new filter, activity, or search starts again from the first page.
+                <ConnectionList key={`${activity}|${searchQuery.trim().toLowerCase()}`} rows={rows} />
+              )}
             </TabButtonPanel>
           );
         })}

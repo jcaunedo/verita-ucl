@@ -4,6 +4,7 @@ import {
   BankNote01,
   Bell01,
   Compass03,
+  FaceSmile,
   FlexAlignLeft,
   FlexAlignRight,
   HomeLine,
@@ -12,11 +13,10 @@ import {
   Settings02,
   Translate01,
   UserCircle,
-  UsersRight,
 } from "@untitledui/icons";
 
 import { cn } from "@/lib/utils";
-import { enterTransition, useMotionPreference } from "@/lib/motion";
+import { enterTransition, iconSwapVariants, reducedMotionTransition, useMotionPreference } from "@/lib/motion";
 import { Logo } from "@/components/branding/logo";
 import { Button } from "@/components/buttons/button";
 import { SidebarMenuItem } from "@/components/buttons/sidebar-menu-item";
@@ -28,9 +28,18 @@ import {
   BriefcaseBusiness,
   BriefcaseBusinessSolid,
   Compass03Solid,
+  FaceSmileSolid,
   HomeLineSolid,
-  UsersRightSolid,
 } from "./sidebar-icons";
+
+/**
+ * `iconSwapVariants` under reduced motion: the same states with no fade or scale. The variants' own transitions win
+ * over a component's `transition` prop, so reduced motion needs its own variants rather than an override.
+ */
+const INSTANT_ICON_SWAP = {
+  shown: { opacity: 1, scale: 1, transition: reducedMotionTransition },
+  hidden: { opacity: 0, scale: 1, transition: reducedMotionTransition },
+};
 
 /** Measured from Figma: `Sidebar` COMPONENT_SET's Expanded/Collapsed frame widths. */
 const EXPANDED_WIDTH = 280;
@@ -57,7 +66,8 @@ const NAV_ITEMS: {
   },
   { key: "earnings", icon: BankNote01, activeIcon: BankNote01Solid, label: "Earnings", href: "/earnings" },
   // Figma: `users-right` (was `users-plus`).
-  { key: "referrals", icon: UsersRight, activeIcon: UsersRightSolid, label: "Referrals", href: "/referrals" },
+  // Figma (2026-10-03): `face-smile`, replacing `users-right`.
+  { key: "referrals", icon: FaceSmile, activeIcon: FaceSmileSolid, label: "Referrals", href: "/referrals" },
 ];
 
 const FOOTER_ITEMS: { key: string; icon: React.FC<{ className?: string }>; iconClassName?: string; label: string }[] = [
@@ -163,7 +173,7 @@ function Sidebar({
   const collapsed = collapsedProp ?? uncontrolledCollapsed;
   const [activeNavKey, setActiveNavKey] = React.useState<NavKey>(defaultActiveNavKey);
   const [isRailHovered, setIsRailHovered] = React.useState(false);
-  const { resolve } = useMotionPreference();
+  const { resolve, prefersReducedMotion } = useMotionPreference();
 
   const toggleCollapsed = () => {
     const next = !collapsed;
@@ -207,13 +217,27 @@ function Sidebar({
               onMouseLeave={() => setIsRailHovered(false)}
               className="relative flex size-8 shrink-0 cursor-e-resize items-center justify-center rounded-md"
             >
-              <Logo mark className={cn("size-8", isRailHovered && "invisible")} />
-              <FlexAlignRight
-                className={cn(
-                  "absolute size-4 text-foreground",
-                  !isRailHovered && "hidden",
-                )}
-              />
+              {/* Hovering the rail swaps the logo mark for the expand icon in place (`iconSwapVariants`): the one
+                  showing dissolves quickly while the other fades in and grows from 0.8 (design direction,
+                  2026-10-03). Instant under reduced motion. */}
+              <motion.span
+                aria-hidden="true"
+                variants={prefersReducedMotion ? INSTANT_ICON_SWAP : iconSwapVariants}
+                initial={false}
+                animate={isRailHovered ? "hidden" : "shown"}
+                className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              >
+                <Logo mark className="size-8" />
+              </motion.span>
+              <motion.span
+                aria-hidden="true"
+                variants={prefersReducedMotion ? INSTANT_ICON_SWAP : iconSwapVariants}
+                initial={false}
+                animate={isRailHovered ? "shown" : "hidden"}
+                className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              >
+                <FlexAlignRight className="size-4 text-foreground" />
+              </motion.span>
             </button>
           ) : (
             <>
