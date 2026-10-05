@@ -303,7 +303,7 @@ interface MyNetworkPanelProps {
  *
  * - No connections (Figma `My network`, `node-id=6129-12391`): the import options (LinkedIn, or a contact list) under
  *   the network illustration. "Get my LinkedIn connections" opens LinkedIn's data download page; "Upload connections"
- *   calls `onImport` (the import itself isn't designed yet).
+ *   calls `onImport` (the import itself isn't designed yet). "Add a connection manually" below them does nothing yet.
  * - With connections (Figma `My network`, `node-id=6156-5828`): no summary figures (the tab counter carries the network
  *   size), straight to search, the `All` / `Matches` / `New matches` / `Referred` filters and the `All activity`
  *   dropdown, then one row per connection (`ConnectionTable`).
@@ -445,6 +445,11 @@ function MyNetworkPanel({
           }
         />
       </div>
+      {/* Figma `button` (link style, 2026-10-05): `sm -medium` label in `state/link`, no padding, 32px below the
+        cards. Same override as My referrals' "or start with your network". The manual add flow isn't designed yet. */}
+      <Button color="link-color" size="sm" onPress={() => {}} className="text-link">
+        Add a connection manually
+      </Button>
     </TabUnderlinePanel>
   );
 }

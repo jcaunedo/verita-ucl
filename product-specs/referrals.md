@@ -1,7 +1,7 @@
 <!--
 Created: Sep 30, 2026
 Created by: Julio Caunedo
-Last updated: Oct 03, 2026
+Last updated: Oct 05, 2026
 Scope: Verita AI professional Referrals destination — its two tabs (My referrals and My network), how a referral is made, the referral and network lifecycles, rewards, and the referral entry points on Home and on application rows.
 Purpose: Give Referrals its own page-level PRD, split out of product-specs/main-navigation.md §2.5 and product-specs/dashboard.md §7.7 now that the destination exists in the product.
 -->
@@ -152,6 +152,10 @@ My network isn't a LinkedIn-only feature. LinkedIn is emphasized as the primary 
 | --- | --- |
 | **Get my LinkedIn network** | Bring in LinkedIn connections to get started. |
 | **Upload a contact list** | Upload connections from another source using a CSV file. |
+
+Below the two options, a secondary **Add a connection manually** link adds one contact at a time.
+
+⚠️ **Gap:** the manual add flow (which fields it asks for, and where it opens) isn't designed yet.
 
 **Connection table columns**
 
