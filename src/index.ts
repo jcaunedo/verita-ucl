@@ -242,6 +242,7 @@ export {
   type SidebarTooltipProps,
 } from "./components/overlays/sidebar-tooltip";
 export { Modal, type ModalProps } from "./components/overlays/modal";
+export { PreviewEmail, sendInviteButtonProps, type PreviewEmailProps } from "./components/overlays/preview-email";
 export {
   ShareReferralLinkModal,
   type ShareReferralLinkModalProps,

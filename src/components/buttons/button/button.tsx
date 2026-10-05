@@ -89,6 +89,23 @@ function renderIcon(icon: IconProp, position: "leading" | "trailing") {
  * positions (container-edge to text-edge) and already produce the correct
  * final spacing with no such buffer — adding one would double-count 2px that
  * Figma's own measurements don't show.
+ *
+ * Counter (Figma `showCounter`, 2026-10-05): pass `count` to show a `counter` pill after the label (and any trailing
+ * icon): `xs -medium`, 22px min width, 6px × 2px padding, fully round, `color-tone-neutral-subtle` fill +
+ * `foreground/muted` text in every color and state, like the tabs' counter. Figma places it with its own spacing per
+ * size, kept literal (DESIGN.md "Gaps/margins/padding must match Figma's literal value"):
+ *
+ * | Size | Label text → pill | Pill → right edge |
+ * | ---- | ----------------- | ----------------- |
+ * | xs   | 5px               | 6px               |
+ * | sm   | 10px              | 8px               |
+ * | md   | 6px               | 8px               |
+ * | lg   | 6px               | 10px              |
+ * | xl   | 6px               | 12px              |
+ *
+ * The right inset is measured from the button's outer edge, as in Figma (whose stroke sits inside the frame), so the
+ * bordered colors (`secondary`, `secondary-destructive`) take their 1px border off the padding (`--button-border`).
+ * Whether a zero shows is the consumer's call: omit `count` to hide it.
  */
 const buttonVariants = cva(
   [
@@ -112,11 +129,13 @@ const buttonVariants = cva(
         // Figma (container-edge to label text, absolute position diff) —
         // sm lands on Tailwind's spacing scale (16px), the rest don't
         // (14/18/18/18px). md/lg/xl converge on the same 18px padding.
-        xs: "h-8 gap-1 px-3.5 text-sm *:data-[icon]:size-4",
-        sm: "h-9 gap-1 px-4 text-sm *:data-[icon]:size-4",
-        md: "h-10 gap-1 px-[18px] text-sm *:data-[icon]:size-5",
-        lg: "h-11 gap-1 px-[18px] text-sm *:data-[icon]:size-5",
-        xl: "h-12 gap-1 px-[18px] text-sm *:data-[icon]:size-5",
+        // With a counter: the pill's left margin tops up the 4px gap to Figma's label → pill distance, and the right
+        // padding becomes Figma's pill → edge inset (see the counter table above).
+        xs: "h-8 gap-1 px-3.5 text-sm *:data-[icon]:size-4 *:data-[counter]:ml-px has-[>[data-counter]]:pr-[calc(6px-var(--button-border,0px))]",
+        sm: "h-9 gap-1 px-4 text-sm *:data-[icon]:size-4 *:data-[counter]:ml-1.5 has-[>[data-counter]]:pr-[calc(8px-var(--button-border,0px))]",
+        md: "h-10 gap-1 px-[18px] text-sm *:data-[icon]:size-5 *:data-[counter]:ml-0.5 has-[>[data-counter]]:pr-[calc(8px-var(--button-border,0px))]",
+        lg: "h-11 gap-1 px-[18px] text-sm *:data-[icon]:size-5 *:data-[counter]:ml-0.5 has-[>[data-counter]]:pr-[calc(10px-var(--button-border,0px))]",
+        xl: "h-12 gap-1 px-[18px] text-sm *:data-[icon]:size-5 *:data-[counter]:ml-0.5 has-[>[data-counter]]:pr-[calc(12px-var(--button-border,0px))]",
       },
       color: {
         primary:
@@ -124,9 +143,9 @@ const buttonVariants = cva(
         "primary-destructive":
           "bg-destructive-400 text-white hover:bg-[color-mix(in_srgb,var(--destructive-400)_90%,black)] disabled:bg-fill-muted",
         secondary:
-          "border border-border bg-white text-foreground shadow-xs hover:bg-hover disabled:border-[#e8eaee] disabled:bg-[#f9f8f5] disabled:text-foreground-subtle",
+          "border border-border [--button-border:1px] bg-white text-foreground shadow-xs hover:bg-hover disabled:border-[#e8eaee] disabled:bg-[#f9f8f5] disabled:text-foreground-subtle",
         "secondary-destructive":
-          "border border-destructive-200 bg-white text-destructive-400 shadow-xs hover:bg-destructive-subtle disabled:border-destructive-subtle disabled:bg-transparent disabled:text-destructive-200",
+          "border border-destructive-200 [--button-border:1px] bg-white text-destructive-400 shadow-xs hover:bg-destructive-subtle disabled:border-destructive-subtle disabled:bg-transparent disabled:text-destructive-200",
         tertiary:
           // Icon-only hover is its own overlay: Figma `Type=Icon` Ghost/Hover = neutral-700 @ 8% (`--icon-hover`); `Type=Text` = `neutral-100`.
           "bg-transparent text-foreground hover:bg-neutral-100 data-icon-only:hover:bg-icon-hover disabled:text-foreground-subtle",
@@ -153,6 +172,8 @@ interface CommonProps extends VariantProps<typeof buttonVariants> {
   iconTrailing?: IconProp;
   /** Zeroes the button's own padding. Always on for `color="link-color"`; opt-in for any other color. */
   noTextPadding?: boolean;
+  /** Counter after the label (Figma's `counter`, `showCounter`), e.g. how many items the action applies to. Omit to hide it. */
+  count?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
 }
@@ -183,6 +204,7 @@ const Button: {
   isDisabled,
   isLoading,
   noTextPadding,
+  count,
   ...props
 }) => {
   const href = "href" in props ? props.href : undefined;
@@ -221,6 +243,14 @@ const Button: {
       )}
       {children && <span data-text>{children}</span>}
       {renderIcon(iconTrailing, "trailing")}
+      {count != null && (
+        <span
+          data-counter
+          className="min-w-[22px] rounded-full bg-tone-neutral-subtle px-1.5 py-0.5 text-center text-xs font-medium text-foreground-muted tabular-nums"
+        >
+          {count}
+        </span>
+      )}
     </>
   );
 

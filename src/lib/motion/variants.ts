@@ -132,11 +132,16 @@ const overlayVariants: Variants = {
  * It leaves the same way in reverse, shrinking back to 0.92 toward the center as it fades, over `modalExitTransition`
  * (600ms), the documented exception to shorter exits. Pair with `modalOverlayVariants` on the
  * scrim. The dialog is usable as soon as it mounts — nothing waits on the entrance.
+ *
+ * `swapOut`: swapping the whole modal for another view (e.g. the share modal's invite email preview). The surface
+ * shrinks to 0.92 toward the center as it fades, quickly (`exitTransition`, 160ms), the content swaps while it's
+ * hidden, and `animate` grows the new view back from the center (design direction, 2026-10-05).
  */
 const modalVariants: Variants = {
   initial: { opacity: 0, scale: motionScale.modalIn },
   animate: { opacity: 1, scale: 1, transition: modalEnterTransition },
   exit: { opacity: 0, scale: motionScale.modalIn, transition: modalExitTransition },
+  swapOut: { opacity: 0, scale: motionScale.modalIn, transition: exitTransition },
 };
 
 /**

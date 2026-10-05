@@ -15,14 +15,19 @@ const meta: Meta<typeof ShareReferralLinkModal> = {
 export default meta;
 type Story = StoryObj<typeof ShareReferralLinkModal>;
 
-/** Figma `share-referral-link-modal`. Opens on load on the link view; "Share by email" swaps to the email view and back. "Copy referral link" closes it and shows a toast (bottom right on desktop, bottom center on mobile). */
+/** Figma `share-referral-link-modal`. Opens on load on the link view; "Share by email" swaps to the email view and back; once an address is added, "Preview invite email" shows the invite (`PreviewEmail`). "Copy referral link" closes it and shows a toast (bottom right on desktop, bottom center on mobile). */
 export const Default: Story = {
   render: () => {
     const [isOpen, setOpen] = React.useState(true);
     return (
       <div className="flex min-h-[480px] items-start bg-white p-6">
         <Button onPress={() => setOpen(true)}>Share your referral link</Button>
-        <ShareReferralLinkModal isOpen={isOpen} onOpenChange={setOpen} link="https://ref.verita-ai.com/hhd87" />
+        <ShareReferralLinkModal
+          isOpen={isOpen}
+          onOpenChange={setOpen}
+          link="https://ref.verita-ai.com/hhd87"
+          inviterName="Theresa"
+        />
         <Toaster />
       </div>
     );
@@ -44,6 +49,7 @@ export const Opportunity: Story = {
           isOpen={isOpen}
           onOpenChange={setOpen}
           link="https://ref.verita-ai.com/hhd87-yw7e"
+          inviterName="Theresa"
           opportunity={{
             title: "Senior Financial Analyst",
             partnerName: "Verita partner",

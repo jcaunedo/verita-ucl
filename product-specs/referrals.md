@@ -218,6 +218,12 @@ A Referral exists only after the professional takes an explicit referral action:
 
 ✅ **Resolved (2026-10-02) — sharing by email to several people:** each email address counts as one use. Sending the link to three addresses at once uses three.
 
+✅ **Confirmed in Figma (2026-10-05) — invite email preview:** once at least one address is added, **Preview invite email** shows the email the person will receive. It opens in place of the share modal's content. **Back** returns to the addresses, and **Send invite** sends from the preview too. The email opens with "Hi {first name}," (the recipient's first name). The general invite's headline reads "{Name} invited you to discover opportunities on Verita AI.", where {Name} is the signed-in professional's first name, followed by Verita's pitch and a **Discover opportunities** button.
+
+ℹ️ The greeting names the recipient only when they're a connection. A typed address has no name, so the preview reads "Hi there,". With several recipients, each email greets its own recipient, and the preview shows the first one's.
+
+⚠️ **Gap:** Figma only shows the general invite. The opportunity invite ("{Name} thinks you’d be a great fit for a {role} role on Verita AI.", the role's terms, and a **View opportunity** button) is draft copy pending review.
+
 ⚠️ **Decision needed:** what the professional sees once the limit is reached (e.g. the share actions disabled with a message saying when sharing is available again).
 
 ✅ **Resolved (2026-10-01) — referring someone new to an opportunity:** the invite opens a read-only preview of the opportunity. To apply, the person joins Verita first (§7: `Referred` → `Joined` → `Applied`).

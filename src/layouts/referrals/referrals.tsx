@@ -154,6 +154,7 @@ function Referrals({
         isOpen={shareOpen}
         onOpenChange={setShareOpen}
         link={DEMO_REFERRAL_LINK}
+        inviterName="Theresa"
         connections={connections}
       />
       {/* Confirms "Copy referral link": bottom right on desktop, bottom center on mobile (the `Toaster` default). */}

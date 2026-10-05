@@ -583,6 +583,7 @@ Every modal is built on `Modal`, so they all get this from one place.
 | --- | --- | --- |
 | Surface | Opacity 0 → 1, scale 0.92 → 1, no movement. 300ms, enter curve `[0.16, 1, 0.3, 1]` (`modalEnterTransition`) | Opacity → 0, scale → 0.92 toward the center. 600ms, standard curve `[0.4, 0, 0.2, 1]` (`modalExitTransition`) |
 | Scrim | Opacity 0 → 1, 300ms, standard curve | Opacity → 0, 600ms, standard curve; no clicks from the start |
+| View swap (`bare`) | The new view grows from the center: opacity 0 → 1, scale 0.92 → 1, 300ms (`modalEnterTransition`) | The current view shrinks toward the center: opacity → 0, scale → 0.92, 160ms (`exitTransition`, `modalVariants.swapOut`) |
 
 - **Scrim look:** `--overlay`, neutral-800 (#222a34) at 18%, over a 1px
   background blur (`--blur-overlay`, applied as `backdrop-blur-overlay`).
@@ -593,13 +594,20 @@ Every modal is built on `Modal`, so they all get this from one place.
 - **Height changes** (e.g. a modal swapping views): the surface glides to its
   new centered position (`layout="position"`, 300ms `standardTransition`)
   instead of jumping.
+- **Swapping the whole modal** (e.g. the share modal ↔ its invite email preview, via `Modal`'s `bare`): the
+  current view shrinks out, the content swaps while it's hidden, and the new view grows in. Both happen around the
+  viewport's center: the position glide is off from the swap until the grow finishes, or the new view's different
+  size would slide it in from the old view's corner. It's one surface and one dialog throughout, so focus never
+  leaves the modal. Back reverses it.
 - **Reduced motion:** fades only. No scale, no layout glide.
 
 **Why:** design direction. 2026-10-02: the exit should be slow and subtle,
 a deliberate exception to CLAUDE.md's "exits are shorter than entrances", so
 don't shorten it back to `exitTransition`. 2026-10-03: the modal grows in from
 and shrinks out to the center, replacing the 12px rise and the fade-only exit;
-the scrim moved from black at 40% to Figma's 18% neutral-800 with a 1px blur.
+the scrim moved from black at 40% to Figma's 18% neutral-800 with a 1px blur. 2026-10-05: swapping the whole
+modal for another view shrinks the old one out and grows the new one in, anchored at the center, replacing a
+content crossfade.
 
 **How to apply:**
 

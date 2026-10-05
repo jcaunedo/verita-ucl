@@ -61,6 +61,11 @@ export const AsLink: Story = {
   args: { color: "primary", href: "#" },
 };
 
+/** Figma `showCounter`: a counter pill after the label, e.g. how many items the action applies to. */
+export const WithCounter: Story = {
+  args: { color: "secondary", size: "xs", count: 3, children: "Send invites" },
+};
+
 export const NoTextPadding: Story = {
   args: { color: "tertiary", noTextPadding: true },
 };
@@ -98,6 +103,18 @@ export const AllVariants: Story = {
             </div>
           </div>
         ))}
+        <div className="flex flex-col gap-2">
+          <p className="text-xs text-muted-foreground">with counter</p>
+          {(["primary", "secondary"] as const).map((color) => (
+            <div key={color} className="flex flex-wrap items-center gap-3">
+              {sizes.map((size) => (
+                <Button key={size} color={color} size={size} count={3}>
+                  Label
+                </Button>
+              ))}
+            </div>
+          ))}
+        </div>
         <div className="flex flex-col gap-2">
           <p className="text-xs text-muted-foreground">tertiary (icon only)</p>
           <div className="flex flex-wrap items-center gap-3">

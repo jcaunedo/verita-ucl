@@ -96,6 +96,7 @@ function useReferOpportunity() {
           onOpenChange={setOpen}
           link={opportunity.link}
           opportunity={opportunity.details}
+          inviterName="Theresa"
           // "Share by email" suggests the demo network, as if it had been imported on Referrals → My network.
           connections={DEMO_CONNECTIONS}
         />
