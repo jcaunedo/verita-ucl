@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/react-vite";
+import type { ArgTypesEnhancer, Preview } from "@storybook/react-vite";
 import { RouterProvider } from "react-aria-components";
 import {
   SET_CURRENT_STORY,
@@ -91,12 +91,61 @@ if (typeof window !== "undefined") {
   });
 }
 
+/**
+ * Text props typed as React content (`label`, `title`, `children`) or as an open string union (`company`) get a text box
+ * instead of Storybook's JSON editor — in stories they're almost always plain text. Runs before Storybook picks default
+ * controls, which keeps any control already set (here or in a story's `argTypes`).
+ */
+const textControlsForTextProps: ArgTypesEnhancer = ({ argTypes }) =>
+  Object.fromEntries(
+    Object.entries(argTypes).map(([name, argType]) => {
+      const type = argType.table?.type?.summary ?? "";
+      const isText = type === "ReactNode" || type.startsWith("(string & {})");
+      return [name, !argType.control && isText ? { ...argType, control: { type: "text" } } : argType];
+    }),
+  );
+
 const preview: Preview = {
+  // Every component gets an auto-generated Docs page; full-page layouts opt out with "!autodocs".
+  tags: ["autodocs"],
+  argTypesEnhancers: [textControlsForTextProps],
   parameters: {
+    // Sidebar order: overview and foundations, then component families, then the full-page prototypes.
+    options: {
+      storySort: {
+        order: [
+          "Introduction",
+          "Foundations",
+          ["Colors", "Typography", "Motion"],
+          "Guidelines",
+          [
+            "Overview",
+            "Lists and rows",
+            "Actions and menus",
+            "Messages and feedback",
+            "Empty views",
+            "Modals and overlays",
+            "Page layout",
+            "Developer contracts",
+          ],
+          "Components",
+          "Icons",
+          "Branding",
+          "Buttons",
+          "Forms",
+          "Navigation",
+          "Overlays",
+          "Feedback",
+          "DataDisplay",
+          "Cards",
+          "Layouts",
+        ],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/i,
+        date: /(^d|D)ate$/, // `date`, `startDate` — not `validate`
       },
     },
   },

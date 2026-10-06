@@ -39,6 +39,7 @@ interface SelectTriggerProps extends Omit<AriaButtonProps, "children" | "classNa
   suffix?: React.ReactNode;
   /** Figma's Error state. Pass the same value as the `Select`'s `isInvalid`. */
   isInvalid?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -217,6 +218,8 @@ const selectItemVariants = cva(
 interface SelectItemProps
   extends Omit<AriaListBoxItemProps, "children" | "className">,
     VariantProps<typeof selectItemVariants> {
+  /** Item height: `xs` 32px, `sm` 36px, `md` 40px. Also sets the text and avatar size. Defaults to `sm`. */
+  size?: VariantProps<typeof selectItemVariants>["size"];
   /** The option's label (Figma's `value`). */
   children: React.ReactNode;
   /** Secondary text after the label (Figma's `supporting-text`, `foreground/subtle`), truncated when space runs out. */
@@ -225,6 +228,7 @@ interface SelectItemProps
   icon?: IconProp;
   /** Leading avatar (Figma's `showAvatar`) — any `Avatar` props; sized per item size (20px xs, 24px sm/md). */
   avatar?: Pick<AvatarProps, "src" | "alt" | "initials">;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -267,7 +271,10 @@ function SelectItem({
 }
 
 /** A divider between groups of options. Figma: `Select Item` `State=Divider` — a 1px `border/neutral/border` rule centered in a 16px row. */
-function SelectSeparator({ className, ...props }: Omit<AriaSeparatorProps, "className"> & { className?: string }) {
+function SelectSeparator({ className, ...props }: Omit<AriaSeparatorProps, "className"> & {
+  /** Extra classes for the divider, merged after the component's own. */
+  className?: string;
+}) {
   return (
     <AriaSeparator
       data-slot="select-separator"

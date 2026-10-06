@@ -80,10 +80,15 @@ interface MenuItemProps
   extends Omit<AriaMenuItemProps, "children" | "className">,
     VariantProps<typeof selectItemVariants>,
     VariantProps<typeof menuItemVariants> {
+  /** Item height: `xs` 32px, `sm` 36px, `md` 40px, the same as `SelectItem`. Defaults to `sm`. */
+  size?: VariantProps<typeof selectItemVariants>["size"];
+  /** `destructive` colors the label and icon red, for irreversible actions like Withdraw. Defaults to `default`. */
+  tone?: VariantProps<typeof menuItemVariants>["tone"];
   /** The action's label. */
   children: React.ReactNode;
   /** Leading 16px icon. Pass an icon component (auto-sized, inherits the item's color) or a pre-rendered element. */
   icon?: IconProp;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

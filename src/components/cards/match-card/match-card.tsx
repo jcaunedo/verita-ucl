@@ -88,6 +88,7 @@ interface MatchCardProps
   onActionsPress?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the match detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

@@ -6,7 +6,7 @@ import { PlaceholderPage } from "./placeholder-page";
 const meta: Meta<typeof PlaceholderPage> = {
   title: "Layouts/PlaceholderPage",
   component: PlaceholderPage,
-  tags: ["autodocs"],
+  tags: ["!autodocs"],
   parameters: {
     layout: "fullscreen",
   },

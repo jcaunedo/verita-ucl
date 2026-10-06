@@ -25,14 +25,16 @@ function DemoSelect({
   defaultSelectedKey = "Engineering",
   itemProps,
   withSeparator = false,
+  defaultOpen = true,
 }: {
   size?: SelectItemProps["size"];
   defaultSelectedKey?: Key;
   itemProps?: (option: string, index: number) => Partial<SelectItemProps>;
   withSeparator?: boolean;
+  defaultOpen?: boolean;
 }) {
   return (
-    <Select aria-label="Discipline" defaultOpen defaultSelectedKey={defaultSelectedKey}>
+    <Select aria-label="Discipline" defaultOpen={defaultOpen} defaultSelectedKey={defaultSelectedKey}>
       <StoryTrigger />
       <SelectContent>
         {OPTIONS.flatMap((option, index) => [
@@ -49,7 +51,10 @@ function DemoSelect({
 const meta: Meta<typeof SelectItem> = {
   title: "Forms/Select",
   component: SelectItem,
+  subcomponents: { SelectTrigger, SelectContent, SelectSeparator },
   tags: ["autodocs"],
+  // Opens on mount, and an open popover locks page scroll — so on the Docs page each story gets its own iframe.
+  parameters: { docs: { story: { inline: false, height: "340px" } } },
   decorators: [
     (Story) => (
       <div className="min-h-[340px] bg-white p-4">
@@ -63,7 +68,15 @@ type Story = StoryObj<typeof SelectItem>;
 
 /** Figma `Select Content (Popper)` with default `sm · 36` items; hover an option for `State=Hover`, the checked one is `State=Selected`. */
 export const Default: Story = {
-  render: () => <DemoSelect />,
+  args: { size: "sm" },
+  // The option labels are fixed; `size`, `supportingText`, and `className` apply to every option.
+  argTypes: { children: { control: false }, icon: { control: false }, avatar: { control: false } },
+  // On the Docs page this story renders inline and closed (open it from its trigger), so the Docs controls reach it; a
+  // story in its own iframe doesn't receive Docs control changes.
+  parameters: { docs: { story: { inline: true } } },
+  render: ({ size, supportingText, className }, { viewMode }) => (
+    <DemoSelect size={size} itemProps={() => ({ supportingText, className })} defaultOpen={viewMode !== "docs"} />
+  ),
 };
 
 export const SizeXs: Story = {

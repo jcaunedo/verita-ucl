@@ -12,6 +12,7 @@ import {
 const meta: Meta<typeof MetricTab> = {
   title: "Navigation/MetricTab",
   component: MetricTab,
+  subcomponents: { MetricTabList },
   tags: ["autodocs"],
   args: { label: "Label", value: "#" },
   decorators: [

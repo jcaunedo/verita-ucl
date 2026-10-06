@@ -46,6 +46,8 @@ const avatarVariants = cva(
 interface AvatarProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof avatarVariants> {
+  /** Diameter: `sm` 32px, `md` 36px, `lg` 40px, `xl` 56px. Defaults to `md`. */
+  size?: VariantProps<typeof avatarVariants>["size"];
   /** Photo URL. When present, renders the photo pattern (Figma's `w*`/`m*` variants) and `initials` is ignored. */
   src?: string;
   /** Alt text for the photo. Required semantically whenever `src` is set. */

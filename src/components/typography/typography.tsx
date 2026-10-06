@@ -52,6 +52,12 @@ type TypographyWeight = NonNullable<
 interface TypographyProps
   extends React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof typographyVariants> {
+  /** Font size and line height. `xs`–`lg` use the body font; `xl` and up use the display font. Defaults to `base`. */
+  size?: VariantProps<typeof typographyVariants>["size"];
+  /** Font weight, independent of `size`. Defaults to `regular`. */
+  weight?: VariantProps<typeof typographyVariants>["weight"];
+  /** The text. */
+  children?: React.ReactNode;
   /** Element to render. Defaults to a <p>. Use this for semantics, e.g. as="h1". */
   as?: React.ElementType;
 }

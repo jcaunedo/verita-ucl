@@ -5,7 +5,7 @@ import { Dashboard } from "./dashboard";
 const meta: Meta<typeof Dashboard> = {
   title: "Layouts/Dashboard",
   component: Dashboard,
-  tags: ["autodocs"],
+  tags: ["!autodocs"],
   parameters: {
     layout: "fullscreen",
   },

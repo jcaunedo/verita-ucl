@@ -149,6 +149,8 @@
 	--shadow-hover-card: 0px 4px 12px 0px rgba(8, 13, 20, 0.06);
 	/* Figma: shadow/Input — text inputs at rest (e.g. `SearchField`). */
 	--shadow-input: 0px 1px 4px 0px rgba(0, 0, 0, 0.04);
+
+	/* ---------- Emphasis and primary states ---------- */
 	--color-emphasis: var(--emphasis);
 	--color-emphasis-foreground: var(--emphasis-foreground);
 	--color-primary-hover: var(--primary-hover);

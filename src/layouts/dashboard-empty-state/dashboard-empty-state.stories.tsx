@@ -5,7 +5,7 @@ import { DashboardEmptyState } from "./dashboard-empty-state";
 const meta: Meta<typeof DashboardEmptyState> = {
   title: "Layouts/DashboardEmptyState",
   component: DashboardEmptyState,
-  tags: ["autodocs"],
+  tags: ["!autodocs"],
   parameters: {
     layout: "fullscreen",
   },

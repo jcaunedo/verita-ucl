@@ -47,6 +47,7 @@ interface TabUnderlineProps extends Omit<AriaTabProps, "children" | "className">
   label: React.ReactNode;
   /** Counter after the label (Figma's `Counter`), e.g. how many items the view holds. Omit to hide it. */
   count?: React.ReactNode;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -93,6 +94,7 @@ function TabUnderline({ label, count, className, ...props }: TabUnderlineProps) 
 }
 
 interface TabUnderlineListProps<T extends object> extends Omit<AriaTabListProps<T>, "className"> {
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

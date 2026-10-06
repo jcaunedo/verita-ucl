@@ -50,6 +50,7 @@ interface AccountTriggerProps
   };
   /** Collapsed sidebar state — renders the avatar only (Figma's `Collapsed`/`Collapsed Hover`). */
   collapsed?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

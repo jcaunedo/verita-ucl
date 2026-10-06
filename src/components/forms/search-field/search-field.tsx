@@ -26,6 +26,7 @@ interface SearchFieldProps extends Omit<AriaSearchFieldProps, "children" | "clas
    * leaves it while empty, or on Escape when empty. `false`: always expanded (width from `className`, default 240px).
    */
   collapsible?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

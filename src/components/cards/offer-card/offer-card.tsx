@@ -94,6 +94,7 @@ interface OfferCardProps
   dismissLabel?: string;
   /** Forwarded to the row's own click target (e.g. `onClick`, which routes to the offer detail). Passing `onClick` makes the whole row a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps`; clicks on nested controls (the CTA, the ×) don't trigger it. Omit `onClick` (and `onDismiss`) for a row that does nothing: it then has no hover tint either. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

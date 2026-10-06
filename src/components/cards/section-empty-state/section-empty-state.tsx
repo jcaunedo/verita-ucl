@@ -40,6 +40,7 @@ interface SectionEmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   buttonLabel: string;
   /** Forwarded to the action button (e.g. `onPress`). Figma shows no link variant for this button, so only the plain-button props are accepted. */
   buttonProps?: Omit<ButtonProps, "size" | "color" | "children">;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

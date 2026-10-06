@@ -227,6 +227,7 @@ interface AccountMenuItemProps extends Omit<AriaMenuItemProps, "children" | "cla
   icon?: IconProp;
   /** Trailing muted value, e.g. the current language "English". Omit to hide it (Figma: `showSuffix`, off by default). */
   suffix?: React.ReactNode;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

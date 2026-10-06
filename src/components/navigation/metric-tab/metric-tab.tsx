@@ -67,6 +67,7 @@ interface MetricTabProps
   label: React.ReactNode;
   /** The metric's value (Figma's `Value` text property), e.g. `12`. */
   value: React.ReactNode;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -115,6 +116,7 @@ function MetricTab({ label, value, className, ...props }: MetricTabProps) {
 
 interface MetricTabListProps<T extends object>
   extends Omit<AriaTabListProps<T>, "className"> {
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

@@ -13,7 +13,10 @@ const USER = {
 const meta: Meta<typeof AccountMenu> = {
   title: "Overlays/AccountMenu",
   component: AccountMenu,
+  subcomponents: { AccountMenuItem },
   tags: ["autodocs"],
+  // Opens on mount, and an open popover locks page scroll — so on the Docs page each story gets its own iframe.
+  parameters: { docs: { story: { inline: false, height: "600px" } } },
   decorators: [
     (Story) => (
       // Room above the trigger for the menu, which opens upward from the sidebar footer.
@@ -28,13 +31,16 @@ type Story = StoryObj<typeof AccountMenu>;
 
 /** The Figma menu: My Profile, Language (with the current value), Settings, Sign out, and the footer links. */
 export const Default: Story = {
-  render: () => (
+  args: { ...USER, termsHref: "#", privacyHref: "#" },
+  argTypes: { trigger: { control: false }, children: { control: false } },
+  // On the Docs page this story renders inline and closed (open it from its trigger), so the Docs controls reach it; a
+  // story in its own iframe doesn't receive Docs control changes.
+  parameters: { docs: { story: { inline: true } } },
+  render: ({ trigger: _trigger, children: _children, ...args }, { viewMode }) => (
     <AccountMenu
-      defaultOpen
-      trigger={<AccountTrigger {...USER} />}
-      {...USER}
-      termsHref="#"
-      privacyHref="#"
+      {...args}
+      defaultOpen={viewMode !== "docs"}
+      trigger={<AccountTrigger name={args.name ?? USER.name} email={args.email ?? USER.email} avatar={args.avatar ?? USER.avatar} />}
     >
       <AccountMenuItem id="profile" icon={UserCircle}>
         My Profile

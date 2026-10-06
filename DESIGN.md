@@ -16,6 +16,10 @@ Keep entries short: what the rule is, why it exists, and the exact
 known-good shape to check against. Don't restate things that are already
 self-evident from reading the code.
 
+Storybook's **Guidelines** pages (`src/docs/guidelines/`) restate these rules
+for developers and the product team. When you add or change a rule here,
+update its page there in the same change.
+
 ---
 
 ## Design quality bar — consumer and internal products are equal

@@ -7,6 +7,70 @@ const meta: Meta<typeof Button> = {
   title: "Buttons/Button",
   component: Button,
   tags: ["autodocs"],
+  // Button's two-signature type (button vs. link) hides its props from Storybook's type reader, so its description and controls are set here — keep in sync with `buttonVariants`.
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "The Verita button. Figma: `button` (Type=Text|Icon, Style×Tone→`color`, Size, State). Pass `href` to render it as a link with the same look.",
+      },
+    },
+  },
+  argTypes: {
+    color: {
+      control: "select",
+      options: [
+        "primary",
+        "primary-destructive",
+        "secondary",
+        "secondary-destructive",
+        "tertiary",
+        "tertiary-destructive",
+        "link-color",
+      ],
+      description: "Figma Style × Tone, e.g. Outlined + Destructive → `secondary-destructive`.",
+      table: { type: { summary: "string" }, defaultValue: { summary: "primary" } },
+    },
+    size: {
+      control: "select",
+      options: ["xs", "sm", "md", "lg", "xl"],
+      description: "Height: `xs` 32px, `sm` 36px, `md` 40px, `lg` 44px, `xl` 48px.",
+      table: { type: { summary: "string" }, defaultValue: { summary: "sm" } },
+    },
+    isLoading: {
+      control: "boolean",
+      description: "Shows a loading spinner and disables the button.",
+      table: { type: { summary: "boolean" } },
+    },
+    isDisabled: {
+      control: "boolean",
+      description: "Disables the button and shows its disabled style.",
+      table: { type: { summary: "boolean" } },
+    },
+    noTextPadding: {
+      control: "boolean",
+      description: "Zeroes the button's own padding. Always on for `link-color`.",
+      table: { type: { summary: "boolean" } },
+    },
+    count: { control: "text", description: "Counter after the label. Omit to hide it.", table: { type: { summary: "ReactNode" } } },
+    iconLeading: {
+      control: false,
+      description:
+        "Icon before the label. Pass an icon component (e.g. `HomeLine`, sized and colored automatically) or a pre-rendered element.",
+      table: { type: { summary: "FC | ReactNode" } },
+    },
+    iconTrailing: {
+      control: false,
+      description: "Icon after the label. Same shape as `iconLeading`.",
+      table: { type: { summary: "FC | ReactNode" } },
+    },
+    href: {
+      control: false,
+      description: "Renders the button as a link (React Aria `Link`) with the same look.",
+      table: { type: { summary: "string" } },
+    },
+    children: { control: "text", description: "The label. Omit it for an icon-only button, and pass `aria-label` instead." },
+  },
   args: {
     children: "Label",
   },

@@ -66,10 +66,13 @@ const tabButtonVariants = cva(
 interface TabButtonProps
   extends Omit<AriaTabProps, "children" | "className">,
     VariantProps<typeof tabButtonVariants> {
+  /** Tab height: `sm` 36px, `md` 40px. Defaults to `md`. */
+  size?: VariantProps<typeof tabButtonVariants>["size"];
   /** Tab label (Figma's `Tab` text). */
   label: React.ReactNode;
   /** Counter value (Figma's `counter`, shown when `showCounter` is on). Omit to hide the counter. */
   count?: React.ReactNode;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -133,6 +136,7 @@ function TabButton({ label, count, size, className, ...props }: TabButtonProps) 
 
 interface TabButtonListProps<T extends object>
   extends Omit<AriaTabListProps<T>, "className"> {
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

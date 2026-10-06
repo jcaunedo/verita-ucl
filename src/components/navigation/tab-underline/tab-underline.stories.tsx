@@ -7,6 +7,7 @@ import { TabUnderline, TabUnderlineList, TabUnderlinePanel, TabUnderlines } from
 const meta: Meta<typeof TabUnderline> = {
   title: "Navigation/TabUnderline",
   component: TabUnderline,
+  subcomponents: { TabUnderlineList },
   tags: ["autodocs"],
   args: { label: "Tab" },
   decorators: [

@@ -40,6 +40,7 @@ interface AvatarCompaniesProps
   logoSrc?: string;
   /** Alt text for `logoSrc`. Required semantically whenever `logoSrc` is set. */
   logoAlt?: string;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

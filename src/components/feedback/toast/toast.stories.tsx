@@ -7,6 +7,25 @@ import { Toast, Toaster, toast } from "./toast";
 const meta: Meta<typeof Toast> = {
   title: "Feedback/Toast",
   component: Toast,
+  // `Toaster`'s props all come from `sonner`, so instead of an empty props tab, the setup goes in the page description.
+  parameters: {
+    docs: {
+      description: {
+        component: `A toast notification card. Figma: \`sonner\`. Usually shown through \`toast()\` rather than rendered directly.
+
+**Setup:** mount \`<Toaster />\` once near the root of the app, then call \`toast()\` from anywhere:
+
+\`\`\`tsx
+import { Toaster, toast } from "verita-ai-ucl";
+
+<Toaster />;
+toast({ title: "Referral link copied", tone: "success" });
+\`\`\`
+
+\`Toaster\` shows toasts bottom right on desktop and bottom center at 768px and below (DESIGN.md "Toasts"), keeps at most 3 visible, and pauses auto-dismiss while one is hovered. \`toast()\` takes \`title\`, \`description\`, \`tone\`, \`action\` (\`{ label, onClick }\`), \`duration\`, \`dismissible\`, and \`id\`, and returns the toast's id: \`toast.dismiss(id)\` closes it, \`toast.dismiss()\` closes them all.`,
+      },
+    },
+  },
   tags: ["autodocs"],
   args: {
     title: "Title",

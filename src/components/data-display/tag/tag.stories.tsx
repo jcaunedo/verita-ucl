@@ -8,6 +8,7 @@ const avatar = (seed: string) => `https://i.pravatar.cc/64?u=${seed}`;
 const meta: Meta<typeof Tag> = {
   title: "DataDisplay/Tag",
   component: Tag,
+  subcomponents: { TagGroup, TagList },
   tags: ["autodocs"],
   decorators: [
     (Story) => (
@@ -22,10 +23,11 @@ type Story = StoryObj<typeof Tag>;
 
 /** Figma `Tag`, label only (`showAvatar` and `showXClose` off). */
 export const Default: Story = {
-  render: () => (
+  args: { children: "Label" },
+  render: (args) => (
     <TagGroup aria-label="Tags">
       <TagList>
-        <Tag id="label">Label</Tag>
+        <Tag id="label" {...args} />
       </TagList>
     </TagGroup>
   ),

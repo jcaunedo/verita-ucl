@@ -33,6 +33,7 @@ interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "ti
   buttonLabel?: string;
   /** Forwarded to the CTA button (e.g. `onPress`, or `href` for a link). */
   buttonProps?: Omit<ButtonProps, "size" | "color" | "children">;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

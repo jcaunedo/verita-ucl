@@ -1,0 +1,79 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+import tokensSource from "../../lib/motion/tokens.ts?raw";
+import transitionsSource from "../../lib/motion/transitions.ts?raw";
+import variantsSource from "../../lib/motion/variants.ts?raw";
+import patternsSource from "../../lib/motion/patterns.ts?raw";
+import { MotionDemos, MotionExports, MotionTokens, MotionTransitions } from "./motion-tokens";
+
+<Meta title="Foundations/Motion" />
+
+# Motion
+
+Motion explains a change: it gives feedback, keeps track of where things came from, and makes the interface feel
+responsive. It should feel calm, refined, and quick. Never bouncy, and never decoration for its own sake. When in
+doubt, choose the subtler option. The full principles live in `CLAUDE.md` under "Motion System".
+
+Every value on this page comes from `src/lib/motion/`, which the library exports:
+
+```tsx
+import { motion } from "motion/react";
+import { liftPattern, revealVariants, motionDuration } from "verita-ai-ucl";
+
+<motion.div {...liftPattern}>…</motion.div>;
+```
+
+## Rules of thumb
+
+- **Use the presets.** Reach for a pattern or variant below before writing an animation, and never put raw durations,
+  curves, or distances in a component. If something new is needed, add it as a token in `src/lib/motion/`.
+- **Exits are shorter than entrances.** The one documented exception is modals, which leave with a slow 600ms fade
+  (DESIGN.md "Modals grow in and shrink out from the center").
+- **Respect reduced motion.** Components read `useMotionPreference()` and fall back to fades without movement.
+- **Animate `opacity` and `transform`.** Use Motion's `layout` for size and position changes rather than animating
+  `height`, `top`, or `margin` by hand.
+
+## Patterns in action
+
+Live demos built from the real presets. With reduced motion turned on in your OS, they fade instead of moving.
+
+<MotionDemos />
+
+## Tokens
+
+The raw values every preset is built from. Components use the presets, not these numbers directly.
+
+### Duration
+
+<MotionTokens source={tokensSource} group="motionDuration" />
+
+### Distance
+
+<MotionTokens source={tokensSource} group="motionDistance" />
+
+### Scale
+
+<MotionTokens source={tokensSource} group="motionScale" />
+
+### Stagger
+
+<MotionTokens source={tokensSource} group="motionStagger" />
+
+## Transitions
+
+Timing presets, picked by intent: `standardTransition` for most changes, `enterTransition` for arrivals,
+`exitTransition` for departures, and springs for direct manipulation.
+
+<MotionTransitions source={transitionsSource} />
+
+## Variants
+
+`initial` / `animate` / `exit` states for elements that mount and unmount. Use them with `AnimatePresence`.
+
+<MotionExports source={variantsSource} pattern="Variants$" />
+
+## Gesture patterns
+
+Prop bundles to spread onto a `motion.*` element for hover and press feedback.
+
+<MotionExports source={patternsSource} pattern="Pattern$" />

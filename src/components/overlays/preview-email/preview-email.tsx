@@ -26,6 +26,7 @@ interface PreviewEmailProps {
   onSend: () => void;
   /** How many invites the send button sends, shown as a counter after its label. Omit (or 0) to hide it. */
   recipientCount?: number;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

@@ -37,6 +37,8 @@ const sidebarMenuItemVariants = cva(
 );
 
 interface SidebarMenuItemProps extends Omit<LinkProps, "children" | "className"> {
+  /** The page this item opens. */
+  href?: LinkProps["href"];
   /** Icon element, e.g. `<HomeLine />` from `@untitledui/icons`. Rendered at 20px and recolored to match the current text color. */
   icon: React.ReactNode;
   /** Nav item label. */
@@ -45,6 +47,7 @@ interface SidebarMenuItemProps extends Omit<LinkProps, "children" | "className">
   current?: boolean;
   /** Icon-only mode for a collapsed sidebar (Figma: `Sidebar` layout's Collapsed variant) — shrinks to a 36px square, hides the label visually while keeping it for screen readers. */
   collapsed?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

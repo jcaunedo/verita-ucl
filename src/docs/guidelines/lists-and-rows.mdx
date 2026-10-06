@@ -1,0 +1,70 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guidelines/Lists and rows" />
+
+# Lists and rows
+
+Row cards (`ApplicationCard`, `MatchCard`, `OfferCard`) show one item per row in a list. Grid cards (`ContractCard`,
+`NextStepCard`, `CalloutCard`) stand on their own in a grid. The two families look and behave differently on purpose.
+
+See them in context in the prototype: [Engagements](?path=/story/layouts-engagements--default) and
+[Dashboard](?path=/story/layouts-dashboard--default).
+
+## A list of rows is one table list
+
+**Rule:** row cards are always listed inside one bordered container, with a divider between rows. They're never stacked
+as separate bordered cards with gaps between them. This holds on every surface (Home modules, Engagements views) and for
+any number of rows: a single row uses the same container, so it looks the same as a standalone card.
+
+**Why:** a list of offers read differently from the Applications and Matches lists next to it. One list pattern keeps
+every row family consistent as items move between views and modules. (Design direction, Sep 25, 2026.)
+
+**For developers:**
+
+- Container: `flex w-full flex-col items-start overflow-hidden rounded-card border border-border shadow-[0px_2px_4px_0px_rgba(0,0,0,0.04)]`.
+- Each row: `border-b border-border last:border-b-0`, on the row or on its motion wrapper when rows animate. The row card
+  itself carries no border, radius, or shadow.
+- Grid cards are not rows. `ContractCard`, `NextStepCard`, and `CalloutCard` keep their own card treatment in a grid.
+
+## Removing a row
+
+**Rule:** when a row is removed in place (for example, declining an offer) and other rows remain, it fades out and its
+space closes up. When it's the last row, the whole list leaves instead, so an empty bordered box never shows. If an
+empty state replaces the list, it fades in after the list has gone.
+
+**For developers:** the row's wrapper uses `rowDismissVariants` (with `overflow-hidden`); the last row's container uses
+`cardDismissVariants`; wrap the list and its empty state in `AnimatePresence mode="wait"`. See
+[Foundations/Motion](?path=/docs/foundations-motion--docs).
+
+## Show section headings only when two sections have rows
+
+**Rule:** a list split into labeled sections (for example `In progress` / `Not moving forward`) shows its headings only
+when at least two sections have rows. With one section, the list renders alone, with no heading. Sections with no rows
+are always hidden.
+
+**Why:** a single heading above the only list tells the user nothing; it just pushes the list down. Grouping only helps
+when there's something to tell apart. (Design direction, Sep 25, 2026.)
+
+**For developers:** render sectioned lists through `GroupedList` (in `src/layouts/engagements/engagements.tsx`), which
+skips empty sections and drops the headings when only one is left. Headings use `ListSection`: `sm` muted text, 8px
+above its list, 32px between sections. Don't hand-roll the section loop.
+
+## Rows tint on hover; cards lift
+
+**Rule:** a row in a list tints very lightly on hover. A standalone card doesn't tint: it lifts slightly and gains a soft
+shadow. Two cards are exceptions: `NextStepCard` and `CalloutCard` tint *and* lift.
+
+| Surface | On hover | Token |
+| --- | --- | --- |
+| List and table rows (Application, Match, Offer) | Light tint | `hover-row` (neutral-700 at 3%) |
+| Standalone cards (Contract) | Lift + shadow, white fill, border | `shadow-hover-card` + Lift motion |
+| `NextStepCard`, `CalloutCard` | Tint + lift, no shadow | `hover` (neutral-700 at 4%) |
+| Controls and menu items (Button, Select and Menu items) | Tint | `hover` |
+
+**Why:** design deliberately separates row hover (large surfaces, lighter) from control hover (small targets,
+stronger). When the two shared one token, a change meant for controls silently darkened every card. (Sep 24–30, 2026.)
+
+**For developers:** new list rows use `hover:bg-hover-row` (or `group-hover:` / `has-[…]:` when a row stays highlighted
+while its menu is open, as in `ApplicationCard`). Never `bg-hover`, `bg-neutral-*`, or an arbitrary `color-mix` on a
+row. New standalone cards use `shadow-hover-card` on hover plus `liftPattern`, with `box-shadow` in the card's CSS
+transition (not `transition-all`, which fights Motion's transform).

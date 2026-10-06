@@ -8,7 +8,7 @@ import { Referrals } from "./referrals";
 const meta: Meta<typeof Referrals> = {
   title: "Layouts/Referrals",
   component: Referrals,
-  tags: ["autodocs"],
+  tags: ["!autodocs"],
   parameters: {
     layout: "fullscreen",
   },

@@ -1,0 +1,62 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+
+import * as MenuStories from "../../components/overlays/menu/menu.stories";
+
+<Meta title="Guidelines/Actions and menus" />
+
+# Actions and menus
+
+## Primary buttons follow the next action, not clickability
+
+**Rule:** a card gets a persistent primary button only when the professional owns the next action **and** that action
+is a meaningful step toward secured work.
+
+| Card | Primary button |
+| --- | --- |
+| `OfferCard` | "View offer" |
+| `ContractCard` | "Start working", or the task the professional owes |
+| `MatchCard` | Its recommended action |
+| `ApplicationCard` | **None.** The whole row opens the detail; an action the professional owes shows through its status and supporting text |
+
+**Why:** every row is already clickable, so "it can be opened" isn't a reason for a button. A button on every
+application would compete with the few rows that really need the professional, and dilute the offer's "View offer",
+the step closest to securing work. (Decided Sep 25, 2026; see
+[offer-card.md §4.1](https://github.com/jcaunedo/verita-ucl/blob/main/product-specs/offer-card.md).)
+
+**For developers:** don't add a CTA to `ApplicationCard` because a design shows one, or to make a row "more clickable".
+Flag it instead. Remove the CTA when the action goes away: a closed offer passes `showCta={false}`.
+
+## A `···` menu needs at least two items
+
+**Rule:** a row's `···` actions menu only shows when it holds two or more items. With one item (or none), there's no
+`···` at all. That single action is either the row's own click (for example View details, when the row already opens
+the detail) or belongs on the row itself.
+
+**Why:** a menu that opens to a single item is an extra click that hides an action instead of offering a choice.
+(Design direction, Sep 25, 2026.)
+
+**For developers:** `ApplicationCard` enforces this with `countMenuItems`: keep passing it the full, status-gated menu
+and don't add your own "only one item" branch. Any new card or row with a `···` menu applies the same check.
+`OfferCard` has no `···` menu: an always-visible × declines the offer.
+
+## No dividers in actions menus
+
+**Rule:** actions menus list their items with no divider, including before a destructive item. The destructive item's
+red label and icon already set it apart. Add a divider only when a design explicitly asks for one for that menu (the
+account menu's divider before the prototype items was requested).
+
+**Why:** dividers were removed from the offer and application menus and are left out everywhere by default. (Design
+direction, Sep 24, 2026.)
+
+Press `···` to open it:
+
+<Canvas of={MenuStories.Default} />
+
+## Clickable things look clickable, and only those
+
+**Rule:** everything clickable shows a pointer cursor on hover (and a not-allowed cursor when disabled). Anything that
+does nothing shouldn't look interactive: an `OfferCard` row with no detail to open and no × doesn't tint on hover.
+
+**For developers:** the pointer cursor is applied once, globally, to real interactive elements and roles. Don't add
+`cursor-pointer` to components. A custom clickable element needs the right role (`role="button"`) to get it. Details in
+[Developer contracts](?path=/docs/guidelines-developer-contracts--docs).

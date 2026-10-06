@@ -31,10 +31,15 @@ const hyperlinkVariants = cva(
 interface HyperlinkProps
   extends Omit<AriaLinkProps, "children" | "className">,
     VariantProps<typeof hyperlinkVariants> {
+  /** Text size: `sm` (14px) or `base` (16px). Defaults to `sm`. */
+  size?: VariantProps<typeof hyperlinkVariants>["size"];
+  /** Where the link goes. */
+  href?: AriaLinkProps["href"];
   /** Link label. */
   children: React.ReactNode;
   /** Shows the trailing arrow-up-right icon (Figma: `showArrowUpRight`). */
   showArrow?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

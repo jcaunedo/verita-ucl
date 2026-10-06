@@ -46,6 +46,7 @@ interface TagProps extends Omit<AriaTagProps, "children" | "className"> {
   avatarClassName?: string;
   /** Accessible label for the remove (×) button. Defaults to "Remove <label>" when the label is a string. */
   removeLabel?: string;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -113,6 +114,7 @@ interface TagGroupProps extends Omit<AriaTagGroupProps, "className" | "children"
   label?: React.ReactNode;
   /** The group's `TagList`. */
   children: React.ReactNode;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
@@ -130,6 +132,7 @@ function TagGroup({ label, children, className, ...props }: TagGroupProps) {
 }
 
 interface TagListProps<T extends object> extends Omit<AriaTagListProps<T>, "className"> {
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

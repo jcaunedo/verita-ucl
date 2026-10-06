@@ -1,0 +1,43 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+
+import * as EmptyStateStories from "../../components/feedback/empty-state/empty-state.stories";
+import * as SectionEmptyStateStories from "../../components/cards/section-empty-state/section-empty-state.stories";
+
+<Meta title="Guidelines/Empty views" />
+
+# Empty views
+
+See them in the prototype: [Dashboard, empty state](?path=/story/layouts-dashboardemptystate--default) and the
+filters in [Engagements](?path=/story/layouts-engagements--default).
+
+## Two empty-state components
+
+- **[EmptyState](?path=/docs/feedback-emptystate--docs):** a centered message for a whole view or filter with nothing
+  to show, such as Engagements → Contracts → Completed ("No completed contracts"). Optional icon and button.
+- **[SectionEmptyState](?path=/docs/cards-sectionemptystate--docs):** a section-level message on a dashed border, with a
+  call to action, for a page section that has nothing in it yet.
+
+<Canvas of={EmptyStateStories.WithAction} />
+
+<Canvas of={SectionEmptyStateStories.RealisticCopy} />
+
+## Hide search and filters when a view is empty
+
+**Rule:** when a view has nothing under **any** of its filters (for example, Engagements → Talent Network with no
+memberships), it shows only the empty state of its default filter, including its call to action: no search button and no
+filter row. Search and filters come back as soon as any filter has an item.
+
+If only one filter is empty (for example `Closed` with no offers yet), the view keeps its search and filters, and that
+filter shows its own empty state.
+
+**Why:** search and filters over nothing are controls with nothing to act on. They push the empty state down and suggest
+there's content to narrow. (Design direction, Sep 25, 2026.)
+
+**For developers:** check the view's total across all filters, not the selected filter's. Engagements applies this to
+every filtered view: Applications, Offers, Contracts, and Talent Network.
+
+## Related
+
+- Empty sections in a list are hidden, and headings disappear when only one section is left
+  ([Lists and rows](?path=/docs/guidelines-lists-and-rows--docs)).
+- When the last row of a list is removed, the list leaves and the empty state fades in after it.

@@ -1,0 +1,50 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+
+import * as InlineAlertStories from "../../components/feedback/inline-alert/inline-alert.stories";
+
+<Meta title="Guidelines/Messages and feedback" />
+
+# Messages and feedback
+
+## Choosing a message component
+
+| Component | Use for | Example |
+| --- | --- | --- |
+| [Alert](?path=/docs/feedback-alert--docs) | A full-width banner about something on the page that needs attention. It can open a detail and can be dismissed | "You have a new offer waiting for your response." ([Dashboard](?path=/story/layouts-dashboard--offer-alert-banner)) |
+| [InlineAlert](?path=/docs/feedback-inlinealert--docs) | A short status line inside a section or card | "No work history added yet" |
+| [Toast](?path=/docs/feedback-toast--docs) | Brief confirmation that an action just happened. It disappears on its own | "Referral link copied and ready to share" |
+
+## Message icons follow the message type
+
+**Rule:** every status or supporting message picks its icon from what the message *means*, using one shared map. When a
+message's type can change (for example a deadline that becomes urgent), the icon changes with it, not just the color.
+
+| Message type | Icon | Color |
+| --- | --- | --- |
+| Info / neutral | `InfoCircle` | Info blue, or muted gray on muted supporting text |
+| Warning | `AlertTriangle` | Warning orange |
+| Destructive / urgent | `AlertCircle` | Destructive red |
+| Success | `CheckCircle` | Success green |
+
+`AlertCircle` means something is wrong or urgent: never use it for informational copy. And never let the icon carry the
+meaning alone; the text has to say it too.
+
+**Why:** `ContractCard`'s instructions line always showed the urgent icon, because Figma only draws the urgent variant.
+Routine copy like "Complete training before it starts on Oct 1" read as an error. (Decided Oct 1, 2026.)
+
+**For developers:** reuse the map in `Alert`/`InlineAlert` (their `tone` prop); don't pick an icon because it's the one in
+the Figma frame you're syncing, since Figma often shows only one state. `ContractCard`'s `instructionsUrgent` switches
+icon and color together.
+
+<Canvas of={InlineAlertStories.AllVariants} />
+
+## Toasts: bottom right on desktop, bottom center on mobile
+
+**Rule:** toasts appear at the bottom right of the screen on desktop, and bottom center at 768px wide and below. At
+most three show at once, and a toast stays while the pointer is over it.
+
+**Why:** without one shared default, each page picked its own placement. (Design direction, Oct 2, 2026.)
+
+**For developers:** mount `<Toaster />` once, without a `position`, and show toasts through `toast()`. Never place a
+`Toast` card on the page yourself. Pass `position` only when a surface genuinely needs a different placement, and note
+why next to it. See [Feedback/Toast](?path=/docs/feedback-toast--docs) for the setup.

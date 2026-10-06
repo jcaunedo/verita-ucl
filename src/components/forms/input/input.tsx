@@ -19,6 +19,7 @@ interface InputProps extends Omit<AriaTextFieldProps, "children" | "className"> 
   hint?: React.ReactNode;
   /** Shown in place of `hint`, in destructive, and turns the field to Figma's Error state. */
   errorMessage?: React.ReactNode;
+  /** Hint text shown in the empty field. Don't use it in place of `label`. */
   placeholder?: string;
   /** Figma `Size`: `md` (40px, `base` text, the default) or `sm` (36px, `sm` text). */
   size?: "sm" | "md";
@@ -28,6 +29,7 @@ interface InputProps extends Omit<AriaTextFieldProps, "children" | "className"> 
   iconTrailing?: FieldIconProp;
   /** Muted text after the value, e.g. a unit (Figma `Suffix`). */
   suffix?: React.ReactNode;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

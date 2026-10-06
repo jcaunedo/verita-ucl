@@ -9,6 +9,7 @@ const meta: Meta<typeof Alert> = {
   args: { title: "title", description: "description", onClick: () => {}, dismissible: true, onDismiss: () => {} },
   argTypes: {
     tone: { control: "inline-radio", options: ["neutral", "info", "warning", "destructive", "success"] },
+    onClick: { control: false },
   },
 };
 export default meta;

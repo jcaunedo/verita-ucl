@@ -164,6 +164,10 @@ const buttonVariants = cva(
 
 /** Common props shared between the button and link variants. */
 interface CommonProps extends VariantProps<typeof buttonVariants> {
+  /** Height: `xs` 32px, `sm` 36px, `md` 40px, `lg` 44px, `xl` 48px. Defaults to `sm`. */
+  size?: VariantProps<typeof buttonVariants>["size"];
+  /** Figma Style × Tone, e.g. Outlined + Destructive → `secondary-destructive`. Defaults to `primary`. */
+  color?: VariantProps<typeof buttonVariants>["color"];
   /** Shows a loading spinner and disables the button. */
   isLoading?: boolean;
   /** Icon to show before the text — an unrendered component reference (e.g. `HomeLine`, sized/colored automatically) or a pre-rendered element (e.g. `<HomeLine className="..." />`, styled manually). */

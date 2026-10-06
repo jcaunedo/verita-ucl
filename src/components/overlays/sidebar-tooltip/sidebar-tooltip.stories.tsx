@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Button as AriaButton } from "react-aria-components";
 
 import { SidebarTooltip, SidebarTooltipTrigger } from "./sidebar-tooltip";
 
@@ -14,15 +15,12 @@ export default meta;
 type Story = StoryObj<typeof SidebarTooltip>;
 
 export const Default: Story = {
-  render: () => (
+  args: { children: "Home" },
+  render: (args) => (
     <SidebarTooltipTrigger delay={0}>
-      <button
-        type="button"
-        className="rounded-full px-3 py-1.5 text-sm text-neutral-600"
-      >
-        Hover me
-      </button>
-      <SidebarTooltip>Home</SidebarTooltip>
+      {/* A React Aria trigger: `TooltipTrigger` only attaches to React Aria components, not a plain <button>. */}
+      <AriaButton className="rounded-full px-3 py-1.5 text-sm text-neutral-600">Hover me</AriaButton>
+      <SidebarTooltip {...args} />
     </SidebarTooltipTrigger>
   ),
 };

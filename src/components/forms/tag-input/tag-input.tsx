@@ -46,7 +46,9 @@ interface TagInputProps {
   onChange?: (value: string[]) => void;
   /** The text typed but not yet turned into a tag, controlled. Pair with `onInputChange`. */
   inputValue?: string;
+  /** The starting draft text, uncontrolled. Defaults to empty. */
   defaultInputValue?: string;
+  /** Called whenever the draft text changes. */
   onInputChange?: (inputValue: string) => void;
   /** Returns an error message when a value can't become a tag, or nothing when it can. Default: anything goes. */
   validate?: (value: string) => string | null | undefined;
@@ -77,6 +79,7 @@ interface TagInputProps {
   isDisabled?: boolean;
   /** The tags can be read and focused but not changed; Figma `Input`'s Read-only look. */
   isReadOnly?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

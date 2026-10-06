@@ -1,0 +1,56 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+import { Typography } from "@/components/typography";
+import themeCss from "../../styles/theme.css?raw";
+import { FontFamily, FontWeights, TypeScale } from "./type-scale";
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+UCL sets text with the `Typography` component, whose `size` and `weight` props map to the type tokens in
+`src/styles/theme.css`. Use `Typography` (or its `typographyVariants` classes) rather than raw `text-*`/`font-*`
+utilities, so text stays on the scale. See [Components/Typography](?path=/docs/components-typography--docs) for its
+props.
+
+## Font
+
+Every size uses one family, Inter, loaded once by `theme.css`:
+
+<FontFamily css={themeCss} />
+
+Font smoothing and optical sizing are set once on `html` and inherited everywhere, including portaled menus and
+popovers (DESIGN.md "Global font rendering").
+
+## Headings
+
+Choose the heading level with `as`, for document structure and screen readers, and its look with `size` and `weight`.
+These are the pairings verita.ds uses:
+
+<div className="sb-unstyled flex flex-col gap-3">
+  <Typography as="h1" size="3xl" weight="semibold">h1 · 3xl semibold</Typography>
+  <Typography as="h2" size="2xl" weight="semibold">h2 · 2xl semibold</Typography>
+  <Typography as="h3" size="xl" weight="semibold">h3 · xl semibold</Typography>
+  <Typography as="h4" size="lg" weight="semibold">h4 · lg semibold</Typography>
+  <Typography>Body · base regular</Typography>
+  <Typography size="sm" className="text-foreground-muted">Supporting text · sm regular, foreground-muted</Typography>
+</div>
+
+```tsx
+<Typography as="h2" size="2xl" weight="semibold">Your engagements</Typography>
+```
+
+## Type scale
+
+Generated from the `--text-*` tokens. Each size sets both font size and line height. Sizes marked "Not in
+`Typography`" exist as tokens for specific components (e.g. `xxs` for the initials in Tag's 16px avatar) but aren't a
+`Typography` size.
+
+<TypeScale css={themeCss} />
+
+## Weights
+
+Generated from the `--font-weight-*` tokens. `Typography` offers `regular`, `medium`, `semibold`, and `bold`. Verita
+never uses the 900 (black) weight, and there's no token for it (DESIGN.md "No black font weight").
+
+<FontWeights css={themeCss} />

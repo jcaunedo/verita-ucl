@@ -140,6 +140,8 @@ interface NextStepCardProps
       "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
     >,
     VariantProps<typeof nextStepCardVariants> {
+  /** `default`: dashed border, filled on hover. `offer`: green tint, no border, and an `offer` badge. Defaults to `default`. */
+  variant?: VariantProps<typeof nextStepCardVariants>["variant"];
   /** Leading label badge text (Figma's `badge` instance, `Label`). */
   label: string;
   /** Leading label badge tone (Figma's `badge` instance tone binding). Defaults to `"neutral"`, or `"offer"` for `variant="offer"`. */
@@ -169,6 +171,7 @@ interface NextStepCardProps
    * be a mount to animate at all. Defaults to `false` (plain fade-in place).
    */
   enterFromRight?: boolean;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

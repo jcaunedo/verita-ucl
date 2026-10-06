@@ -6,7 +6,7 @@ import { Engagements } from "./engagements";
 const meta: Meta<typeof Engagements> = {
   title: "Layouts/Engagements",
   component: Engagements,
-  tags: ["autodocs"],
+  tags: ["!autodocs"],
   parameters: {
     layout: "fullscreen",
   },

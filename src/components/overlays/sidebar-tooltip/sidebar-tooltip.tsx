@@ -31,7 +31,9 @@ import { enterTransition, motionDistance, useMotionPreference } from "@/lib/moti
  */
 interface SidebarTooltipProps
   extends Omit<AriaTooltipProps, "className" | "children"> {
+  /** Extra classes for the tooltip bubble, merged after the component's own. */
   className?: string;
+  /** The tooltip text, e.g. the collapsed sidebar item's label. */
   children?: React.ReactNode;
 }
 

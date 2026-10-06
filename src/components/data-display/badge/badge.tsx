@@ -98,6 +98,13 @@ const badgeVariants = cva(
 interface BadgeProps
   extends Omit<React.ComponentProps<"span">, "children">,
     VariantProps<typeof badgeVariants> {
+  /**
+   * Color. Status tones: `neutral`, `brand`, `success`, `warning`, `destructive`, `info`. Decorative hues: `gray-blue`,
+   * `blue-light`, `indigo`, `purple`, `pink`, `orange`. `offer` is white with green text. Defaults to `neutral`.
+   */
+  tone?: VariantProps<typeof badgeVariants>["tone"];
+  /** Height: `sm` 22px, `md` 24px, `lg` 30px. Defaults to `sm`. */
+  size?: VariantProps<typeof badgeVariants>["size"];
   /** Badge text. Omit (or pass `null`) for an icon-only badge (Figma: Show Label off). */
   label?: React.ReactNode;
   /** Leading status dot (Figma: `Dot`, 6px, `currentColor`-filled — always matches the tone's strong color). */

@@ -1,0 +1,51 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guidelines/Page layout" />
+
+# Page layout
+
+## One page shell, one responsive behavior
+
+**Rule:** every page uses the same shell: a sticky `Sidebar` on the left and a content area filling the rest. No page
+gets its own gutters, breakpoints, or sidebar behavior.
+
+| Window width | Sidebar | Content gutters (left / right) | Card grids |
+| --- | --- | --- | --- |
+| 1024 and below | Collapses automatically | 48 / 48 | 2 per row |
+| 1025 – 1280 | User's choice | 48 / 48 | 2 per row (Next Steps: 3) |
+| 1281 – 1536 | User's choice | Open: 24 / 48 · Collapsed: 96 / 96 | 3 per row (Next Steps: 4) |
+| 1537 and up | User's choice | Open: 64 / 160 · Collapsed: 160 / 160 | 3 per row (Next Steps: 4) |
+
+- **Content column:** at most 1400px wide, centered, starting 40px from the top with 104px of space at the bottom.
+- **Sidebar:** at 1024px and below it collapses on its own. Widening the window again restores it only if the collapse
+  was automatic; once the user toggles it, their choice sticks. Collapsing it glides the content over rather than
+  jumping.
+- **Next Steps** shows one row of cards; "View more" expands to all of them, "View less" collapses back.
+- **Contract cards** in a section are all the same height, with their buttons lined up at the bottom.
+- **Callout row** (Dashboard): stacked at 1024px and below, side by side above it, at equal height.
+
+**Why:** each layout used to set its own gutters, and they drifted, so pages didn't line up when you switched between
+them. Engagements' gutters became the standard and moved into one shared helper (Sep 23–30, 2026).
+
+**For developers:** start a new layout from an existing one (`PlaceholderPage` is the smallest): sticky `Sidebar`
+driven by `useLayoutSidebar`, canvas padding from `layoutCanvasPaddingClassName(sidebarCollapsed)`, and a 1400px
+content column. Never hand-write `px-*`/`pl-*`/`pr-*` on the canvas or copy the collapse logic. To change the gutters,
+edit `layoutCanvasPaddingClassName` and update `DESIGN.md`. Check every changed layout at exactly 1024, 1280, and 1536,
+and 1px above each, with the sidebar open and collapsed.
+
+See it in the prototype: [Dashboard](?path=/story/layouts-dashboard--default),
+[Engagements](?path=/story/layouts-engagements--default), [Referrals](?path=/story/layouts-referrals--default).
+
+## Breakpoints include their own width
+
+**Rule:** a breakpoint covers widths up to **and including** its frame width. The frames are md 768, lg 1024, xl 1280,
+2xl 1536, and 3xl 1920. So a window exactly 1024px wide gets the "1024 and below" layout, and the next layout starts at
+1025px. Say "at `lg` (1024) and below" or "above `lg`" in specs and comments, not "below `lg`" or "from `lg`".
+
+**Why:** designs are reviewed at those exact frame widths, and each frame has to show the layout designed for it. With
+Tailwind's default breakpoints, a frame at exactly 1024px got the next layout up. (Design direction, Sep 25, 2026.)
+
+**For developers:** `theme.css` registers each Tailwind breakpoint 1px past its frame, so write the usual `lg:`/`xl:`
+classes (`lg:` means above 1024, `max-lg:` means 1024 and below) and never an arbitrary `min-[1025px]:`. In JavaScript,
+use `mediaAbove("lg")` from `@/lib/breakpoints` instead of a hand-written media query. Keep `theme.css` and
+`src/lib/breakpoints.ts` in sync.

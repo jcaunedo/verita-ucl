@@ -24,6 +24,8 @@ const logoVariants = cva("", {
 interface LogoProps
   extends React.SVGAttributes<SVGSVGElement>,
     VariantProps<typeof logoVariants> {
+  /** Color: `default` follows the theme's text color; `inverse` is white, for dark surfaces. Defaults to `default`. */
+  variant?: VariantProps<typeof logoVariants>["variant"];
   /** Accessible label. Defaults to "Verita AI", the wordmark's visible text. */
   title?: string;
   /**

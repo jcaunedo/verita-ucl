@@ -51,6 +51,10 @@ const toneIcons: Record<InlineAlertTone, React.FC<{ className?: string }>> = {
 interface InlineAlertProps
   extends React.ComponentProps<"div">,
     VariantProps<typeof inlineAlertVariants> {
+  /** Message type, which sets the text color and default icon: `info`, `warning`, `destructive`, or `success`. Defaults to `info`. */
+  tone?: VariantProps<typeof inlineAlertVariants>["tone"];
+  /** The message text. */
+  children?: React.ReactNode;
   /** Shows the tone's leading icon (Figma: `showIcon`). */
   showIcon?: boolean;
   /**

@@ -1,0 +1,39 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guidelines/Overview" />
+
+# Guidelines
+
+Components tell you what each piece looks like. These guidelines tell you how the pieces behave **together on a page**:
+when a card gets a button, how a list of rows is drawn, what an empty view shows, where a toast appears. Each rule was
+settled with design, often after several rounds, so follow it rather than re-deciding it screen by screen.
+
+They apply to every Verita product equally. Internal and operational tools meet the same bar for clarity, usability, and
+polish as consumer screens: don't skip states, motion, or copy quality because a screen is internal.
+
+## How each rule is written
+
+- **Rule:** what to do, in plain language.
+- **Why:** the reason, and when it was decided, so you can tell a deliberate choice from an accident.
+- **For developers:** the component, prop, or helper that implements it, and what not to hand-roll.
+
+## The guidelines
+
+| Page | Covers |
+| --- | --- |
+| [Lists and rows](?path=/docs/guidelines-lists-and-rows--docs) | One table list for rows, section headings, row vs. card hover, removing rows |
+| [Actions and menus](?path=/docs/guidelines-actions-and-menus--docs) | When a card gets a primary button, `···` menus, what looks clickable |
+| [Messages and feedback](?path=/docs/guidelines-messages-and-feedback--docs) | Message icons, choosing Alert vs. InlineAlert vs. Toast, toast placement |
+| [Empty views](?path=/docs/guidelines-empty-views--docs) | What a view shows when there's nothing in it |
+| [Modals and overlays](?path=/docs/guidelines-modals-and-overlays--docs) | How modals open, close, and swap views |
+| [Page layout](?path=/docs/guidelines-page-layout--docs) | The page shell, gutters, grids, and breakpoints |
+| [Developer contracts](?path=/docs/guidelines-developer-contracts--docs) | Code-level rules that keep the above from breaking |
+
+## Where the rules live
+
+The source of truth is [`DESIGN.md`](https://github.com/jcaunedo/verita-ucl/blob/main/DESIGN.md) in the UCL repo. These
+pages restate it for a wider audience. When a rule changes, update `DESIGN.md` and the matching page here in the same
+change.
+
+> **Not defined yet: brand voice.** `DESIGN.md` doesn't yet define copy tone for Verita. This page will link to it
+> once it does.

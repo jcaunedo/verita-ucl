@@ -36,6 +36,8 @@ const toneIcons: Record<ToastTone, { icon: React.FC<{ className?: string }>; cla
 };
 
 interface ToastProps extends VariantProps<typeof toastVariants> {
+  /** Message type, which sets the leading icon and its color: `success`, `info`, `warning`, or `destructive`. Defaults to `success`. */
+  tone?: VariantProps<typeof toastVariants>["tone"];
   /** Toast title (Figma: `sm -semibold`, `icon/foreground`). */
   title: React.ReactNode;
   /** Supporting line under the title (Figma: `sm`, `foreground/muted`, 4px below). Optional. */
@@ -48,6 +50,7 @@ interface ToastProps extends VariantProps<typeof toastVariants> {
   onClose?: () => void;
   /** Accessible label for the close button. Defaults to "Dismiss". */
   closeLabel?: string;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 

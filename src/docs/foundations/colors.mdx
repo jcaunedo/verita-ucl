@@ -1,0 +1,35 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+import themeCss from "../../styles/theme.css?raw";
+import { ColorTokens } from "./color-tokens";
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+Every color in UCL is a token defined in `src/styles/theme.css`. Use tokens through their Tailwind utilities, never as
+hex values: a token named `tone-brand` is available as `bg-tone-brand`, `text-tone-brand`, `border-tone-brand`, and so
+on.
+
+## How tokens are named
+
+- **Roles, not hues.** Pick tokens by what the color does: `foreground` for body text, `foreground-muted` for
+  secondary text, `border` for dividers, `hover-row` for a hovered list row. Reach for a primitive ramp
+  (`rosewood-500`, `neutral-200`) only when no role fits.
+- **Tones come in three strengths.** `tone-success` is the strong color (text, icons), `tone-success-subtle` a light
+  fill behind it, and `tone-success-muted` a border between the two. Badge, Alert, and InlineAlert all use this
+  vocabulary.
+- **Hover has two tokens.** List rows tint with `hover-row`; standalone surfaces like buttons use `hover`. Cards don't
+  tint at all; they lift (DESIGN.md "Row hover").
+- **Light mode only.** verita.ds defines a single light theme. The `.dark` values in `theme.css` are a derived
+  placeholder, so they aren't shown here.
+
+To add a color, add it to the `:root` block and map it in `@theme inline` as `--color-<name>`, or its Tailwind
+utility won't exist. It then appears on this page automatically.
+
+## All color tokens
+
+Generated from `theme.css`. Each swatch shows the token's Tailwind name, the value it resolves to, and the comment
+written above it in the file.
+
+<ColorTokens css={themeCss} />

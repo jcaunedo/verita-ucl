@@ -7,3 +7,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./theme.css";
+
+/* Tailwind's preflight strips list markers everywhere, including Storybook's MDX pages. Restore them for prose
+   lists there; docs blocks that render components opt out with `sb-unstyled`. */
+.sbdocs ol:not(.sb-unstyled ol) {
+	list-style-type: decimal;
+}
+.sbdocs ul:not(.sb-unstyled ul) {
+	list-style-type: disc;
+}

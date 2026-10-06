@@ -1,0 +1,42 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+
+import * as ModalStories from "../../components/overlays/modal/modal.stories";
+
+<Meta title="Guidelines/Modals and overlays" />
+
+# Modals and overlays
+
+## Modals grow in and shrink out from the center
+
+**Rule:** every modal grows in place from the center of the screen and leaves the same way in reverse, with no sliding.
+It opens quickly and closes slowly and quietly.
+
+| Part | Opening | Closing |
+| --- | --- | --- |
+| Modal | Fades in while growing from 92% to full size, 300ms | Fades out while shrinking back to 92%, 600ms |
+| Background scrim | Fades in, 300ms | Fades out over the same 600ms, and stops blocking clicks immediately |
+| Swapping to another view (e.g. share → email preview) | The new view grows in from the center, 300ms | The current view shrinks out, 160ms |
+
+- The scrim is a light dark tint (neutral-800 at 18%) over a slight 1px blur of the page.
+- When a modal's content changes height, it glides to its new centered position instead of jumping.
+- With reduced motion turned on, modals only fade.
+
+**Why:** the close is deliberately slow and subtle, a documented exception to "exits are shorter than entrances", so a
+modal recedes quietly (for example after "Copy referral link" closes it) rather than snapping away. Nothing waits on it:
+the page is clickable as soon as closing starts. (Design direction, Oct 2–5, 2026.)
+
+**For developers:** build every modal on `Modal` (like `ShareReferralLinkModal`). Don't wrap React Aria's
+`Modal`/`ModalOverlay` yourself or pass your own exit; that's how a modal ends up closing differently. Timing lives in
+`modalEnterTransition` / `modalExitTransition`, the scrim in the `--overlay` and `--blur-overlay` tokens.
+
+Press **Open modal** to see it:
+
+<Canvas of={ModalStories.Default} />
+
+## Menus and dropdowns
+
+Menus, selects, and dropdowns open near their trigger with a short fade, a small move away from the trigger, and a
+slight scale from 98%, and close with a quick fade. Action menus and selects share one surface and motion, so build new
+ones on `MenuContent` or `SelectContent` rather than a custom popover. The account menu is the exception: it rises from
+the sidebar footer. See [Foundations/Motion](?path=/docs/foundations-motion--docs) (`popoverVariants`,
+`accountMenuVariants`).

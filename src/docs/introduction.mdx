@@ -1,0 +1,113 @@
+import { Meta, Canvas } from "@storybook/addon-docs/blocks";
+
+import * as ButtonStories from "../components/buttons/button/button.stories";
+
+<Meta title="Introduction" />
+
+# Verita AI UCL
+
+The Unified Content Library is the shared React component library for Verita AI frontend apps. It's built with
+React 19, TypeScript, Tailwind CSS 4, Untitled UI, and React Aria.
+
+## How UCL is set up
+
+UCL lives in its own repo, separate from the apps that use it. It holds the shared UI components plus one CSS file with
+the design tokens (colors, type, spacing, radius, shadows). `npm run build` (tsup) compiles it into a package with
+three parts:
+
+| Part             | File               | What it is                                                          |
+| ---------------- | ------------------ | ------------------------------------------------------------------- |
+| Components       | `dist/index.js`    | ESM bundle, marked `"use client"` so Next.js Server Components can import it |
+| Types            | `dist/index.d.ts`  | Type definitions for every component, prop, and token export        |
+| Styles           | `dist/styles.css`  | The design tokens from `src/styles/theme.css`                        |
+
+Components are built and reviewed here in Storybook, in isolation. Each one has stories for its states, so design and
+engineering review the same thing before any app uses it. This Storybook redeploys to Netlify on every push to `main`.
+
+## Using it in an app
+
+**1. Install the package.** It isn't published to a registry yet, so consume it locally: `npm link`, `yalc`, a
+workspace reference, or a git dependency. Once a registry is set up, apps will install it like any other dependency,
+with a small registry config pointing the package scope at it plus a read-only access token.
+
+**2. Import the styles** in your app's global CSS:
+
+```css
+@import "tailwindcss";
+@import "verita-ai-ucl/styles";
+@source "../node_modules/verita-ai-ucl/dist";
+```
+
+The `@source` line matters: it tells Tailwind to scan UCL's built files for class names. Without it, component styles
+silently go missing. Import the tokens this way rather than copying colors into the app.
+
+**3. Import components** from the package root:
+
+```tsx
+import { Button } from "verita-ai-ucl";
+
+<Button color="primary">Label</Button>
+```
+
+<Canvas of={ButtonStories.Primary} />
+
+UCL expects the app to provide React 19 (a peer dependency, so apps never end up with two copies). `formik` is an
+optional peer, needed only for the `Formik*` form fields.
+
+## Making a change
+
+1. **Build it in Storybook.** Create or update the component with stories for every state it has: default, hover,
+   disabled, error, loading, empty. `CLAUDE.md` covers the folder structure and conventions, and `DESIGN.md` the rules
+   to follow.
+2. **Export it** from `src/index.ts`, the library's public entry, so apps can import it.
+3. **Get it reviewed:** design review in Storybook, code review in the pull request. Then merge to `main`.
+4. **Release a new version** (see below).
+5. **Update each app** to the new version, check the screens that use the component, and ship the app through its
+   normal deploy. Releasing UCL never changes a live site by itself: production only changes when an app picks up the
+   new version and deploys.
+
+To try unpublished UCL changes inside an app, link it locally first (`npm link`, `yalc`, or a local file path
+dependency).
+
+## Releasing
+
+Use semantic versioning, from the point of view of the apps that use UCL:
+
+| Bump  | Example         | For                                                                                                   |
+| ----- | --------------- | ----------------------------------------------------------------------------------------------------- |
+| Patch | 1.4.2 → 1.4.3   | Bug fixes and visual tweaks that don't change how a component is used: padding, a color, an accessibility fix |
+| Minor | 1.4.2 → 1.5.0   | Additions that don't break existing usage: a new component, optional prop, variant, or design token   |
+| Major | 1.4.2 → 2.0.0   | Anything that could break an app: removing or renaming a component, prop, variant, or token; changing a default behavior; requiring a newer React |
+
+UCL is still below 1.0.0 (currently `0.1.0`). Below 1.0, package managers treat a minor bump (0.7 → 0.8) as breaking,
+so apps don't pick it up automatically and have to update deliberately.
+
+> **Not set up yet.** The planned release flow is one command plus a push: a `release:patch` / `release:minor` /
+> `release:major` script bumps the version, commits, and tags it (after `npm run lint` passes, then rebuilds), and a
+> CI workflow publishes to the registry whenever the version in `package.json` changes. Merging ordinary work never
+> releases anything, so every release is deliberate. This repo doesn't have those scripts, the CI workflow, or a
+> registry yet; until it does, apps consume UCL locally as described above.
+
+## Finding your way around
+
+Start with **Foundations**: the color tokens, type scale, and motion presets every component is built from. Those
+pages are generated from `theme.css` and `src/lib/motion/`, so they're always current.
+
+Each component has a **Docs** page with a live preview, an editable props table, and every variant. The sidebar groups
+components by family, including:
+
+| Family       | What's in it                                       |
+| ------------ | -------------------------------------------------- |
+| Buttons      | Buttons, links, and sidebar menu items             |
+| Forms        | Inputs, selects, text areas, and tag inputs        |
+| Overlays     | Modals, menus, and tooltips                        |
+| Data Display | Avatars, badges, and tags                          |
+| Feedback     | Alerts, toasts, and empty states                   |
+| Cards        | Contract, offer, match, and application cards      |
+| Navigation   | Sidebar and tabs                                   |
+| Layouts      | Full-page prototype flows built from the above     |
+
+## Contributing
+
+Read `DESIGN.md` before you create or change a component. It records the design and component rules that took
+iteration to land on. `CLAUDE.md` covers folder structure, the motion system, and how to add a component.

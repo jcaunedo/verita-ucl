@@ -129,6 +129,7 @@ interface ContractCardProps
   primaryActionProps?: Omit<ButtonProps, "size" | "color" | "children">;
   /** Forwarded to the card's own click target (e.g. `onClick`, which opens the contract detail). Passing `onClick` makes the whole card a `role="button"` (pointer cursor, focusable, Enter/Space) via `clickableRowProps` — same model as `ApplicationCard`/`MatchCard`/`OfferCard`; clicks on the primary action button don't trigger it. */
   rowProps?: Omit<React.HTMLAttributes<HTMLDivElement>, "className">;
+  /** Extra classes for the card surface (inside the hover-lift wrapper), merged after the component's own. */
   className?: string;
 }
 

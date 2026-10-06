@@ -80,6 +80,10 @@ const toneIcons: Record<AlertTone, { icon: React.FC<{ className?: string }>; cla
 interface AlertProps
   extends Omit<React.ComponentProps<"div">, "title">,
     VariantProps<typeof alertVariants> {
+  /** Message type, which sets the tint, border, and icon: `neutral`, `info`, `warning`, `destructive`, or `success`. Defaults to `neutral`. */
+  tone?: VariantProps<typeof alertVariants>["tone"];
+  /** Makes the whole banner pressable (`role="button"`) and shows the trailing arrow. Presses on the × don't trigger it. */
+  onClick?: React.ComponentProps<"div">["onClick"];
   /** Bold lead-in (Figma: `title`, `sm -semibold`). Omit to show the description alone. */
   title?: React.ReactNode;
   /** Supporting text after the title (Figma: `description`, `sm` regular). */

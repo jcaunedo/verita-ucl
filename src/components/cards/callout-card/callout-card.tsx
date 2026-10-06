@@ -53,6 +53,7 @@ interface CalloutCardProps
   /** Custom leading icon, rendered only when `showIcon` is true. Falls back to `check-circle-broken`. */
   icon?: React.ReactNode;
   href: NonNullable<AriaLinkProps["href"]>;
+  /** Extra classes for the card link (inside the hover-lift wrapper), merged after the component's own. */
   className?: string;
 }
 

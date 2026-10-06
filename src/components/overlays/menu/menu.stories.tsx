@@ -8,7 +8,10 @@ import { MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "./menu";
 const meta: Meta<typeof MenuItem> = {
   title: "Overlays/Menu",
   component: MenuItem,
+  subcomponents: { MenuContent, MenuSeparator },
   tags: ["autodocs"],
+  // Opens on mount, and an open popover locks page scroll — so on the Docs page each story gets its own iframe.
+  parameters: { docs: { story: { inline: false, height: "260px" } } },
   decorators: [
     (Story) => (
       <div className="flex min-h-[260px] justify-end bg-white p-4 pr-48">
@@ -22,13 +25,23 @@ type Story = StoryObj<typeof MenuItem>;
 
 /** An application row's actions (PRD §4.1): View Details, Refer, and a destructive Withdraw. No separator by default (DESIGN.md "Actions menus"). */
 export const Default: Story = {
-  render: () => (
-    <MenuTrigger defaultOpen>
+  args: { size: "sm" },
+  // The labels and icons are fixed per item; `size` and `className` apply to every item.
+  argTypes: { children: { control: false }, icon: { control: false }, tone: { control: false } },
+  // On the Docs page this story renders inline and closed (open it from its trigger), so the Docs controls reach it; a
+  // story in its own iframe doesn't receive Docs control changes.
+  parameters: { docs: { story: { inline: true } } },
+  render: ({ size, className }, { viewMode }) => (
+    <MenuTrigger defaultOpen={viewMode !== "docs"}>
       <Button color="tertiary" size="xs" aria-label="More actions" iconLeading={DotsHorizontal} />
       <MenuContent placement="bottom end">
-        <MenuItem icon={ArrowUpRight}>View Details</MenuItem>
-        <MenuItem icon={FaceSlightlySmilingPlus}>Refer someone</MenuItem>
-        <MenuItem icon={XCircle} tone="destructive">
+        <MenuItem size={size} className={className} icon={ArrowUpRight}>
+          View Details
+        </MenuItem>
+        <MenuItem size={size} className={className} icon={FaceSlightlySmilingPlus}>
+          Refer someone
+        </MenuItem>
+        <MenuItem size={size} className={className} icon={XCircle} tone="destructive">
           Withdraw
         </MenuItem>
       </MenuContent>

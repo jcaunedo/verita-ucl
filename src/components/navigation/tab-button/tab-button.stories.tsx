@@ -12,6 +12,7 @@ import {
 const meta: Meta<typeof TabButton> = {
   title: "Navigation/TabButton",
   component: TabButton,
+  subcomponents: { TabButtonList },
   tags: ["autodocs"],
   args: { label: "Tab" },
   decorators: [

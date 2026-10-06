@@ -19,11 +19,13 @@ interface TextareaProps extends Omit<AriaTextFieldProps, "children" | "className
   hint?: React.ReactNode;
   /** Shown in place of `hint`, in destructive, and turns the field to Figma's Error state. */
   errorMessage?: React.ReactNode;
+  /** Hint text shown in the empty field. Don't use it in place of `label`. */
   placeholder?: string;
   /** Figma `Size`: `md` (`base` text, the default) or `sm` (`sm` text). Sets the one-line starting height too. */
   size?: "sm" | "md";
   /** Visible rows to start with. Default: one, as in Figma; the field grows with its content either way. */
   rows?: number;
+  /** Extra classes for the root element, merged after the component's own. */
   className?: string;
 }
 
