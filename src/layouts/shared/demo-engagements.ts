@@ -428,7 +428,7 @@ type DemoContract = Pick<
 const DEMO_CONTRACTS: DemoContract[] = [
   {
     // `contract-card.md` §6.1 "Awaiting start": `info` badge (§3.1.2 tone table), no progress since work hasn't
-    // begun, and what's due before it starts — the same training Home's Next steps asks for ("Complete training").
+    // begun, and what's due before it starts.
     // Listed first: an `Awaiting start` contract leads the list (§7).
     key: "clinical-research-advisor",
     filter: "open",
