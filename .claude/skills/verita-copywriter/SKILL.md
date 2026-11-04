@@ -1,5 +1,5 @@
 ---
-name: ucl-ux-copywriter
+name: verita-copywriter
 description: Improve, create, audit, or standardize UX copy for Verita AI, its curated guest marketplace, provider portal, and internal operations tools. Use for screen titles, descriptions, CTAs, forms, helper text, onboarding, empty states, errors, warnings, success messages, verification, pricing, policies, publishing, booking flows, AI-assisted drafts, and guest-facing experience listings. Apply Verita AI's audience-specific voice for guests, providers, and internal operators without requiring a separate UX-writing skill.
 ---
 
